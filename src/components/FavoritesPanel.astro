@@ -35,7 +35,7 @@ const heart =
   <div
     role="dialog"
     aria-label={f.title}
-    class="fav-box absolute top-[84px] right-3 sm:right-margin md:right-margin-desktop w-[calc(100vw-1.5rem)] sm:w-[380px] max-h-[calc(100vh-100px)] h-[560px] bg-surface rounded-2xl border border-outline-variant/40 shadow-2xl shadow-black/80 flex flex-col overflow-hidden"
+    class="fav-box absolute top-[84px] right-3 w-[calc(100vw-1.5rem)] sm:w-[380px] max-h-[calc(100vh-100px)] h-[560px] bg-surface rounded-2xl border border-outline-variant/40 shadow-2xl shadow-black/80 flex flex-col overflow-hidden"
   >
     <div class="h-[2px] w-full bg-gradient-to-r from-primary-container via-pink-500 to-amber-500 shrink-0"></div>
 
@@ -64,7 +64,7 @@ const heart =
               role="tab"
               data-fav-tab={tab.key}
               aria-selected={i === 0 ? 'true' : 'false'}
-              class="fav-tab flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all"
+              class="fav-tab flex-1 py-1.5 px-2 rounded-lg border border-transparent flex items-center justify-center gap-1.5 transition-colors"
             >
               <span>{tab.label}</span>
               <span class="fav-tab-count px-1 rounded text-[9px]">{tab.count}</span>
@@ -193,8 +193,14 @@ const heart =
     background: #131317;
     color: #fff;
     font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  .fav-tab:focus {
+    outline: none;
+  }
+  .fav-tab:focus-visible {
+    outline: 1px solid #a078ff;
   }
   .fav-tab[aria-selected='true'] .fav-tab-count {
     background: rgba(160, 120, 255, 0.3);
@@ -254,7 +260,18 @@ const heart =
     }`;
   }
 
-  function open() {
+  const box = root.querySelector<HTMLElement>('.fav-box')!;
+
+  // Правый край панели — по правому краю иконки ♡ (на узком экране панель шире иконки, но не выходит за экран)
+  function place(trigger?: Element | null) {
+    const icon = trigger ?? document.querySelector('[data-open-favorites]');
+    if (!icon) return;
+    const right = document.documentElement.clientWidth - icon.getBoundingClientRect().right;
+    box.style.right = `${Math.max(12, right)}px`;
+  }
+
+  function open(trigger?: Element | null) {
+    place(trigger);
     sync.classList.toggle('hidden', isLoggedIn());
     root.classList.remove('hidden');
     root.getBoundingClientRect();
@@ -287,9 +304,10 @@ const heart =
     const trigger = (e.target as HTMLElement).closest('[data-open-favorites]');
     if (!trigger) return;
     e.preventDefault();
-    root.classList.contains('fav-open') ? close() : open();
+    root.classList.contains('fav-open') ? close() : open(trigger);
   });
-  document.addEventListener('favorites:open', open);
+  document.addEventListener('favorites:open', () => open());
+  window.addEventListener('resize', () => place());
 
   setTab('models');
 </script>
