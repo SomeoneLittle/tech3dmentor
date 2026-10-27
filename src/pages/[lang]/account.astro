@@ -1,0 +1,472 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { locales, t, tu, path, type Lang } from '../../i18n';
+import { mockImages } from '../../data/mockImages';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const dict = t(lang);
+const u = tu(lang);
+
+const section = 'w-full p-space-lg rounded-xl bg-surface-container-low shadow-xl flex flex-col gap-space-md';
+const labelCls = 'font-tech-data-sm text-tech-data-sm text-outline flex items-center justify-between uppercase';
+const fieldCls =
+  'w-full bg-surface-container-lowest text-on-surface font-tech-data-sm text-tech-data-sm px-3.5 py-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary shadow-inner';
+const frameHead = 'flex flex-wrap items-center justify-between gap-space-sm pb-space-sm';
+const rowCls = 'p-space-sm rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors flex flex-col md:flex-row md:items-center justify-between gap-space-sm';
+const linkCls = 'font-tech-data-sm text-tech-data-sm text-primary hover:text-on-surface flex items-center gap-1 uppercase transition-colors';
+
+const appStyles = [
+  { icon: 'school', iconCls: 'text-secondary-fixed', badge: 'bg-secondary-fixed-dim/20 text-secondary-fixed-dim', badgeIcon: 'check_circle', actionIcon: 'launch' },
+  { icon: 'precision_manufacturing', iconCls: 'text-tertiary-container', badge: 'bg-tertiary-container/20 text-tertiary', badgeIcon: '', actionIcon: 'arrow_forward' },
+  { icon: 'troubleshoot', iconCls: 'text-primary', badge: 'bg-surface-container-highest text-on-surface-variant', badgeIcon: 'outbox', actionIcon: 'arrow_forward' },
+];
+const subStyles = [
+  { icon: 'shopping_bag', iconCls: 'text-primary', tagCls: 'bg-primary-container/20 text-primary', on: true },
+  { icon: 'terminal', iconCls: 'text-secondary-fixed', tagCls: 'bg-secondary-container/20 text-secondary-fixed', on: true },
+  { icon: 'co_present', iconCls: 'text-outline', tagCls: 'bg-surface-container-highest text-outline', on: false },
+];
+const favImages = [mockImages.model1, mockImages.work1, mockImages.article1];
+const favOverlays = [
+  { tl: '.FBX / .ZTL', tlCls: 'text-secondary-fixed', dot: true, bl: 'CAM_ISO_04 • 60 FPS' },
+  { tl: 'POLY: 28.4M', tlCls: 'text-primary', dot: false, bl: 'MATCAP: ECORCHE_GREY' },
+  { tl: 'BREAKDOWNS', tlCls: 'text-tertiary', dot: false, bl: 'READ: 8 MIN' },
+];
+const favSub = ['text-primary font-bold', 'text-outline-variant text-[11px]', 'text-secondary-fixed text-[11px]'];
+const favSubRight = ['text-secondary-container', 'text-tertiary-fixed-dim', 'text-outline'];
+const navItems = [
+  { id: 'profile-section', label: u.nav.profile },
+  { id: 'applications-section', label: u.nav.applications },
+  { id: 'subscriptions-section', label: u.nav.subscriptions },
+  { id: 'favorites-section', label: u.nav.favorites },
+];
+---
+
+<BaseLayout lang={lang} page="account" title={`${u.seo.title} — ${dict.site.name}`} description={u.seo.description}>
+  <!-- Пока не вошли: заглушка и окно входа -->
+  <div id="account-guard" class="hidden max-w-[1440px] mx-auto px-margin md:px-margin-desktop py-space-2xl">
+    <div class="max-w-md mx-auto text-center bg-surface-container-low rounded-xl p-space-xl shadow-xl flex flex-col items-center gap-space-md">
+      <span class="material-symbols-outlined text-primary text-[40px]">lock</span>
+      <h1 class="font-headline-sm text-headline-sm text-on-surface uppercase">{u.guard.title}</h1>
+      <p class="font-body-md text-body-md text-on-surface-variant">{u.guard.text}</p>
+      <button type="button" data-open-auth class="px-space-lg py-2.5 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_rgba(160,120,255,0.4)] transition-all active:scale-95">
+        {u.guard.button}
+      </button>
+    </div>
+  </div>
+
+  <div id="account-content" class="hidden w-full">
+    <div class="relative w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop py-space-lg flex flex-col gap-space-xl">
+      <!-- Хлебные крошки и телеметрия -->
+      <div class="w-full flex flex-col gap-space-sm">
+        <div class="flex flex-wrap items-center justify-between gap-space-sm">
+          <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-space-xs font-tech-data-sm text-tech-data-sm text-outline">
+            <a href={path(lang)} class="hover:text-primary transition-colors">{u.crumbs.home}</a>
+            <span class="text-outline-variant font-bold">//</span>
+            <span>{u.crumbs.session}</span>
+            <span class="text-outline-variant font-bold">//</span>
+            <span class="text-primary font-semibold tracking-wider" aria-current="page">{u.crumbs.account}</span>
+          </nav>
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-tech-data-sm text-[10px] shadow-sm">
+              <span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-ping"></span>
+              <span class="text-secondary-fixed font-bold">SESSION_AUTH:</span> VERIFIED_TOKEN
+            </div>
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-tech-data-sm text-[10px] shadow-sm">
+              <span class="text-primary font-bold">ACCESS_LEVEL:</span> STUDENT_TIER_01 // CLIENT
+            </div>
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-tech-data-sm text-[10px] shadow-sm">
+              <span class="text-tertiary font-bold">SYS_UPTIME:</span> 99.98%
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col md:flex-row md:items-baseline justify-between gap-space-xs">
+          <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase tracking-tight text-on-surface flex flex-wrap items-center gap-x-3">
+            <span>OPERATOR</span>
+            <span class="text-outline-variant font-tech-data-lg">//</span>
+            <span class="bg-gradient-to-r from-primary-container via-primary to-tertiary-container bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(160,120,255,0.35)]">ACCOUNT_HUB</span>
+          </h1>
+          <div class="flex items-center gap-2 font-tech-data-sm text-tech-data-sm text-outline">
+            <span class="material-symbols-outlined text-[15px] text-secondary-fixed">memory</span>
+            <span>DCC_BUILD: 2024.3.4-PROD</span>
+            <span class="text-outline-variant">•</span>
+            <span>RENDER_NODE: FRA-01</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Карточка пользователя -->
+      <div class="w-full p-space-lg rounded-xl bg-surface-container-low shadow-xl relative overflow-hidden flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg">
+        <div class="flex items-center gap-space-md min-w-0">
+          <div class="relative shrink-0 w-20 h-20 rounded-xl bg-surface-container-high p-1 shadow-[0_0_24px_rgba(160,120,255,0.25)] flex items-center justify-center">
+            <div class="w-full h-full rounded-lg bg-gradient-to-br from-primary-container to-tertiary-container flex items-center justify-center font-headline-md text-headline-sm text-on-surface">AV</div>
+            <div class="absolute -bottom-1 -right-1 flex items-center justify-center w-5 h-5 rounded-full bg-surface-container-lowest shadow-md">
+              <span class="w-3 h-3 rounded-full bg-secondary-fixed shadow-[0_0_8px_rgba(0,255,135,0.7)]"></span>
+            </div>
+            <span class="absolute -top-1.5 -left-1.5 font-label-caps text-[8px] px-1 rounded bg-primary text-on-primary font-bold uppercase">CAD_V4</span>
+          </div>
+          <div class="flex flex-col gap-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 class="font-headline-md text-headline-sm sm:text-headline-md text-on-surface leading-tight truncate">{u.hello} Alex Vance</h2>
+              <span class="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary font-label-caps text-label-caps uppercase flex items-center gap-1">
+                <span class="material-symbols-outlined text-[12px]">verified</span> VERIFIED_CADET
+              </span>
+            </div>
+            <p class="font-tech-data-sm text-tech-data-sm text-primary-fixed-dim truncate">alex.vance@studio-operator.io</p>
+            <div class="flex flex-wrap items-center gap-space-xs font-tech-data-sm text-tech-data-sm text-outline mt-0.5">
+              <span class="text-secondary-fixed">MEMBER // CAD_ID #8042-KV</span>
+              <span class="text-outline-variant">•</span>
+              <span>REGISTERED: MAR 2024</span>
+              <span class="text-outline-variant">•</span>
+              <span class="text-tertiary-fixed-dim">WORKSPACE: ALPHA-CORE</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-space-sm shrink-0">
+          <button type="button" class="px-4 py-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-tech-data-sm text-tech-data-sm uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+            <span class="material-symbols-outlined text-[16px] text-primary">swap_horiz</span>
+            {u.switchWorkspace}
+          </button>
+          <button type="button" id="sign-out" data-home={path(lang)} class="px-4 py-2 rounded-full bg-surface-container-lowest hover:bg-error-container text-on-surface-variant hover:text-on-error-container font-tech-data-sm text-tech-data-sm uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+            <span class="material-symbols-outlined text-[16px]">logout</span>
+            {u.signOut}
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+        <!-- Левая колонка -->
+        <div class="lg:col-span-3 flex flex-col gap-space-md lg:sticky lg:top-28">
+          <div class="w-full bg-surface-container-low rounded-xl p-space-sm flex flex-col gap-1 shadow-lg">
+            <div class="px-3 py-2 flex items-center justify-between font-label-caps text-label-caps text-outline uppercase tracking-widest">
+              <span>TERMINAL_DOCKS</span>
+              <span class="material-symbols-outlined text-[14px]">tune</span>
+            </div>
+            {
+              navItems.map((item, i) => (
+                <a
+                  href={`#${item.id}`}
+                  data-account-nav
+                  class:list={[
+                    'group flex items-center justify-between px-3 py-2.5 rounded-lg font-tech-data-sm text-tech-data-sm transition-all',
+                    i === 0
+                      ? 'bg-surface-container-high text-primary shadow-[0_0_16px_rgba(160,120,255,0.15)]'
+                      : 'bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface',
+                  ]}
+                >
+                  <div class="flex items-center gap-2.5">
+                    <span class:list={['w-1.5 h-4 rounded-full', i === 0 ? 'bg-primary-container' : 'bg-transparent group-hover:bg-outline-variant transition-colors']} />
+                    <span class:list={[i === 0 && 'font-bold text-on-surface']}>{`0${i + 1}. ${item.label}`}</span>
+                  </div>
+                  {i === 0 && <span class="font-label-caps text-[9px] px-1.5 py-0.5 rounded bg-primary-container/30 text-primary-fixed uppercase font-bold tracking-wide">ACTIVE</span>}
+                  {i === 1 && <span class="font-tech-data-sm text-[10px] px-2 py-0.5 rounded-full bg-surface-container-high text-secondary-fixed font-bold">3</span>}
+                  {i === 2 && (
+                    <span class="flex items-center gap-1 font-label-caps text-[9px] text-secondary-fixed uppercase">
+                      <span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-pulse" /> ACTIVE
+                    </span>
+                  )}
+                  {i === 3 && <span class="font-tech-data-sm text-[10px] px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary font-bold">7</span>}
+                </a>
+              ))
+            }
+            <div class="my-2 pt-2 px-1 flex flex-col gap-1">
+              <span class="font-label-caps text-[9px] text-error/60 tracking-widest uppercase">CRITICAL_NODE</span>
+              <button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-error-container/20 hover:bg-error-container text-error hover:text-on-error-container font-tech-data-sm text-tech-data-sm transition-colors text-left group">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[16px]">warning</span>
+                  <span>05. {u.nav.delete}</span>
+                </div>
+                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="w-full bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-sm shadow-md">
+            <div class="flex items-center justify-between">
+              <span class="font-label-caps text-label-caps text-outline uppercase tracking-wider flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[14px] text-primary">cloud</span>
+                STORAGE_TELEMETRY
+              </span>
+              <span class="font-tech-data-sm text-[10px] text-secondary-fixed font-bold">24% {u.quota.used}</span>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <div class="w-full h-2 rounded-full bg-surface-container-lowest overflow-hidden flex">
+                <div class="h-full bg-gradient-to-r from-primary to-secondary-container rounded-full" style="width: 24%;"></div>
+              </div>
+              <div class="flex justify-between font-tech-data-sm text-[11px] text-on-surface-variant">
+                <span>{u.quota.cloud}: 1.2 GB</span>
+                <span class="text-outline">5.0 GB {u.quota.max}</span>
+              </div>
+            </div>
+            <div class="p-2.5 rounded-lg bg-surface-container-high flex flex-col gap-1">
+              <div class="flex items-center justify-between font-label-caps text-[9px] text-tertiary-fixed-dim uppercase">
+                <span>UPCOMING_SYNC</span>
+                <span class="flex items-center gap-1 text-secondary-fixed"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span> LIVE_Q3</span>
+              </div>
+              <p class="font-tech-data-sm text-tech-data-sm text-on-surface font-semibold">{u.upcoming.title}</p>
+              <span class="font-tech-data-sm text-[11px] text-outline">{u.upcoming.when}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Правая колонка -->
+        <div class="lg:col-span-9 flex flex-col gap-space-xl">
+          <!-- 01 Профиль -->
+          <section id="profile-section" class={`${section} gap-space-lg relative overflow-hidden`}>
+            <div class={frameHead}>
+              <div class="flex items-center gap-space-xs">
+                <span class="material-symbols-outlined text-primary text-[20px]">badge</span>
+                <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">{u.profile.title}</span>
+              </div>
+              <div class="flex items-center gap-space-xs font-tech-data-sm text-[10px] text-outline">
+                <span>VIEWPORT_ID: DOCK_USR_01</span>
+                <span>•</span>
+                <span class="text-secondary-fixed">FIELD_WRITE_PERMIT: ENABLED</span>
+              </div>
+            </div>
+            <form class="grid grid-cols-1 md:grid-cols-2 gap-space-md" id="profile-form">
+              <div class="flex flex-col gap-1.5">
+                <label class={labelCls} for="p-name"><span>{u.profile.name}</span><span class="text-[9px] text-outline-variant">[STRING_PARAM]</span></label>
+                <div class="relative flex items-center">
+                  <input id="p-name" class={fieldCls} type="text" value="Alex Vance" />
+                  <span class="absolute right-3 material-symbols-outlined text-outline text-[16px] pointer-events-none">edit</span>
+                </div>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class={labelCls} for="p-email">
+                  <span>{u.profile.email}</span>
+                  <span class="text-[9px] text-secondary-fixed flex items-center gap-1 font-bold"><span class="material-symbols-outlined text-[11px]">verified</span> [VERIFIED]</span>
+                </label>
+                <div class="relative flex items-center">
+                  <input id="p-email" class={fieldCls} type="email" value="alex.vance@studio-operator.io" />
+                  <span class="absolute right-3 material-symbols-outlined text-secondary-fixed text-[16px] pointer-events-none">lock</span>
+                </div>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <span class={labelCls}><span>{u.profile.language}</span><span class="text-[9px] text-outline-variant">[LOCALE_TAG]</span></span>
+                <div class="grid grid-cols-3 gap-2 bg-surface-container-lowest p-1 rounded-lg">
+                  {
+                    locales.map((code) => (
+                      <a
+                        href={path(code, 'account')}
+                        hreflang={code}
+                        aria-current={code === lang ? 'true' : undefined}
+                        class:list={[
+                          'py-2 text-center rounded font-tech-data-sm text-tech-data-sm uppercase transition-colors',
+                          code === lang ? 'bg-surface-variant text-primary font-bold shadow-[0_0_12px_rgba(160,120,255,0.3)]' : 'text-outline hover:text-on-surface',
+                        ]}
+                      >
+                        {code === 'en' ? 'EN (US)' : code}
+                      </a>
+                    ))
+                  }
+                </div>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class={labelCls} for="p-tz"><span>{u.profile.timezone}</span><span class="text-[9px] text-outline-variant">[CHRONO_OFFSET]</span></label>
+                <div class="relative flex items-center">
+                  <select id="p-tz" class={`${fieldCls} appearance-none cursor-pointer`}>
+                    {u.profile.timezones.map((tz) => <option>{tz}</option>)}
+                  </select>
+                  <span class="absolute right-3 material-symbols-outlined text-outline text-[18px] pointer-events-none">schedule</span>
+                </div>
+              </div>
+              <div class="md:col-span-2 pt-space-sm flex flex-wrap items-center justify-between gap-space-sm">
+                <div class="flex items-center gap-2 font-tech-data-sm text-[11px] text-outline">
+                  <span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+                  <span>{u.profile.synced}</span>
+                </div>
+                <div class="flex items-center gap-space-md">
+                  <button type="reset" class="font-tech-data-sm text-tech-data-sm text-outline hover:text-on-surface transition-colors uppercase">{u.profile.discard}</button>
+                  <button type="submit" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container hover:from-primary hover:to-tertiary-fixed text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_rgba(160,120,255,0.4)] hover:shadow-[0_0_28px_rgba(255,87,34,0.55)] transition-all active:scale-95 flex items-center gap-2">
+                    <span>{u.profile.save}</span>
+                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </section>
+
+          <!-- 02 Заявки -->
+          <section id="applications-section" class={section}>
+            <div class={frameHead}>
+              <div class="flex items-center gap-space-xs">
+                <span class="material-symbols-outlined text-secondary-fixed text-[20px]">assignment</span>
+                <h3 class="font-label-caps text-label-caps text-secondary-fixed tracking-widest uppercase">{u.applications.title}</h3>
+              </div>
+              <a href="#applications-section" class="font-tech-data-sm text-tech-data-sm text-primary hover:underline flex items-center gap-1 uppercase">
+                <span>{u.applications.viewAll}</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </a>
+            </div>
+            <div class="flex flex-col gap-2.5">
+              {
+                u.applications.rows.map((row, i) => (
+                  <div class={rowCls}>
+                    <div class="flex items-center gap-3">
+                      <div class:list={['p-2 rounded bg-surface-container-highest', appStyles[i].iconCls]}>
+                        <span class="material-symbols-outlined text-[20px]">{appStyles[i].icon}</span>
+                      </div>
+                      <div class="flex flex-col">
+                        <span class="font-tech-data-sm text-tech-data-sm text-on-surface font-semibold">{row.title}</span>
+                        <span class="font-tech-data-sm text-[11px] text-outline">{row.meta}</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between md:justify-end gap-space-md shrink-0">
+                      <span class:list={['px-2.5 py-1 rounded-full font-tech-data-sm text-[11px] font-bold flex items-center gap-1', appStyles[i].badge]}>
+                        {appStyles[i].badgeIcon ? <span class="material-symbols-outlined text-[13px]">{appStyles[i].badgeIcon}</span> : <span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse" />}
+                        {row.status}
+                      </span>
+                      <a href="#applications-section" class={linkCls}>
+                        {row.action} <span class="material-symbols-outlined text-[14px]">{appStyles[i].actionIcon}</span>
+                      </a>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </section>
+
+          <!-- 03 Подписки -->
+          <section id="subscriptions-section" class={section}>
+            <div class={frameHead}>
+              <div class="flex items-center gap-space-xs">
+                <span class="material-symbols-outlined text-tertiary text-[20px]">notifications_active</span>
+                <h3 class="font-label-caps text-label-caps text-tertiary tracking-widest uppercase">{u.subscriptions.title}</h3>
+              </div>
+              <span class="font-tech-data-sm text-[11px] text-outline uppercase">PROTOCOL: SSE_REALTIME</span>
+            </div>
+            {
+              u.subscriptions.rows.map((row, i) => (
+                <div class="p-space-sm rounded-lg bg-surface-container flex items-center justify-between gap-space-md">
+                  <div class="flex items-start gap-3 min-w-0">
+                    <span class:list={['p-2 rounded bg-surface-container-high material-symbols-outlined text-[20px]', subStyles[i].iconCls]}>{subStyles[i].icon}</span>
+                    <div class="flex flex-col">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <span class="font-tech-data-sm text-tech-data-sm text-on-surface font-semibold">{row.title}</span>
+                        <span class:list={['px-1.5 rounded font-label-caps text-[9px] uppercase', subStyles[i].tagCls]}>{row.tag}</span>
+                      </div>
+                      <p class="font-body-sm text-body-sm text-on-surface-variant max-w-xl">{row.text}</p>
+                    </div>
+                  </div>
+                  <button type="button" data-toggle role="switch" aria-checked={String(subStyles[i].on)} aria-label={row.title} class="sub-toggle shrink-0 w-12 h-6 rounded-full p-0.5 flex items-center transition-all" />
+                </div>
+              ))
+            }
+          </section>
+
+          <!-- 04 Избранное -->
+          <section id="favorites-section" class={section}>
+            <div class={frameHead}>
+              <div class="flex flex-wrap items-center gap-space-xs">
+                <span class="material-symbols-outlined text-tertiary-container text-[20px]">favorite</span>
+                <h3 class="font-label-caps text-label-caps text-tertiary-container tracking-widest uppercase">{u.favorites.title}</h3>
+                <span class="font-tech-data-sm text-tech-data-sm text-outline">{u.favorites.items}</span>
+              </div>
+              <div class="flex items-center gap-1.5 bg-surface-container-lowest p-1 rounded-full">
+                {
+                  u.favorites.tabs.map((tab, i) => (
+                    <button
+                      type="button"
+                      class:list={[
+                        'px-3 py-1 rounded-full font-tech-data-sm text-[11px] uppercase transition-colors',
+                        i === 0 ? 'bg-primary text-on-primary font-bold shadow-sm' : 'text-outline hover:text-on-surface',
+                      ]}
+                    >
+                      {tab}
+                    </button>
+                  ))
+                }
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+              {
+                u.favorites.cards.map((card, i) => (
+                  <div class="group rounded-xl bg-surface-container hover:bg-surface-container-high transition-all p-space-sm flex flex-col gap-space-sm shadow-md">
+                    <div class="relative w-full h-44 rounded-lg bg-surface-container-lowest overflow-hidden flex items-center justify-center">
+                      <img src={favImages[i]} alt={card.title} loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <div class:list={['absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur font-tech-data-sm text-[9px]', favOverlays[i].tlCls]}>
+                        {favOverlays[i].dot && <span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed" />}
+                        {favOverlays[i].tl}
+                      </div>
+                      <button type="button" aria-label={dict.header.favorites} class="absolute top-2 right-2 w-7 h-7 rounded-full bg-surface-container-lowest/90 text-tertiary-container flex items-center justify-center shadow-md">
+                        <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                      </button>
+                      <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur font-tech-data-sm text-[10px] text-on-surface">{favOverlays[i].bl}</div>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <span class="font-tech-data-sm text-tech-data-sm text-on-surface font-semibold truncate">{card.title}</span>
+                      <div class="flex items-center justify-between gap-2 font-tech-data-sm text-tech-data-sm text-outline">
+                        <span class={favSub[i]}>{card.left}</span>
+                        <span class:list={['text-[10px] text-right', favSubRight[i]]}>{card.right}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+            <div class="pt-space-sm flex items-center justify-end">
+              <a href="#favorites-section" class="font-tech-data-sm text-tech-data-sm text-primary hover:text-on-surface flex items-center gap-1.5 uppercase transition-colors">
+                <span>{u.favorites.browseAll}</span>
+                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+              </a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .sub-toggle {
+    background: #353439;
+    justify-content: flex-start;
+  }
+  .sub-toggle::after {
+    content: '';
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 9999px;
+    background: #958ea0;
+    transition: all 0.2s;
+  }
+  .sub-toggle[aria-checked='true'] {
+    background: #00ff87;
+    box-shadow: 0 0 12px rgba(0, 255, 135, 0.4);
+    justify-content: flex-end;
+  }
+  .sub-toggle[aria-checked='true']::after {
+    background: #0e0e12;
+  }
+</style>
+
+<script>
+  import { isLoggedIn, logout } from '../../scripts/auth';
+
+  const content = document.getElementById('account-content')!;
+  const guard = document.getElementById('account-guard')!;
+
+  // Без входа показываем заглушку и открываем окно входа (после DOMContentLoaded, когда модалка уже готова)
+  if (isLoggedIn()) {
+    content.classList.remove('hidden');
+  } else {
+    guard.classList.remove('hidden');
+    document.addEventListener('DOMContentLoaded', () => document.dispatchEvent(new Event('auth:open')));
+  }
+
+  const signOut = document.getElementById('sign-out') as HTMLElement;
+  signOut.addEventListener('click', () => {
+    logout();
+    window.location.href = signOut.dataset.home as string;
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-toggle]').forEach((btn) =>
+    btn.addEventListener('click', () => btn.setAttribute('aria-checked', String(btn.getAttribute('aria-checked') !== 'true')))
+  );
+
+  document.getElementById('profile-form')!.addEventListener('submit', (e) => e.preventDefault());
+</script>

@@ -39,6 +39,15 @@ const contactsDictionaries: Record<Lang, ContactsDict> = { ru: contactsRu, ua: c
 /** Тексты страницы «Контакты» */
 export const tc = (lang: Lang): ContactsDict => contactsDictionaries[lang];
 
+import { accountEn, accountRu, accountUa, authEn, authRu, authUa, type AccountDict, type AuthDict } from './account';
+
+const accountDictionaries: Record<Lang, AccountDict> = { ru: accountRu, ua: accountUa, en: accountEn };
+const authDictionaries: Record<Lang, AuthDict> = { ru: authRu, ua: authUa, en: authEn };
+/** Тексты страницы «Аккаунт» */
+export const tu = (lang: Lang): AccountDict => accountDictionaries[lang];
+/** Тексты окна входа / регистрации */
+export const tx = (lang: Lang): AuthDict => authDictionaries[lang];
+
 const mentoringDictionaries: Record<Lang, MentoringDict> = { ru: mentoringRu, ua: mentoringUa, en: mentoringEn };
 
 export const t = (lang: Lang): Dict => dictionaries[lang];

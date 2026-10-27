@@ -1,0 +1,247 @@
+---
+import { tx, path, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const a = tx(lang);
+
+const card = 'bg-surface-container-low border border-outline-variant/40';
+const labelCls = 'block font-label-caps text-[10px] uppercase tracking-wider text-outline mb-1.5';
+const input =
+  'auth-input w-full bg-surface-container-low border border-outline-variant/40 text-on-surface placeholder:text-outline text-xs rounded-lg px-3.5 py-2.5 transition-all font-label-caps font-medium tracking-normal normal-case';
+const gradientBtn =
+  'w-full mt-2 py-2.5 px-4 rounded-lg text-white font-headline-md font-semibold text-xs tracking-wide shadow-md flex items-center justify-center gap-2 bg-gradient-to-br from-primary-container via-pink-500 to-tertiary-container hover:-translate-y-px hover:shadow-[0_8px_24px_-4px_rgba(139,92,246,0.4)] transition-all';
+const arrow = 'M14 5l7 7m0 0l-7 7m7-7H3';
+const eye =
+  'M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z';
+---
+
+<div id="auth-modal" class="hidden fixed inset-0 z-[60] items-start sm:items-center justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-4" role="dialog" aria-modal="true" aria-label={a.titleIn} data-account-url={path(lang, 'account')}>
+  <div class="w-full max-w-[440px] my-auto bg-surface border border-outline-variant/40 rounded-xl shadow-2xl p-6 sm:p-7 relative overflow-hidden font-headline-md">
+    <div id="auth-glow" class="absolute -top-16 -right-16 w-32 h-32 bg-primary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+
+    <div class="flex items-center justify-between pb-5 border-b border-outline-variant/30">
+      <div class="flex items-center gap-2 font-label-caps text-[11px] tracking-wide text-on-surface-variant">
+        <span class="w-1.5 h-1.5 rounded-full bg-secondary-container shadow-[0_0_6px_#34ff8c]"></span>
+        <span>[AUTH_GATEWAY // SECURE_PORTAL_V2.4]</span>
+      </div>
+      <button type="button" data-auth-close aria-label={a.close} class="text-outline hover:text-on-surface p-1 rounded-md hover:bg-white/5 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+
+    <!-- Заголовок меняется вместе со вкладкой -->
+    <div class="pt-5 pb-4">
+      <div data-auth-kicker class="font-label-caps text-[10px] tracking-wider text-primary-container uppercase font-semibold mb-1.5" data-in={a.kickerIn} data-up={a.kickerUp}>{a.kickerIn}</div>
+      <h2 data-auth-title class="text-xl sm:text-[22px] font-bold text-white tracking-tight leading-snug" data-in={a.titleIn} data-up={a.titleUp}>{a.titleIn}</h2>
+      <p data-auth-text class="text-xs text-outline mt-1.5 leading-relaxed font-body-sm" data-in={a.textIn} data-up={a.textUp}>{a.textIn}</p>
+    </div>
+
+    <div class={`flex items-center p-1 rounded-lg ${card} mb-5`} role="tablist">
+      <button type="button" role="tab" data-auth-tab="in" class="auth-tab flex-1 py-1.5 text-xs rounded-md transition-all text-center">{a.tabIn}</button>
+      <button type="button" role="tab" data-auth-tab="up" class="auth-tab flex-1 py-1.5 text-xs rounded-md transition-all text-center">{a.tabUp}</button>
+    </div>
+
+    <button type="button" class={`w-full flex items-center justify-center gap-3 ${card} hover:border-outline text-on-surface text-xs font-medium py-2.5 px-4 rounded-lg transition-all shadow-sm group`}>
+      <svg class="w-4 h-4 shrink-0 transition-transform group-hover:scale-105" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+      </svg>
+      <span>{a.google}</span>
+    </button>
+
+    <div class="relative my-4 flex items-center justify-center">
+      <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-outline-variant/40"></div></div>
+      <span class="relative bg-surface px-2.5 font-label-caps text-[10px] text-outline uppercase tracking-widest">{a.orEmail}</span>
+    </div>
+
+    <!-- ВХОД -->
+    <form id="auth-form-in" class="space-y-3.5" novalidate>
+      <div>
+        <label class={labelCls} for="auth-in-email">{a.email}</label>
+        <input id="auth-in-email" class={input} type="email" name="email" placeholder={a.emailPlaceholder} autocomplete="email" />
+      </div>
+      <div>
+        <label class={labelCls} for="auth-in-pass">{a.password}</label>
+        <div class="relative">
+          <input id="auth-in-pass" class={`${input} pr-10`} type="password" name="password" placeholder={a.passwordPlaceholder} autocomplete="current-password" />
+          <button type="button" data-toggle-pass aria-label={a.togglePassword} class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d={eye} /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          </button>
+        </div>
+      </div>
+      <p id="auth-error" class="hidden text-[11px] text-error leading-snug" role="alert">{a.error}</p>
+      <div class="flex items-center justify-between pt-0.5 text-xs">
+        <label class="flex items-center gap-2 cursor-pointer select-none text-on-surface-variant">
+          <input type="checkbox" checked class="w-3.5 h-3.5 rounded accent-primary-container" />
+          <span>{a.remember}</span>
+        </label>
+        <a href="#" class="text-primary-container hover:text-primary transition-colors hover:underline">{a.forgot}</a>
+      </div>
+      <button type="submit" class={gradientBtn}>
+        <span>{a.submitIn}</span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d={arrow} /></svg>
+      </button>
+    </form>
+
+    <!-- РЕГИСТРАЦИЯ (пока без действия) -->
+    <form id="auth-form-up" class="hidden space-y-3" novalidate>
+      <div>
+        <label class={labelCls} for="auth-up-name">{a.name}</label>
+        <input id="auth-up-name" class={input} type="text" placeholder={a.namePlaceholder} autocomplete="name" />
+      </div>
+      <div>
+        <label class={labelCls} for="auth-up-email">{a.email}</label>
+        <input id="auth-up-email" class={input} type="email" placeholder={a.emailPlaceholder} autocomplete="email" />
+      </div>
+      <div>
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="block font-label-caps text-[10px] uppercase tracking-wider text-outline" for="auth-up-pass">{a.password}</label>
+          <span class="font-label-caps text-[10px] text-outline">{a.passwordHint}</span>
+        </div>
+        <div class="relative">
+          <input id="auth-up-pass" class={`${input} pr-10`} type="password" placeholder={a.newPasswordPlaceholder} autocomplete="new-password" />
+          <button type="button" data-toggle-pass aria-label={a.togglePassword} class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d={eye} /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          </button>
+        </div>
+      </div>
+      <div class="pt-1">
+        <label class="flex items-start gap-2.5 cursor-pointer select-none text-on-surface-variant">
+          <input type="checkbox" class="w-3.5 h-3.5 mt-0.5 rounded accent-primary-container shrink-0" />
+          <span class="text-xs leading-snug">
+            {a.agreeBefore} <a href={path(lang, 'terms')} class="text-primary-container hover:text-primary underline">{a.terms}</a> {a.and} <a href={path(lang, 'privacy')} class="text-primary-container hover:text-primary underline">{a.privacy}</a>
+          </span>
+        </label>
+      </div>
+      <button type="button" class={gradientBtn}>
+        <span>{a.submitUp}</span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d={arrow} /></svg>
+      </button>
+    </form>
+
+    <div class="mt-4 text-center text-xs text-outline">
+      <span data-auth-switch-text data-in={a.noAccount} data-up={a.haveAccount}>{a.noAccount}</span>
+      <button type="button" data-auth-switch class="text-primary-container hover:text-primary font-medium ml-1 transition-colors hover:underline" data-in={a.createOne} data-up={a.signInLink}>{a.createOne}</button>
+    </div>
+
+    <p id="auth-legal" class="text-[11px] text-outline text-center mt-3 leading-relaxed border-t border-outline-variant/30 pt-3">
+      {a.legalBefore} <a href={path(lang, 'terms')} class="hover:text-on-surface underline">{a.terms}</a> {a.and} <a href={path(lang, 'privacy')} class="hover:text-on-surface underline">{a.privacy}</a>.
+    </p>
+
+    <div class="mt-3.5 pt-2.5 border-t border-outline-variant/30 flex items-center justify-center gap-2 font-label-caps text-[10px] text-outline">
+      <span class="w-1.5 h-1.5 rounded-full bg-secondary-container shadow-[0_0_6px_#34ff8c]"></span>
+      <span>{a.security}</span>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  .auth-input:focus {
+    outline: none;
+    border-color: #a078ff;
+    box-shadow: 0 0 0 1px #a078ff, 0 0 16px -2px rgba(160, 120, 255, 0.25);
+  }
+  .auth-tab {
+    color: #958ea0;
+    font-weight: 500;
+  }
+  .auth-tab:hover {
+    color: #e4e1e7;
+  }
+  .auth-tab[aria-selected='true'] {
+    background: #131317;
+    color: #fff;
+    font-weight: 600;
+    border: 1px solid rgba(73, 68, 84, 0.5);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+</style>
+
+<script>
+  import { isLoggedIn, login } from '../scripts/auth';
+
+  const modal = document.getElementById('auth-modal') as HTMLElement;
+  const accountUrl = modal.dataset.accountUrl as string;
+  const formIn = document.getElementById('auth-form-in') as HTMLFormElement;
+  const formUp = document.getElementById('auth-form-up') as HTMLFormElement;
+  const error = document.getElementById('auth-error') as HTMLElement;
+  const legal = document.getElementById('auth-legal') as HTMLElement;
+  const glow = document.getElementById('auth-glow') as HTMLElement;
+  const tabs = modal.querySelectorAll<HTMLElement>('[data-auth-tab]');
+  const swapTexts = modal.querySelectorAll<HTMLElement>('[data-auth-kicker], [data-auth-title], [data-auth-text], [data-auth-switch-text], [data-auth-switch]');
+  const kicker = modal.querySelector<HTMLElement>('[data-auth-kicker]')!;
+
+  function setTab(mode: 'in' | 'up') {
+    const up = mode === 'up';
+    formIn.classList.toggle('hidden', up);
+    formUp.classList.toggle('hidden', !up);
+    legal.classList.toggle('hidden', up);
+    error.classList.add('hidden');
+    tabs.forEach((tab) => tab.setAttribute('aria-selected', String(tab.dataset.authTab === mode)));
+    swapTexts.forEach((el) => (el.textContent = el.dataset[mode] ?? ''));
+    kicker.classList.toggle('text-primary-container', !up);
+    kicker.classList.toggle('text-pink-400', up);
+    glow.classList.toggle('bg-primary-container/10', !up);
+    glow.classList.toggle('bg-pink-600/10', up);
+  }
+
+  function open(mode: 'in' | 'up' = 'in') {
+    setTab(mode);
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  tabs.forEach((tab) => tab.addEventListener('click', () => setTab(tab.dataset.authTab as 'in' | 'up')));
+  modal.querySelector('[data-auth-switch]')!.addEventListener('click', () => setTab(formIn.classList.contains('hidden') ? 'in' : 'up'));
+  modal.querySelectorAll('[data-auth-close]').forEach((btn) => btn.addEventListener('click', close));
+  modal.addEventListener('click', (e) => e.target === modal && close());
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && close());
+
+  modal.querySelectorAll<HTMLButtonElement>('[data-toggle-pass]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const input = btn.parentElement!.querySelector('input')!;
+      input.type = input.type === 'password' ? 'text' : 'password';
+    })
+  );
+  modal.querySelectorAll<HTMLAnchorElement>('a[href="#"]').forEach((a) => a.addEventListener('click', (e) => e.preventDefault()));
+
+  // Тест: пустые поля — вход в тестовый аккаунт, иначе ошибка. Регистрация пока ничего не делает.
+  formIn.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(formIn);
+    const empty = !String(data.get('email')).trim() && !String(data.get('password')).trim();
+    if (!empty) {
+      error.classList.remove('hidden');
+      return;
+    }
+    login();
+    window.location.href = accountUrl;
+  });
+  formIn.addEventListener('input', () => error.classList.add('hidden'));
+
+  // Кнопки с data-open-auth: если уже вошли — ведут в аккаунт, иначе открывают окно.
+  document.addEventListener('click', (e) => {
+    const trigger = (e.target as HTMLElement).closest('[data-open-auth]');
+    if (!trigger) return;
+    e.preventDefault();
+    if (isLoggedIn()) window.location.href = accountUrl;
+    else open();
+  });
+  document.addEventListener('auth:open', () => open());
+
+  // Зелёная точка у иконки аккаунта, когда пользователь вошёл
+  if (isLoggedIn()) document.querySelectorAll('[data-auth-dot]').forEach((el) => el.classList.remove('hidden'));
+</script>
