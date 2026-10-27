@@ -1,0 +1,601 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { locales, t, tm, path, type Lang } from '../../i18n';
+import { SITE } from '../../config';
+import { mentoringImages } from '../../data/mockMentoringImages';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const dict = t(lang);
+const m = tm(lang);
+
+const wrap = 'max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const kicker = 'font-label-caps text-label-caps tracking-widest uppercase';
+const h2 = 'font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface uppercase tracking-tight';
+const sectionHead = 'flex flex-col gap-space-xs mb-space-xl';
+const field =
+  'w-full bg-surface-container-lowest px-4 py-3 rounded-lg text-on-surface font-tech-data-lg text-tech-data-lg focus:outline-none focus:ring-1 focus:ring-primary shadow-inner placeholder:text-outline-variant';
+const fieldLabel = 'font-tech-data-sm text-tech-data-sm text-on-surface-variant uppercase flex justify-between gap-2';
+const gradientBtn =
+  'inline-flex items-center justify-center text-center rounded-full bg-gradient-to-r from-primary-container via-inverse-primary to-tertiary-container text-white font-headline-sm text-tech-data-lg uppercase tracking-wider transition-all transform active:scale-95';
+const ghostBtn =
+  'w-full text-center py-3 rounded-full bg-surface-container-high text-on-surface font-tech-data-lg text-tech-data-lg uppercase tracking-wide hover:bg-surface-bright transition-colors shadow';
+
+// Цвета и иконки не переводятся, поэтому лежат здесь, рядом с текстами из словаря по индексу.
+const statVisuals = [
+  { icon: 'star', cls: 'text-tertiary', fill: true },
+  { icon: 'calendar_today', cls: 'text-secondary-container', fill: false },
+  { icon: 'draw', cls: 'text-primary', fill: false },
+  { icon: 'folder_zip', cls: 'text-tertiary', fill: false },
+];
+const trackVisuals = [
+  { icon: 'school', text: 'text-primary', blob: 'bg-primary-container/10' },
+  { icon: 'military_tech', text: 'text-secondary-container', blob: 'bg-secondary-container/10' },
+];
+const stepBadgeTone = ['text-tertiary', 'text-primary', 'text-secondary-container'];
+const formatVisuals = [
+  { icon: 'schedule', cls: 'text-primary' },
+  { icon: 'sync', cls: 'text-secondary-container' },
+  { icon: 'hourglass_top', cls: 'text-tertiary' },
+  { icon: 'forum', cls: 'text-primary-fixed' },
+];
+const outcomeVisuals = [
+  { icon: 'deployed_code', cls: 'text-primary' },
+  { icon: 'video_library', cls: 'text-tertiary' },
+  { icon: 'brush', cls: 'text-secondary-container' },
+  { icon: 'badge', cls: 'text-primary-fixed' },
+];
+const tierCheck = ['text-primary', 'text-secondary-container', 'text-tertiary'];
+const studentVisuals = [
+  { dot: 'bg-secondary-container', text: 'text-secondary-container', image: mentoringImages.exosuit },
+  { dot: 'bg-tertiary', text: 'text-tertiary', image: mentoringImages.ecorche },
+  { dot: 'bg-primary', text: 'text-primary', image: mentoringImages.mech },
+  { dot: 'bg-secondary-container', text: 'text-secondary-container', image: mentoringImages.mage },
+];
+const reviewAvatar = [
+  'bg-primary/20 text-primary',
+  'bg-secondary-container/20 text-secondary-container',
+  'bg-tertiary/20 text-tertiary',
+];
+const initials = (name: string) =>
+  name
+    .split(' ')
+    .map((word) => word[0])
+    .join('');
+const levelKeys = ['beginner', 'middle', 'studio'] as const;
+---
+
+<BaseLayout
+  lang={lang}
+  page="mentoring"
+  title={`${m.seo.title} — ${dict.site.name}`}
+  description={m.seo.description}
+  image={mentoringImages.hero}
+>
+  <!-- HERO -->
+  <section class="relative w-full overflow-hidden pb-space-2xl">
+    <div class="absolute inset-0 pointer-events-none opacity-40" aria-hidden="true">
+      <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="viewport-hero-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+            <path d="M 48 0 L 0 0 0 48" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"></path>
+            <circle cx="0" cy="0" r="1.5" fill="rgba(52, 255, 140, 0.25)"></circle>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#viewport-hero-grid)"></rect>
+      </svg>
+    </div>
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[720px] max-w-full h-[360px] bg-primary-container/10 blur-[130px] rounded-full pointer-events-none"></div>
+    <div class="absolute top-1/3 right-1/4 w-[420px] max-w-full h-[280px] bg-tertiary-container/10 blur-[110px] rounded-full pointer-events-none"></div>
+
+    <div class={`${wrap} pt-space-xl relative z-10`}>
+      <div class="flex flex-wrap items-center justify-between gap-space-sm mb-space-lg">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high shadow-inner">
+          <span class="w-2 h-2 rounded-full bg-secondary-container animate-ping"></span>
+          <span class="font-tech-data-sm text-tech-data-sm text-secondary-container tracking-wider uppercase">{m.hero.status}</span>
+        </div>
+        <div class="inline-flex flex-wrap items-center gap-3 px-3 py-1.5 rounded-full bg-surface-container-low shadow-sm">
+          <span class="font-label-caps text-label-caps text-outline uppercase tracking-widest">{m.hero.intake}</span>
+          <span class="font-tech-data-sm text-tech-data-sm text-tertiary uppercase font-bold">{m.hero.seats}</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          <span class="font-tech-data-sm text-tech-data-sm text-on-surface-variant">{m.hero.locks}</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-center">
+        <div class="lg:col-span-8 flex flex-col gap-space-md">
+          <div class="flex items-center gap-2">
+            <span class={`${kicker} text-primary`}>{m.hero.track}</span>
+            <span class="h-px w-16 bg-surface-variant"></span>
+          </div>
+          <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface uppercase tracking-tight max-w-4xl">
+            {m.hero.titleBefore}
+            <span class="bg-gradient-to-r from-primary-container via-primary to-tertiary-container bg-clip-text text-transparent">{m.hero.titleAccent}</span>
+          </h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">{m.hero.sub}</p>
+          <div class="flex flex-wrap items-center gap-space-md pt-space-sm">
+            <a href="#apply" class={`${gradientBtn} px-8 py-3.5 shadow-[0_0_32px_rgba(160,120,255,0.45)] hover:shadow-[0_0_40px_rgba(255,87,34,0.6)]`}>
+              {m.hero.apply}
+              <span class="material-symbols-outlined ml-2 text-[18px]" aria-hidden="true">arrow_downward</span>
+            </a>
+            <a href="#program" class="inline-flex items-center justify-center px-7 py-3.5 rounded-full bg-surface-container-high text-on-surface font-tech-data-lg text-tech-data-lg uppercase tracking-wide shadow-md hover:bg-surface-bright hover:text-secondary-container transition-all">
+              <span class="material-symbols-outlined mr-2 text-[18px]" aria-hidden="true">terminal</span>
+              {m.hero.program}
+            </a>
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 relative">
+          <div class="relative rounded-xl overflow-hidden bg-surface-container-low shadow-2xl p-space-sm">
+            <div class="flex items-center justify-between px-space-xs py-1 mb-space-xs bg-surface-container rounded-lg">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-error-container"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-surface-variant"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-secondary-container/40"></span>
+                <span class="font-tech-data-sm text-[10px] text-outline ml-1 uppercase">{m.hero.file}</span>
+              </div>
+              <span class="font-tech-data-sm text-[10px] text-secondary-container">{m.hero.fps}</span>
+            </div>
+            <div class="relative aspect-square rounded-lg overflow-hidden bg-surface-container-lowest">
+              <img src={mentoringImages.hero} alt={m.hero.imageAlt} class="w-full h-full object-cover" fetchpriority="high" />
+              <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 via-transparent to-transparent"></div>
+              <div class="absolute top-3 right-3 flex items-center gap-2 bg-surface-container-highest/80 backdrop-blur-md px-2.5 py-1 rounded-full">
+                <div class="w-4 h-4 rounded-full bg-gradient-to-tr from-primary to-tertiary shadow-inner"></div>
+                <span class="font-tech-data-sm text-[10px] text-on-surface uppercase">{m.hero.matcap}</span>
+              </div>
+              <div class="absolute bottom-3 left-3 right-3 p-space-xs rounded-lg bg-surface-container/90 backdrop-blur-md flex items-center justify-between gap-2">
+                <div>
+                  <div class="font-label-caps text-label-caps text-outline uppercase">{m.hero.pipelineLabel}</div>
+                  <div class="font-tech-data-sm text-tech-data-sm text-on-surface">{m.hero.pipelineValue}</div>
+                </div>
+                <div class="text-right">
+                  <div class="font-label-caps text-label-caps text-secondary-container uppercase">{m.hero.topologyLabel}</div>
+                  <div class="font-tech-data-sm text-tech-data-sm text-on-surface">{m.hero.topologyValue}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter mt-space-2xl pt-space-lg">
+        {
+          m.hero.stats.map((stat, i) => (
+            <div class="p-space-md rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <span class={`${kicker} text-primary`}>{stat.label}</span>
+                <span
+                  class={`material-symbols-outlined text-[18px] ${statVisuals[i].cls}`}
+                  style={statVisuals[i].fill ? "font-variation-settings: 'FILL' 1;" : undefined}
+                  aria-hidden="true"
+                >
+                  {statVisuals[i].icon}
+                </span>
+              </div>
+              <span class="font-headline-sm text-headline-sm text-on-surface">{stat.value}</span>
+              <span class="font-tech-data-sm text-tech-data-sm text-outline">{stat.sub}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ДЛЯ КОГО -->
+  <section class="w-full py-space-2xl bg-surface-container-lowest relative">
+    <div class={wrap}>
+      <div class={sectionHead}>
+        <span class={`${kicker} text-secondary-container`}>{m.audience.kicker}</span>
+        <h2 class={h2}>{m.audience.title}</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">{m.audience.sub}</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter-desktop">
+        {
+          m.audience.tracks.map((track, i) => (
+            <div class="rounded-xl p-space-lg md:p-space-xl bg-surface-container flex flex-col justify-between shadow-xl relative overflow-hidden hover:bg-surface-container-high transition-all">
+              <div class={`absolute -right-8 -top-8 w-40 h-40 ${trackVisuals[i].blob} rounded-full blur-3xl pointer-events-none`}></div>
+              <div>
+                <div class="flex items-center justify-between gap-space-sm mb-space-md">
+                  <span class={`font-tech-data-sm text-tech-data-sm ${trackVisuals[i].text} uppercase bg-surface-variant px-3 py-1 rounded-full`}>{track.tag}</span>
+                  <span class={`material-symbols-outlined ${i === 0 ? 'text-outline' : trackVisuals[i].text}`} aria-hidden="true">{trackVisuals[i].icon}</span>
+                </div>
+                <h3 class="font-headline-md text-headline-md text-on-surface uppercase mb-space-md">{track.title}</h3>
+                <ul class="flex flex-col gap-space-md mb-space-lg">
+                  {track.points.map((point) => (
+                    <li class="flex items-start gap-space-sm">
+                      <span class="w-5 h-5 rounded-full bg-surface-variant flex items-center justify-center shrink-0 mt-0.5">
+                        <span class={`material-symbols-outlined ${trackVisuals[i].text} text-[14px]`} aria-hidden="true">check</span>
+                      </span>
+                      <p class="font-body-md text-body-md text-on-surface-variant">{point}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div class="bg-surface-container-low p-space-md rounded-lg flex flex-wrap items-center justify-between gap-2">
+                <span class="font-tech-data-sm text-tech-data-sm text-outline uppercase">{m.audience.goal}</span>
+                <span class={`font-tech-data-sm text-tech-data-sm ${trackVisuals[i].text} font-bold uppercase`}>{track.goal}</span>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- КАК ЭТО РАБОТАЕТ -->
+  <section class="w-full py-space-2xl bg-surface relative">
+    <div class={wrap}>
+      <div class={sectionHead}>
+        <span class={`${kicker} text-primary`}>{m.how.kicker}</span>
+        <h2 class={h2}>{m.how.title}</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">{m.how.sub}</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-space-xl">
+        {
+          m.how.steps.map((step, i) => (
+            <div class="p-space-lg rounded-xl bg-surface-container-low shadow-lg flex flex-col justify-between hover:bg-surface-container transition-all">
+              <div>
+                <div class="flex items-center justify-between mb-space-md">
+                  <span class="font-headline-md text-headline-md text-outline font-bold">{String(i + 1).padStart(2, '0')}</span>
+                  <span class={`px-2.5 py-1 rounded bg-surface-variant font-tech-data-sm text-[11px] uppercase ${stepBadgeTone[i]}`}>{step.badge}</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase mb-space-sm">{step.title}</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">{step.text}</p>
+              </div>
+              <div class="mt-space-lg pt-space-sm font-label-caps text-label-caps text-outline uppercase">{step.meta}</div>
+            </div>
+          ))
+        }
+      </div>
+      <div class="rounded-xl bg-surface-container-high p-space-md shadow-inner grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter items-center">
+        {
+          m.how.format.map((item, i) => (
+            <div class="flex items-center gap-space-sm">
+              <span class={`material-symbols-outlined text-[28px] ${formatVisuals[i].cls}`} aria-hidden="true">{formatVisuals[i].icon}</span>
+              <div>
+                <span class="font-label-caps text-label-caps text-outline uppercase block">{item.label}</span>
+                <span class="font-tech-data-lg text-tech-data-lg text-on-surface">{item.value}</span>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ПРОГРАММА -->
+  <section id="program" class="w-full py-space-2xl bg-surface-container-lowest relative scroll-mt-20">
+    <div class={wrap}>
+      <div class={sectionHead}>
+        <span class={`${kicker} text-primary`}>{m.program.kicker}</span>
+        <h2 class={h2}>{m.program.title}</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">{m.program.sub}</p>
+      </div>
+      <div class="flex flex-col gap-space-sm">
+        {
+          m.program.modules.map((mod, i) => (
+            <details class="group rounded-xl bg-surface-container overflow-hidden transition-all shadow-md" open={i === 0}>
+              <summary class="p-space-md md:p-space-lg flex items-center justify-between gap-space-sm cursor-pointer hover:bg-surface-container-high transition-colors select-none list-none [&::-webkit-details-marker]:hidden">
+                <div class="flex items-center gap-space-md">
+                  <span class="hidden sm:inline font-tech-data-sm text-tech-data-sm text-primary uppercase bg-surface-variant px-3 py-1 rounded shrink-0">
+                    {m.program.mod} {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <div>
+                    <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase">{mod.title}</h3>
+                    <span class="font-tech-data-sm text-tech-data-sm text-outline">{mod.tags}</span>
+                  </div>
+                </div>
+                <span class="material-symbols-outlined text-on-surface-variant group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">expand_more</span>
+              </summary>
+              <div class="px-space-md md:px-space-lg pb-space-lg pt-space-xs bg-surface-container/60">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-space-md pt-space-sm">
+                  <div class="p-space-sm bg-surface-container-low rounded-lg">
+                    <span class="font-label-caps text-label-caps text-primary uppercase block mb-1">{m.program.emphasis}</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">{mod.emphasis}</p>
+                  </div>
+                  <div class="p-space-sm bg-surface-container-low rounded-lg">
+                    <span class="font-label-caps text-label-caps text-secondary-container uppercase block mb-1">{m.program.lab}</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">{mod.lab}</p>
+                  </div>
+                  <div class="p-space-sm bg-surface-container-low rounded-lg">
+                    <span class="font-label-caps text-label-caps text-tertiary uppercase block mb-1">{m.program.tools}</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">{mod.tools}</p>
+                  </div>
+                </div>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ЧТО ПОЛУЧИШЬ -->
+  <section class="w-full py-space-2xl bg-surface relative">
+    <div class={wrap}>
+      <div class={sectionHead}>
+        <span class={`${kicker} text-secondary-container`}>{m.outcomes.kicker}</span>
+        <h2 class={h2}>{m.outcomes.title}</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">{m.outcomes.sub}</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+        {
+          m.outcomes.items.map((item, i) => (
+            <div class="p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-between shadow-md hover:bg-surface-container transition-all">
+              <div>
+                <div class={`w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center mb-space-md ${outcomeVisuals[i].cls}`}>
+                  <span class="material-symbols-outlined text-[28px]" aria-hidden="true">{outcomeVisuals[i].icon}</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase mb-space-xs">{item.title}</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">{item.text}</p>
+              </div>
+              <div class={`mt-space-md pt-space-sm font-tech-data-sm text-tech-data-sm uppercase font-bold ${outcomeVisuals[i].cls}`}>{item.tag}</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ТАРИФЫ -->
+  <section class="w-full py-space-2xl bg-surface-container-lowest relative">
+    <div class={wrap}>
+      <div class={`${sectionHead} text-center items-center`}>
+        <span class={`${kicker} text-primary`}>{m.pricing.kicker}</span>
+        <h2 class={h2}>{m.pricing.title}</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-xl">{m.pricing.sub}</p>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-stretch">
+        {
+          m.pricing.tiers.map((tier, i) => {
+            const featured = i === 1;
+            return (
+              <div class={`p-space-lg md:p-space-xl rounded-xl flex flex-col justify-between ${featured ? 'bg-surface-container-high shadow-2xl relative overflow-hidden lg:-translate-y-2' : 'bg-surface-container shadow-lg'}`}>
+                {featured && <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary-container via-secondary-container to-tertiary-container"></div>}
+                <div>
+                  <div class="mb-space-md">
+                    <div class="flex items-center justify-between gap-2">
+                      <span class={`font-tech-data-sm text-tech-data-sm uppercase ${featured ? 'text-secondary-container' : 'text-outline'}`}>{tier.tag}</span>
+                      {featured && (
+                        <span class="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps uppercase font-bold shadow-md">{m.pricing.popular}</span>
+                      )}
+                    </div>
+                    <h3 class={`${featured ? 'font-headline-md text-headline-md' : 'font-headline-sm text-headline-sm'} text-on-surface uppercase mt-1`}>{tier.title}</h3>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{tier.sub}</p>
+                  </div>
+                  <div class="py-space-md">
+                    <span class={`font-tech-data-sm text-tech-data-sm uppercase block ${featured ? 'text-secondary-container' : 'text-outline'}`}>{m.pricing.investment}</span>
+                    <span class={`${featured ? 'font-headline-lg text-headline-lg' : 'font-headline-md text-headline-md'} text-on-surface font-bold`}>
+                      {m.pricing.from} {m.pricing.price}
+                    </span>
+                    <span class="font-tech-data-sm text-tech-data-sm text-on-surface-variant">{tier.period}</span>
+                  </div>
+                  <div class="h-px w-full bg-surface-variant my-space-md"></div>
+                  <ul class="flex flex-col gap-space-sm mb-space-lg">
+                    {tier.features.map((feature) => (
+                      <li class={`flex items-center gap-space-xs font-body-sm text-body-sm ${featured ? 'text-on-surface' : 'text-on-surface-variant'}`}>
+                        <span class={`material-symbols-outlined text-[18px] shrink-0 ${tierCheck[i]}`} aria-hidden="true">{featured ? 'verified' : 'check'}</span>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                {featured ? (
+                  <a href="#apply" class={`${gradientBtn} w-full py-3.5 shadow-[0_0_24px_rgba(160,120,255,0.4)] hover:shadow-[0_0_32px_rgba(255,87,34,0.55)]`}>{tier.cta}</a>
+                ) : (
+                  <a href="#apply" class={ghostBtn}>{tier.cta}</a>
+                )}
+              </div>
+            );
+          })
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- РАБОТЫ УЧЕНИКОВ -->
+  <section class="w-full py-space-2xl bg-surface relative">
+    <div class={wrap}>
+      <div class={sectionHead}>
+        <span class={`${kicker} text-secondary-container`}>{m.students.kicker}</span>
+        <div class="flex flex-wrap items-baseline justify-between gap-space-md">
+          <h2 class={h2}>{m.students.title}</h2>
+          <span class="font-tech-data-sm text-tech-data-sm text-outline">{m.students.sub}</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+        {
+          m.students.works.map((work, i) => (
+            <div class="rounded-xl overflow-hidden bg-surface-container-low shadow-xl group">
+              <div class="relative aspect-video bg-surface-container-lowest overflow-hidden">
+                <img src={studentVisuals[i].image} alt={work.alt} loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div class="absolute top-3 left-3 bg-surface-container-highest/80 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-2">
+                  <span class={`w-2 h-2 rounded-full ${studentVisuals[i].dot}`}></span>
+                  <span class="font-tech-data-sm text-[10px] text-on-surface uppercase">{work.chip}</span>
+                </div>
+              </div>
+              <div class="p-space-lg flex flex-col gap-space-xs">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase">{work.title}</h3>
+                  <span class={`px-2.5 py-0.5 rounded-full bg-surface-variant font-tech-data-sm text-[11px] uppercase ${studentVisuals[i].text}`}>{work.badge}</span>
+                </div>
+                <p class="font-tech-data-sm text-tech-data-sm text-outline">
+                  {m.students.mentee} {work.mentee} • {m.students.software} {work.software}
+                </p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ОТЗЫВЫ -->
+  <section class="w-full py-space-2xl bg-surface-container-lowest relative">
+    <div class={wrap}>
+      <div class={sectionHead}>
+        <span class={`${kicker} text-primary`}>{m.reviews.kicker}</span>
+        <h2 class={h2}>{m.reviews.title}</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        {
+          m.reviews.items.map((review, i) => (
+            <figure class="p-space-lg md:p-space-xl rounded-xl bg-surface-container flex flex-col justify-between shadow-lg">
+              <div>
+                <div class="flex items-center justify-between mb-space-md">
+                  <div class="flex gap-1 text-tertiary" aria-hidden="true">
+                    {Array.from({ length: 5 }, () => (
+                      <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                    ))}
+                  </div>
+                  <span class="font-tech-data-sm text-tech-data-sm text-secondary-container">5.0 / 5.0</span>
+                </div>
+                <blockquote class="font-body-md text-body-md text-on-surface-variant italic mb-space-lg">{review.text}</blockquote>
+              </div>
+              <figcaption class="flex items-center gap-space-sm pt-space-sm">
+                <div class={`w-10 h-10 rounded-full flex items-center justify-center font-headline-sm uppercase ${reviewAvatar[i]}`}>{initials(review.name)}</div>
+                <div>
+                  <div class="font-headline-sm text-tech-data-lg text-on-surface uppercase">{review.name}</div>
+                  <div class="font-tech-data-sm text-tech-data-sm text-outline">{review.role}</div>
+                </div>
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="w-full py-space-2xl bg-surface relative">
+    <div class={wrap}>
+      <div class={sectionHead}>
+        <span class={`${kicker} text-secondary-container`}>{m.faq.kicker}</span>
+        <h2 class={h2}>{m.faq.title}</h2>
+      </div>
+      <div class="flex flex-col gap-space-sm max-w-4xl">
+        {
+          m.faq.items.map((item, i) => (
+            <details class="group rounded-xl bg-surface-container overflow-hidden transition-all shadow-sm" open={i === 0}>
+              <summary class="p-space-md md:p-space-lg flex items-center justify-between gap-space-sm cursor-pointer hover:bg-surface-container-high transition-colors select-none list-none [&::-webkit-details-marker]:hidden">
+                <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase">{item.q}</h3>
+                <span class="material-symbols-outlined text-on-surface-variant group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">expand_more</span>
+              </summary>
+              <div class="px-space-md md:px-space-lg pb-space-lg pt-space-xs">
+                <p class="font-body-md text-body-md text-on-surface-variant">{item.a}</p>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ЗАЯВКА -->
+  <section id="apply" class="w-full py-space-2xl bg-surface-container-lowest relative scroll-mt-20">
+    <div class="absolute bottom-10 left-1/3 w-[500px] max-w-full h-[300px] bg-primary-container/10 blur-[150px] pointer-events-none rounded-full"></div>
+    <div class={`${wrap} relative z-10`}>
+      <div class={sectionHead}>
+        <span class={`${kicker} text-secondary-container`}>{m.apply.kicker}</span>
+        <h2 class={h2}>{m.apply.title}</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">{m.apply.sub}</p>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
+        <div class="lg:col-span-7 bg-surface-container p-space-lg md:p-space-xl rounded-xl shadow-2xl">
+          <form id="mentor-intake-form" class="flex flex-col gap-space-md" data-email={SITE.email} data-subject={m.apply.form.mailSubject}>
+            <div class="flex flex-col gap-1.5">
+              <label for="mi-name" class={fieldLabel}><span>{m.apply.form.name}</span><span class="text-outline">{m.apply.form.nameType}</span></label>
+              <input id="mi-name" name="name" type="text" required placeholder={m.apply.form.namePlaceholder} class={field} />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="mi-contact" class={fieldLabel}><span>{m.apply.form.contact}</span><span class="text-outline">{m.apply.form.contactType}</span></label>
+              <input id="mi-contact" name="contact" type="text" required placeholder={m.apply.form.contactPlaceholder} class={field} />
+            </div>
+            <fieldset class="flex flex-col gap-2">
+              <legend class={`${fieldLabel} w-full mb-2`}><span>{m.apply.form.level}</span><span class="text-outline">{m.apply.form.levelType}</span></legend>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {
+                  levelKeys.map((key, i) => (
+                    <label class="flex items-center gap-2 p-3 rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container-high transition-colors">
+                      <input type="radio" name="level" value={m.apply.form.levels[key]} checked={i === 0} class="accent-primary" />
+                      <span class="font-tech-data-sm text-tech-data-sm text-on-surface uppercase">{m.apply.form.levels[key]}</span>
+                    </label>
+                  ))
+                }
+              </div>
+            </fieldset>
+            <div class="flex flex-col gap-1.5">
+              <label for="mi-goal" class={fieldLabel}><span>{m.apply.form.goal}</span><span class="text-outline">{m.apply.form.goalType}</span></label>
+              <textarea id="mi-goal" name="goal" rows="3" required placeholder={m.apply.form.goalPlaceholder} class={`${field} font-body-sm text-body-sm`}></textarea>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="mi-link" class={fieldLabel}><span>{m.apply.form.link}</span><span class="text-outline">{m.apply.form.linkType}</span></label>
+              <input id="mi-link" name="link" type="url" placeholder={m.apply.form.linkPlaceholder} class={field} />
+            </div>
+            <label class="flex items-start gap-2.5 mt-space-xs cursor-pointer select-none">
+              <input type="checkbox" required class="accent-secondary-container mt-1" />
+              <span class="font-body-sm text-body-sm text-on-surface-variant">{m.apply.form.consent}</span>
+            </label>
+            <button type="submit" class={`${gradientBtn} mt-space-sm w-full py-4 gap-2 shadow-[0_0_28px_rgba(160,120,255,0.4)] hover:shadow-[0_0_36px_rgba(255,87,34,0.55)]`}>
+              <span>{m.apply.form.submit}</span>
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">send</span>
+            </button>
+            <div id="form-feedback" role="status" class="hidden mt-space-sm p-space-sm rounded-lg bg-secondary-container/20 text-secondary-container font-tech-data-sm text-tech-data-sm items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">check_circle</span>
+              <span>{m.apply.form.success}</span>
+            </div>
+          </form>
+        </div>
+
+        <div class="lg:col-span-5 flex flex-col gap-space-md">
+          <div class="bg-surface-container p-space-lg md:p-space-xl rounded-xl shadow-xl flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-space-sm">
+                <span class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-pulse"></span>
+                <span class={`${kicker} text-secondary-container`}>{m.apply.call.badge}</span>
+              </div>
+              <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase mb-space-sm">{m.apply.call.title}</h3>
+              <p class="font-body-md text-body-md text-on-surface-variant mb-space-md">{m.apply.call.text}</p>
+              <div class="flex items-center gap-2 p-space-sm rounded-lg bg-surface-container-low mb-space-lg">
+                <span class="material-symbols-outlined text-primary text-[20px]" aria-hidden="true">videocam</span>
+                <span class="font-tech-data-sm text-tech-data-sm text-on-surface">{m.apply.call.specs}</span>
+              </div>
+            </div>
+            <a href={`mailto:${SITE.email}?subject=${encodeURIComponent(m.apply.call.mailSubject)}`} class={`${ghostBtn} py-3.5 hover:text-secondary-container`}>{m.apply.call.cta}</a>
+          </div>
+          <div class="p-space-lg rounded-xl bg-surface-container-low shadow flex flex-col gap-space-xs">
+            <span class="font-label-caps text-label-caps text-outline uppercase">{m.apply.comms.title}</span>
+            <div class="flex items-center justify-between gap-2 py-1">
+              <span class="font-tech-data-sm text-tech-data-sm text-on-surface-variant">{m.apply.comms.telegram}</span>
+              <a href={SITE.telegram} class="font-tech-data-sm text-tech-data-sm text-primary hover:underline">{SITE.telegramHandle}</a>
+            </div>
+            <div class="flex items-center justify-between gap-2 py-1">
+              <span class="font-tech-data-sm text-tech-data-sm text-on-surface-variant">{m.apply.comms.email}</span>
+              <a href={`mailto:${SITE.email}`} class="font-tech-data-sm text-tech-data-sm text-primary hover:underline break-all">{SITE.email}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Бэкенда формы пока нет: заявка собирается в письмо на почту из config.ts (mailto).
+  const form = document.getElementById('mentor-intake-form') as HTMLFormElement | null;
+  const feedback = document.getElementById('form-feedback');
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const lines = ['name', 'contact', 'level', 'goal', 'link'].map((key) => `${key}: ${String(data.get(key) ?? '')}`);
+    const subject = encodeURIComponent(form.dataset.subject ?? '');
+    window.location.href = `mailto:${form.dataset.email}?subject=${subject}&body=${encodeURIComponent(lines.join('\n'))}`;
+    feedback?.classList.remove('hidden');
+    feedback?.classList.add('flex');
+    form.reset();
+  });
+</script>

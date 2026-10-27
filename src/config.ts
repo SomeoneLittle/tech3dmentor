@@ -8,5 +8,7 @@ export const SITE = {
   instagram: '#',
   youtube: '#',
   discord: '#',
+  telegram: '#', // TODO: ссылка t.me
+  telegramHandle: '@handle', // TODO: реальный ник
   twitter: '#',
 };

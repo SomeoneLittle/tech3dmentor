@@ -1,6 +1,7 @@
 import { en, type Dict } from './en';
 import { ru } from './ru';
 import { ua } from './ua';
+import { mentoringEn, mentoringRu, mentoringUa, type MentoringDict } from './mentoring';
 
 export const locales = ['ru', 'ua', 'en'] as const;
 export type Lang = (typeof locales)[number];
@@ -14,7 +15,11 @@ const dictionaries: Record<Lang, Dict> = { ru, ua, en };
 /** Текст, заданный сразу на трёх языках (так же будут выглядеть поля в Sanity). */
 export type Localized = Record<Lang, string>;
 
+const mentoringDictionaries: Record<Lang, MentoringDict> = { ru: mentoringRu, ua: mentoringUa, en: mentoringEn };
+
 export const t = (lang: Lang): Dict => dictionaries[lang];
+/** Тексты страницы менторства */
+export const tm = (lang: Lang): MentoringDict => mentoringDictionaries[lang];
 export const pick = (value: Localized, lang: Lang): string => value[lang];
 
 /** Адрес внутри сайта с языковым префиксом: path('ua', 'portfolio') → /ua/portfolio */
