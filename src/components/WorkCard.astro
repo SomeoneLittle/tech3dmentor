@@ -1,0 +1,47 @@
+---
+import { pick, t, path, type Lang } from '../i18n';
+import type { Work } from '../data/home';
+
+interface Props {
+  work: Work;
+  lang: Lang;
+}
+
+const { work, lang } = Astro.props;
+const dict = t(lang);
+const tone = work.badgeTone === 'green' ? 'text-secondary-container' : 'text-tertiary';
+---
+
+<a
+  href={path(lang, `portfolio/${work.slug}`)}
+  data-work
+  data-category={work.category}
+  class="bg-surface-container rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group flex flex-col"
+>
+  <div class="relative h-72 bg-surface-container-lowest overflow-hidden">
+    <img
+      src={work.image}
+      alt={pick(work.title, lang)}
+      loading="lazy"
+      decoding="async"
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+    />
+    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md font-tech-data-sm text-tech-data-sm text-on-surface">
+      {pick(work.tag, lang)}
+    </div>
+    <div class:list={['absolute top-3 right-3 px-2.5 py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md font-tech-data-sm text-tech-data-sm', tone]}>
+      {work.badge}
+    </div>
+    <div class="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-between bg-surface-container-lowest/90 backdrop-blur-md px-3 py-2 rounded-lg font-tech-data-sm text-tech-data-sm">
+      <span class="text-outline">{work.hover}</span>
+      <span class="text-primary font-bold">{dict.works.view}</span>
+    </div>
+  </div>
+  <div class="p-space-md flex flex-col gap-1">
+    <div class="flex items-center justify-between">
+      <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase tracking-tight">{pick(work.title, lang)}</h3>
+      <span class="material-symbols-outlined text-outline text-[20px]">view_in_ar</span>
+    </div>
+    <p class="font-body-sm text-body-sm text-on-surface-variant">{pick(work.desc, lang)}</p>
+  </div>
+</a>

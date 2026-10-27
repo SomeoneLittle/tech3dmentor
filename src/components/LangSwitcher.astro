@@ -1,0 +1,31 @@
+---
+import { locales, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  /** Путь страницы без языкового префикса, например "portfolio" */
+  page?: string;
+}
+
+const { lang, page = '' } = Astro.props;
+---
+
+<div class="flex items-center bg-surface-container-low rounded-full p-1 shadow-inner" role="group" aria-label="Language">
+  {
+    locales.map((code) => (
+      <a
+        href={`/${code}/${page}`}
+        hreflang={code}
+        aria-current={code === lang ? 'true' : undefined}
+        class:list={[
+          'px-2 py-0.5 rounded-full font-label-caps text-label-caps uppercase transition-colors',
+          code === lang
+            ? 'bg-surface-variant text-primary shadow-sm'
+            : 'text-on-surface-variant hover:text-on-surface',
+        ]}
+      >
+        {code}
+      </a>
+    ))
+  }
+</div>

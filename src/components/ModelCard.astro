@@ -1,0 +1,50 @@
+---
+import { pick, t, path, type Lang } from '../i18n';
+import type { Model } from '../data/home';
+
+interface Props {
+  model: Model;
+  lang: Lang;
+}
+
+const { model, lang } = Astro.props;
+const dict = t(lang);
+---
+
+<div class="relative bg-surface-container rounded-xl overflow-hidden shadow-xl flex flex-col group hover:-translate-y-1 transition-transform duration-300">
+  <a href={path(lang, `marketplace/${model.slug}`)} class="flex flex-col flex-1">
+    <div class="relative h-56 bg-surface-container-lowest overflow-hidden">
+      <img
+        src={model.image}
+        alt={pick(model.title, lang)}
+        loading="lazy"
+        decoding="async"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      />
+      <div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-surface-container-lowest/85 font-tech-data-sm text-tech-data-sm text-secondary-container font-semibold">
+        {pick(model.badge, lang)}
+      </div>
+    </div>
+    <div class="p-space-md flex flex-col gap-space-xs flex-1 justify-between">
+      <div>
+        <div class="flex flex-wrap gap-1 mb-2">
+          {model.formats.map((f) => <span class="px-1.5 py-0.5 rounded bg-surface-container-high font-tech-data-sm text-[10px] text-on-surface-variant">{f}</span>)}
+        </div>
+        <h3 class="font-headline-sm text-tech-data-lg text-on-surface uppercase tracking-tight line-clamp-1">{pick(model.title, lang)}</h3>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{pick(model.desc, lang)}</p>
+      </div>
+      <div class="pt-space-sm flex items-center justify-between font-tech-data-sm text-tech-data-sm">
+        <span class="text-on-surface font-bold text-tech-data-lg">$--</span>
+        <span class="text-outline uppercase text-[11px]">{dict.marketplace.on}</span>
+      </div>
+    </div>
+  </a>
+  <button
+    type="button"
+    data-favorite={model.slug}
+    aria-label={dict.marketplace.favorite}
+    class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-on-surface hover:text-tertiary transition-colors shadow"
+  >
+    <span class="material-symbols-outlined text-[18px]">favorite</span>
+  </button>
+</div>

@@ -1,0 +1,85 @@
+---
+import { t, path, type Lang } from '../i18n';
+import { SITE } from '../config';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const dict = t(lang).footer;
+const name = t(lang).site.name;
+
+// Ссылки на площадки — заглушки из макета, подставить реальные адреса профилей.
+const platforms = [
+  { icon: 'deployed_code', label: dict.artstation, href: SITE.artstation },
+  { icon: 'view_in_ar', label: dict.cults, href: SITE.cults },
+  { icon: 'token', label: dict.gumroad, href: SITE.gumroad },
+];
+const socials = [
+  { icon: 'alternate_email', label: dict.instagram, href: SITE.instagram },
+  { icon: 'play_circle', label: dict.youtube, href: SITE.youtube },
+  { icon: 'forum', label: dict.discord, href: SITE.discord },
+  { icon: 'share', label: dict.twitter, href: SITE.twitter },
+];
+const linkClass = 'font-tech-data-sm text-tech-data-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5';
+---
+
+<footer class="w-full bg-surface-container-lowest py-space-2xl relative">
+  <div class="max-w-[1440px] mx-auto px-margin md:px-margin-desktop">
+    <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-space-lg mb-space-xl">
+      <div class="md:col-span-4 lg:col-span-4 flex flex-col gap-space-sm">
+        <div class="flex items-center gap-space-xs">
+          <span class="font-headline-sm text-headline-sm text-on-surface tracking-tight uppercase">{name}</span>
+          <span class="font-tech-data-sm text-tech-data-sm text-secondary-container px-2 py-0.5 rounded-full bg-surface-container">CAD/3D</span>
+        </div>
+        <p class="font-body-sm text-body-sm text-on-surface-variant max-w-sm">{dict.desc}</p>
+        <div class="flex items-center gap-space-xs mt-space-sm">
+          <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+          <span class="font-tech-data-sm text-tech-data-sm text-secondary-container uppercase tracking-wide">{dict.available}</span>
+        </div>
+      </div>
+
+      <div class="lg:col-span-3 flex flex-col gap-space-xs">
+        <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-space-xs">{dict.platforms}</span>
+        {
+          platforms.map((p) => (
+            <a class={linkClass} href={p.href} target="_blank" rel="noopener noreferrer">
+              <span class="material-symbols-outlined text-[14px]">{p.icon}</span>
+              {p.label}
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="lg:col-span-3 flex flex-col gap-space-xs">
+        <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-space-xs">{dict.social}</span>
+        {
+          socials.map((s) => (
+            <a class={linkClass} href={s.href} target="_blank" rel="noopener noreferrer">
+              <span class="material-symbols-outlined text-[14px]">{s.icon}</span>
+              {s.label}
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="lg:col-span-2 flex flex-col gap-space-xs">
+        <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-space-xs">{dict.inquiries}</span>
+        <div class="p-space-sm bg-surface-container rounded-lg">
+          <span class="font-label-caps text-label-caps text-outline block mb-1 uppercase">{dict.comms}</span>
+          <a class="font-tech-data-sm text-tech-data-sm text-primary hover:underline break-all" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md bg-surface-container-low px-space-md py-space-sm rounded-lg shadow-inner">
+      <span class="font-tech-data-sm text-tech-data-sm text-outline">© {new Date().getFullYear()} {name.toUpperCase()}. {dict.rights}</span>
+      <div class="flex items-center gap-space-md">
+        <a class="font-tech-data-sm text-tech-data-sm text-on-surface-variant hover:text-on-surface transition-colors uppercase" href={path(lang, 'privacy')}>{dict.privacy}</a>
+        <span class="text-outline text-xs">+</span>
+        <a class="font-tech-data-sm text-tech-data-sm text-on-surface-variant hover:text-on-surface transition-colors uppercase" href={path(lang, 'terms')}>{dict.terms}</a>
+      </div>
+    </div>
+  </div>
+</footer>

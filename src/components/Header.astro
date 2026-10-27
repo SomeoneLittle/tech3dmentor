@@ -1,0 +1,127 @@
+---
+import { t, path, type Lang } from '../i18n';
+import LangSwitcher from './LangSwitcher.astro';
+
+interface Props {
+  lang: Lang;
+  /** Путь текущей страницы без языка — нужен переключателю языка и подсветке пункта меню */
+  page?: string;
+}
+
+const { lang, page = '' } = Astro.props;
+const dict = t(lang);
+
+const links = [
+  { key: 'portfolio', label: dict.nav.portfolio },
+  { key: 'mentoring', label: dict.nav.mentoring },
+  { key: 'marketplace', label: dict.nav.marketplace },
+  { key: 'blog', label: dict.nav.blog },
+  { key: 'about', label: dict.nav.about },
+  { key: 'contacts', label: dict.nav.contacts },
+];
+const isActive = (key: string) => page === key || page.startsWith(`${key}/`);
+const bookHref = `${path(lang, 'mentoring')}#apply`;
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.4)]">
+  <div class="h-20 max-w-[1440px] mx-auto px-margin md:px-margin-desktop flex items-center justify-between gap-space-md">
+    <a href={path(lang)} class="flex items-center gap-space-sm shrink-0" aria-label={dict.site.name}>
+      <svg class="h-8 w-8 text-primary" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true">
+        <path d="M16 3 28 9.5v13L16 29 4 22.5v-13z" />
+        <path d="M4 9.5 16 16l12-6.5M16 16v13" />
+      </svg>
+      <span class="flex flex-col">
+        <span class="font-headline-sm text-headline-sm leading-none text-on-surface tracking-tight uppercase">{dict.site.name}</span>
+        <span class="hidden sm:block font-tech-data-sm text-tech-data-sm text-primary tracking-widest uppercase mt-0.5">{dict.site.role}</span>
+      </span>
+    </a>
+
+    <nav class="hidden lg:flex items-center gap-space-lg" aria-label="Main">
+      {
+        links.map((link) => (
+          <a
+            href={path(lang, link.key)}
+            aria-current={isActive(link.key) ? 'page' : undefined}
+            class:list={[
+              'font-tech-data-lg text-tech-data-lg tracking-wide uppercase transition-colors',
+              isActive(link.key) ? 'text-primary' : 'text-on-surface-variant hover:text-on-surface',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-space-sm md:gap-space-md shrink-0">
+      <div class="hidden sm:block"><LangSwitcher lang={lang} page={page} /></div>
+      <button
+        type="button"
+        data-open-favorites
+        aria-label={dict.header.favorites}
+        class="relative p-2 rounded-full bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors flex items-center justify-center"
+      >
+        <span class="material-symbols-outlined text-[20px]">favorite</span>
+        <span data-favorites-count class="hidden absolute -top-1 -right-1 bg-tertiary-container text-on-tertiary font-tech-data-sm text-[9px] px-1.5 rounded-full font-bold shadow-sm">0</span>
+      </button>
+      <button
+        type="button"
+        data-open-auth
+        aria-label={dict.header.account}
+        class="w-9 h-9 rounded-full bg-primary flex items-center justify-center hover:bg-primary-container transition-colors"
+      >
+        <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+      </button>
+      <a
+        href={bookHref}
+        class="hidden xl:inline-flex items-center justify-center px-space-md py-2 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-[0_0_20px_-4px_rgba(160,120,255,0.45)] hover:shadow-[0_0_28px_rgba(255,87,34,0.55)] transition-all active:scale-95"
+      >
+        {dict.header.book}
+      </a>
+      <button
+        type="button"
+        id="burger"
+        aria-label={dict.header.menu}
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        class="lg:hidden p-2 rounded-full bg-surface-container-low text-on-surface-variant hover:text-on-surface flex items-center justify-center"
+      >
+        <span class="material-symbols-outlined text-[22px]">menu</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden lg:hidden bg-surface border-t border-outline-variant/30 px-margin py-space-md">
+    <nav class="flex flex-col gap-space-md" aria-label="Mobile">
+      {
+        links.map((link) => (
+          <a
+            href={path(lang, link.key)}
+            class:list={[
+              'font-tech-data-lg text-tech-data-lg tracking-wide uppercase',
+              isActive(link.key) ? 'text-primary' : 'text-on-surface-variant',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <a
+        href={bookHref}
+        class="self-start px-space-lg py-2 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider"
+      >
+        {dict.header.book}
+      </a>
+      <div class="sm:hidden"><LangSwitcher lang={lang} page={page} /></div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const burger = document.getElementById('burger');
+  const menu = document.getElementById('mobile-menu');
+  burger?.addEventListener('click', () => {
+    const open = menu?.classList.toggle('hidden') === false;
+    burger.setAttribute('aria-expanded', String(open));
+  });
+</script>

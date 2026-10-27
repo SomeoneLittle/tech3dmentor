@@ -1,0 +1,43 @@
+---
+import { pick, t, path, type Lang } from '../i18n';
+import type { Article } from '../data/home';
+
+interface Props {
+  article: Article;
+  lang: Lang;
+}
+
+const { article, lang } = Astro.props;
+const dict = t(lang);
+const tones = { green: 'text-secondary-container', peach: 'text-tertiary', violet: 'text-primary' };
+---
+
+<article class="bg-surface-container rounded-xl overflow-hidden shadow-xl hover:bg-surface-container-high transition-all group">
+  <a href={path(lang, `blog/${article.slug}`)} class="flex flex-col h-full">
+    <div class="relative h-52 bg-surface-container-lowest overflow-hidden">
+      <img
+        src={article.image}
+        alt={pick(article.title, lang)}
+        loading="lazy"
+        decoding="async"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      />
+      <div class:list={['absolute top-3 left-3 px-2.5 py-1 rounded-full bg-surface-container-lowest/85 font-tech-data-sm text-tech-data-sm', tones[article.tone]]}>
+        {pick(article.tag, lang)}
+      </div>
+    </div>
+    <div class="p-space-lg flex flex-col flex-1 justify-between gap-space-md">
+      <div>
+        <span class="font-tech-data-sm text-tech-data-sm text-outline block mb-2">{pick(article.date, lang)}</span>
+        <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase tracking-tight group-hover:text-primary transition-colors">
+          {pick(article.title, lang)}
+        </h3>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-2 line-clamp-3">{pick(article.desc, lang)}</p>
+      </div>
+      <span class="inline-flex items-center gap-2 font-tech-data-sm text-tech-data-sm text-primary group-hover:text-secondary-container font-semibold uppercase tracking-wider">
+        <span>{dict.blog.read}</span>
+        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+      </span>
+    </div>
+  </a>
+</article>

@@ -1,0 +1,38 @@
+---
+interface Props {
+  kicker: string;
+  title: string;
+  sub?: string;
+  /** Подпись второй части кикера, например «THE PROCESS» */
+  tag?: string;
+  linkLabel?: string;
+  linkHref?: string;
+}
+
+const { kicker, title, sub, tag, linkLabel, linkHref } = Astro.props;
+---
+
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+  <div>
+    <div class="inline-flex items-center gap-2 font-tech-data-sm text-tech-data-sm text-primary tracking-widest uppercase mb-2">
+      <span>{kicker}</span>
+      {tag && (<><span class="text-outline-variant">•</span><span>{tag}</span></>)}
+    </div>
+    <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight uppercase">
+      {title}
+    </h2>
+    {sub && <p class="font-body-md text-body-md text-on-surface-variant mt-1 max-w-md md:max-w-none">{sub}</p>}
+  </div>
+  {
+    linkLabel && linkHref && (
+      <a
+        href={linkHref}
+        class="inline-flex items-center gap-2 font-tech-data-lg text-tech-data-lg text-primary hover:text-on-surface transition-colors uppercase tracking-wider group"
+      >
+        <span>{linkLabel}</span>
+        <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+      </a>
+    )
+  }
+  <slot />
+</div>
