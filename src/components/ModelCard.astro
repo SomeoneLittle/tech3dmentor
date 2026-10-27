@@ -11,7 +11,7 @@ const { model, lang } = Astro.props;
 const dict = t(lang);
 ---
 
-<div class="relative bg-surface-container rounded-xl overflow-hidden shadow-xl flex flex-col group hover:-translate-y-1 transition-transform duration-300">
+<div class="relative bg-surface-container rounded-xl overflow-hidden shadow-xl flex flex-col group hover:-translate-y-1 transition-transform duration-300 will-change-transform">
   <a href={path(lang, `marketplace/${model.slug}`)} class="flex flex-col flex-1">
     <div class="relative h-56 bg-surface-container-lowest overflow-hidden">
       <img
