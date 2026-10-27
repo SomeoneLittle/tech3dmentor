@@ -54,6 +54,20 @@ const statTone: Record<StatTone, string> = {
       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
     />
     {
+      work.video && (
+        <video
+          src={work.video}
+          poster={work.image}
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+      )
+    }
+    {
       work.matcap && (
         <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-surface-container-highest/90 backdrop-blur-md px-2 py-1 rounded-full shadow-sm">
           <div class:list={['w-4 h-4 rounded-full shadow-inner', work.matcap.swatch]}></div>

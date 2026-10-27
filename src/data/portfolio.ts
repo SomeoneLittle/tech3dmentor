@@ -72,6 +72,8 @@ export interface PortfolioWork {
   year?: number;
   featured?: boolean;
   likes?: number;
+  /** Короткое видео-превью для карточки списка (в Sanity — файл) */
+  video?: string;
   /** Ссылка на PDF с техническим разбором (поле появится в Sanity) */
   pdf?: string;
   detail?: WorkDetail;
@@ -99,6 +101,7 @@ export const portfolioWorks: PortfolioWork[] = [
     ],
     polys: 64200,
     featured: true,
+    video: '/videos/gorgon-queen-bust.mp4',
   },
   {
     slug: 'cybernetic-quadruped',
