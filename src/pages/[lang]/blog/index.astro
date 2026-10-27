@@ -1,0 +1,337 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BlogCard from '../../../components/BlogCard.astro';
+import SubscribeBlock from '../../../components/SubscribeBlock.astro';
+import { locales, pick, t, tb, path, type Lang } from '../../../i18n';
+import { blogCategories, blogPosts, featuredPost, formatDate } from '../../../data/blog';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const dict = t(lang);
+const d = tb(lang);
+const l = d.list;
+const sectionClass = 'w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const PAGE_SIZE = 9;
+
+// Главная статья вынесена в верхний блок, остальные идут в сетку
+const gridPosts = blogPosts.filter((p) => p !== featuredPost);
+const count = (category: string) => gridPosts.filter((p) => p.category === category).length;
+const avgRead = (blogPosts.reduce((sum, p) => sum + p.readMin, 0) / blogPosts.length).toFixed(1);
+const featuredHref = path(lang, `blog/${featuredPost.slug}`);
+const featuredTitle = pick(featuredPost.title, lang);
+const hud = featuredPost.article?.hud;
+---
+
+<BaseLayout lang={lang} page="blog" title={`${dict.nav.blog} — ${dict.site.name}`} description={l.sub} image={featuredPost.image}>
+  <div class={`${sectionClass} pt-8 pb-10 flex flex-col gap-space-xl`}>
+    <!-- ШАПКА СТРАНИЦЫ -->
+    <header class="flex flex-col gap-space-md">
+      <div class="flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-lowest px-space-md py-space-xs rounded-full shadow-md">
+        <nav aria-label="Breadcrumb" class="flex items-center gap-2 overflow-x-auto whitespace-nowrap font-tech-data-sm text-tech-data-sm text-primary tracking-wider uppercase">
+          <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+          <a href={path(lang)} class="hover:text-on-surface transition-colors">{dict.common.home}</a>
+          <span aria-hidden="true">//</span>
+          <span>{l.archive}</span>
+          <span aria-hidden="true">//</span>
+          <span aria-current="page">{dict.nav.blog}</span>
+        </nav>
+        <span class="font-tech-data-sm text-tech-data-sm text-on-surface-variant bg-surface-container px-2.5 py-0.5 rounded-full">[{l.logs}: {blogPosts.length}]</span>
+      </div>
+
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md">
+        <div class="max-w-3xl flex flex-col gap-space-xs">
+          <span class="self-start font-label-caps text-label-caps text-secondary-container uppercase tracking-widest bg-surface-container px-2 py-0.5 rounded">{l.kicker}</span>
+          <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg tracking-tight uppercase text-on-surface">
+            {l.titleBefore}<span class="bg-gradient-to-r from-primary-container via-primary to-tertiary-container bg-clip-text text-transparent">{l.titleAccent}</span>
+          </h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">{l.sub}</p>
+        </div>
+        <div class="flex items-center gap-space-sm self-start lg:self-end bg-surface-container-low p-2 rounded-lg shadow-sm">
+          <div class="flex flex-col px-3 py-1 bg-surface-container rounded">
+            <span class="font-label-caps text-label-caps text-outline uppercase">{l.chips.avgRead}</span>
+            <span class="font-tech-data-lg text-tech-data-lg text-on-surface">{avgRead} {l.chips.minutes}</span>
+          </div>
+          <div class="flex flex-col px-3 py-1 bg-surface-container rounded">
+            <span class="font-label-caps text-label-caps text-outline uppercase">{l.chips.articles}</span>
+            <span class="font-tech-data-lg text-tech-data-lg text-secondary-container">{blogPosts.length}</span>
+          </div>
+          <div class="hidden sm:flex flex-col px-3 py-1 bg-surface-container rounded">
+            <span class="font-label-caps text-label-caps text-outline uppercase">{l.chips.langs}</span>
+            <span class="font-tech-data-lg text-tech-data-lg text-tertiary">RU/UA/EN</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ФИЛЬТРЫ И ПОИСК -->
+    <section class="flex flex-col md:flex-row md:items-center justify-between gap-space-md bg-surface-container-low p-space-md rounded-xl shadow-lg">
+      <div id="category-filters" class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+        <button type="button" data-filter="all" aria-pressed="true" class="filter-chip shrink-0 px-space-md py-1.5 rounded-full font-tech-data-sm text-tech-data-sm uppercase transition-all whitespace-nowrap">
+          {l.filters.all} ({gridPosts.length})
+        </button>
+        {
+          blogCategories.map((key) => (
+            <button type="button" data-filter={key} aria-pressed="false" class="filter-chip shrink-0 px-space-md py-1.5 rounded-full font-tech-data-sm text-tech-data-sm uppercase transition-all whitespace-nowrap">
+              {l.filters[key]} ({count(key)})
+            </button>
+          ))
+        }
+      </div>
+      <div class="relative w-full md:w-96 flex items-center">
+        <span class="material-symbols-outlined absolute left-3 text-outline text-[20px] pointer-events-none" aria-hidden="true">search</span>
+        <input
+          id="article-search"
+          type="search"
+          placeholder={l.searchPlaceholder}
+          aria-label={l.searchPlaceholder}
+          class="w-full bg-surface-container-lowest text-on-surface placeholder:text-outline font-tech-data-sm text-tech-data-sm pl-10 pr-20 py-2.5 rounded-full focus:outline-none focus:bg-surface-container focus:shadow-[0_0_16px_rgba(160,120,255,0.25)] transition-all"
+        />
+        <span class="hidden md:block absolute right-3 font-label-caps text-label-caps bg-surface-container text-outline px-2 py-0.5 rounded shadow-inner pointer-events-none">CTRL+K</span>
+      </div>
+    </section>
+
+    <!-- ГЛАВНАЯ СТАТЬЯ -->
+    <section class="w-full bg-surface-container-low rounded-2xl overflow-hidden shadow-2xl relative group">
+      <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[460px]">
+        <a href={featuredHref} class="lg:col-span-7 relative min-h-[320px] lg:min-h-[460px] overflow-hidden bg-surface-container-lowest block" tabindex="-1" aria-hidden="true">
+          <img src={featuredPost.image} alt="" fetchpriority="high" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-90" />
+          <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-surface-container-lowest/60"></div>
+          <div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
+            <span class="flex items-center gap-2 bg-surface-container-lowest/85 backdrop-blur-md px-3 py-1 rounded-full shadow-lg font-label-caps text-label-caps text-secondary-container tracking-wider uppercase">
+              <span class="w-2 h-2 rounded-full bg-secondary-container animate-ping"></span>
+              {l.featured}
+            </span>
+          </div>
+          {
+            hud && (
+              <div class="absolute bottom-4 left-4 right-4 flex flex-wrap items-center gap-2 pointer-events-none font-tech-data-sm text-tech-data-sm">
+                <span class="bg-surface-container-lowest/90 backdrop-blur text-primary px-3 py-1 rounded-full shadow-md">[{hud.toolchain.join(' + ')}]</span>
+                <span class="bg-surface-container-lowest/90 backdrop-blur text-outline px-3 py-1 rounded-full shadow-md">POLY: {hud.poly}</span>
+                <span class="hidden sm:inline bg-surface-container-lowest/90 backdrop-blur text-secondary-container px-3 py-1 rounded-full shadow-md">SUBD: {hud.subd}</span>
+              </div>
+            )
+          }
+        </a>
+
+        <div class="lg:col-span-5 p-space-lg lg:p-space-xl flex flex-col justify-between gap-space-lg bg-surface-container-low">
+          <div class="flex flex-col gap-space-md">
+            <div class="flex items-center justify-between gap-space-xs">
+              <span class="font-tech-data-sm text-tech-data-sm bg-surface-container text-primary-container px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+                {d.article.categories[featuredPost.category]} // {pick(featuredPost.topic, lang)}
+              </span>
+              {
+                featuredPost.peer && (
+                  <div class="flex items-center gap-1 text-outline shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">verified</span>
+                    <span class="font-label-caps text-label-caps uppercase">{l.peer}</span>
+                  </div>
+                )
+              }
+            </div>
+            <h2 class="font-headline-md text-headline-md text-on-surface leading-snug group-hover:text-primary transition-colors">
+              <a href={featuredHref}>{featuredTitle}</a>
+            </h2>
+            <p class="font-body-md text-body-md text-on-surface-variant line-clamp-4">{pick(featuredPost.desc, lang)}</p>
+          </div>
+          <div class="flex flex-col gap-space-md">
+            <div class="flex flex-wrap items-center justify-between gap-space-xs text-on-surface-variant font-tech-data-sm text-tech-data-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-[10px]">T3</span>
+                <span class="text-on-surface font-semibold uppercase">{dict.site.name}</span>
+                <span class="text-outline">•</span>
+                <span>{formatDate(featuredPost.date, lang, 'long')}</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-secondary-container flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[16px]">schedule</span>
+                  {featuredPost.readMin} {l.minRead}
+                </span>
+                <button type="button" data-like data-likes={featuredPost.likes} aria-pressed="false" aria-label={l.like} class="flex items-center gap-1 hover:text-tertiary aria-pressed:text-tertiary transition-colors">
+                  <span class="material-symbols-outlined text-[18px]">favorite</span>
+                  <span data-like-count>{featuredPost.likes}</span>
+                </button>
+              </div>
+            </div>
+            <div>
+              <a
+                href={featuredHref}
+                class="inline-flex items-center justify-center gap-2 px-space-xl py-3 rounded-full bg-gradient-to-r from-primary-container via-primary to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.45)] hover:shadow-[0_0_32px_rgba(255,87,34,0.55)] transition-all transform active:scale-95"
+              >
+                <span>{l.readFeatured}</span>
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- СЕТКА СТАТЕЙ -->
+    <section class="flex flex-col gap-space-lg">
+      <div class="flex flex-wrap items-center justify-between gap-space-xs">
+        <div class="flex items-center gap-space-xs">
+          <h2 class="font-headline-sm text-headline-sm uppercase text-on-surface">{l.indexTitle}</h2>
+          <span class="font-tech-data-sm text-tech-data-sm text-outline">[{l.showing} <span id="posts-visible">{Math.min(PAGE_SIZE, gridPosts.length)}</span> {l.of} <span id="posts-total">{gridPosts.length}</span>]</span>
+        </div>
+        <div class="flex items-center gap-2 font-tech-data-sm text-tech-data-sm text-on-surface-variant">
+          <span>{l.sortLabel}</span>
+          <span class="text-primary uppercase">{l.sortNewest}</span>
+        </div>
+      </div>
+
+      <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter-desktop">
+        {gridPosts.map((post, i) => <BlogCard post={post} lang={lang} index={i} />)}
+      </div>
+      <p id="posts-empty" class="hidden text-center font-tech-data-sm text-tech-data-sm text-outline py-space-xl">{l.noResults}</p>
+
+      <div class="flex flex-col items-center justify-center gap-space-md pt-space-md">
+        <button
+          id="load-more-btn"
+          type="button"
+          data-loading={l.loading}
+          data-loaded={l.allLoaded}
+          class="px-space-xl py-3 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider flex flex-wrap items-center justify-center gap-3 shadow-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          <span class="material-symbols-outlined text-secondary-container text-[20px]">refresh</span>
+          <span id="load-more-label">{l.loadMore}</span>
+          <span class="font-tech-data-sm text-tech-data-sm text-outline bg-surface-container-lowest px-2 py-0.5 rounded-full">
+            {l.remainingBefore} <span id="posts-remaining">{Math.max(0, gridPosts.length - PAGE_SIZE)}</span> {l.remainingAfter}
+          </span>
+        </button>
+
+        <div
+          id="pager"
+          data-prev={l.pager.prev}
+          data-next={l.pager.next}
+          data-jump={l.pager.jump}
+          class="flex flex-wrap items-center justify-center gap-space-sm bg-surface-container-lowest px-space-md py-space-xs rounded-full shadow-inner font-tech-data-sm text-tech-data-sm"
+        >
+          <button type="button" id="pager-prev" class="text-outline hover:text-on-surface uppercase transition-colors px-2 py-1 disabled:opacity-40">{l.pager.prev}</button>
+          <div id="pager-pages" class="flex items-center gap-1"></div>
+          <button type="button" id="pager-next" class="text-on-surface-variant hover:text-on-surface uppercase transition-colors px-2 py-1 disabled:opacity-40">{l.pager.next}</button>
+          <span class="text-outline hidden sm:inline-block">•</span>
+          <span id="pager-jump" class="text-secondary-container hidden sm:inline-block"></span>
+        </div>
+      </div>
+    </section>
+
+    <SubscribeBlock lang={lang} variant="blog" />
+  </div>
+</BaseLayout>
+
+<script>
+  const PAGE = 9;
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-post-card]'));
+  const chips = document.querySelectorAll<HTMLButtonElement>('#category-filters [data-filter]');
+  const search = document.getElementById('article-search') as HTMLInputElement | null;
+  const visible = document.getElementById('posts-visible');
+  const remaining = document.getElementById('posts-remaining');
+  const empty = document.getElementById('posts-empty');
+  const more = document.getElementById('load-more-btn') as HTMLButtonElement | null;
+  const moreLabel = document.getElementById('load-more-label');
+  const moreDefault = moreLabel?.textContent ?? '';
+  let filter = 'all';
+  let query = '';
+  let limit = PAGE;
+
+  const render = () => {
+    const matching = cards.filter((c) => (filter === 'all' || c.dataset.category === filter) && (c.dataset.search ?? '').includes(query));
+    cards.forEach((c) => c.classList.add('hidden'));
+    matching.slice(0, limit).forEach((c) => c.classList.remove('hidden'));
+    const shown = Math.min(limit, matching.length);
+    const left = matching.length - shown;
+    if (visible) visible.textContent = String(shown);
+    if (remaining) remaining.textContent = String(left);
+    empty?.classList.toggle('hidden', matching.length > 0);
+    if (more && moreLabel) {
+      more.disabled = left === 0;
+      moreLabel.textContent = left === 0 && matching.length > PAGE ? (more.dataset.loaded ?? '') : moreDefault;
+    }
+    renderPager(matching.length, shown);
+  };
+
+  // Лента страниц: страница N показывает первые N×PAGE статей (так же, как «показать ещё»)
+  const pager = document.getElementById('pager');
+  const pages = document.getElementById('pager-pages');
+  const prevBtn = document.getElementById('pager-prev') as HTMLButtonElement | null;
+  const nextBtn = document.getElementById('pager-next') as HTMLButtonElement | null;
+  const jump = document.getElementById('pager-jump');
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const renderPager = (total: number, shown: number) => {
+    const totalPages = Math.max(1, Math.ceil(total / PAGE));
+    const current = Math.max(1, Math.ceil(shown / PAGE));
+    if (!pages) return;
+    pages.replaceChildren(
+      ...Array.from({ length: totalPages }, (_, i) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = `[ ${i + 1} ]`;
+        b.className =
+          i + 1 === current
+            ? 'w-8 h-8 rounded-full bg-primary-container text-on-primary-container font-bold flex items-center justify-center shadow-sm'
+            : 'w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center transition-colors';
+        b.addEventListener('click', () => {
+          limit = (i + 1) * PAGE;
+          render();
+        });
+        return b;
+      }),
+    );
+    if (prevBtn) prevBtn.disabled = current <= 1;
+    if (nextBtn) nextBtn.disabled = current >= totalPages;
+    if (jump) jump.textContent = (pager?.dataset.jump ?? '').replace('{n}', pad(current)).replace('{total}', pad(totalPages));
+  };
+  prevBtn?.addEventListener('click', () => {
+    limit = Math.max(PAGE, limit - PAGE);
+    render();
+  });
+  nextBtn?.addEventListener('click', () => {
+    limit += PAGE;
+    render();
+  });
+
+  chips.forEach((chip) =>
+    chip.addEventListener('click', () => {
+      filter = chip.dataset.filter ?? 'all';
+      limit = PAGE;
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      render();
+    }),
+  );
+  search?.addEventListener('input', () => {
+    query = search.value.toLowerCase().trim();
+    limit = PAGE;
+    render();
+  });
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      search?.focus();
+    }
+  });
+  more?.addEventListener('click', () => {
+    if (!moreLabel) return;
+    moreLabel.textContent = more.dataset.loading ?? '';
+    setTimeout(() => {
+      limit += PAGE;
+      render();
+    }, 400);
+  });
+
+  // Лайки (пока без сохранения)
+  document.querySelectorAll<HTMLButtonElement>('[data-like]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(on));
+      const count = btn.querySelector('[data-like-count]');
+      if (count) count.textContent = String(Number(btn.dataset.likes) + (on ? 1 : 0));
+      const icon = btn.querySelector<HTMLElement>('.material-symbols-outlined');
+      if (icon) icon.style.fontVariationSettings = on ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : '';
+    }),
+  );
+
+  render();
+</script>

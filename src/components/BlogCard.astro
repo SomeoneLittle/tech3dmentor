@@ -1,0 +1,67 @@
+---
+import { pick, tb, path, type Lang } from '../i18n';
+import { formatDate, type BlogPost } from '../data/blog';
+
+interface Props {
+  post: BlogPost;
+  lang: Lang;
+  /** Порядковый номер для метки #01 */
+  index: number;
+}
+
+const { post, lang, index } = Astro.props;
+const d = tb(lang);
+const title = pick(post.title, lang);
+const href = path(lang, `blog/${post.slug}`);
+const search = [title, pick(post.desc, lang), pick(post.topic, lang), post.chip].join(' ').toLowerCase();
+---
+
+<article
+  data-post-card
+  data-category={post.category}
+  data-index={index}
+  data-search={search}
+  class="flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group"
+>
+  <a href={href} class="relative block h-56 bg-surface-container-lowest overflow-hidden" tabindex="-1" aria-hidden="true">
+    <img src={post.image} alt="" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+    <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+    <span class="absolute top-3 left-3 font-tech-data-sm text-tech-data-sm bg-surface-container-lowest/90 text-primary-container px-2.5 py-1 rounded-full uppercase">
+      {d.article.categories[post.category]}
+    </span>
+    <span class="absolute top-3 right-3 w-6 h-6 rounded-full bg-surface-container-lowest/80 text-secondary-container flex items-center justify-center font-tech-data-sm text-[10px]">
+      #{String(index + 1).padStart(2, '0')}
+    </span>
+    <span class="absolute bottom-3 left-3 flex items-center gap-1.5 font-tech-data-sm text-tech-data-sm text-outline bg-surface-container-lowest/80 px-2 py-0.5 rounded">
+      <span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+      <span>{pick(post.topic, lang)}</span>
+    </span>
+  </a>
+
+  <div class="p-space-md flex flex-col flex-1 justify-between gap-space-md">
+    <div class="flex flex-col gap-2">
+      <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-2">
+        <a href={href}>{title}</a>
+      </h3>
+      <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-3">{pick(post.desc, lang)}</p>
+    </div>
+
+    <div class="flex flex-col gap-space-sm pt-space-xs">
+      <div class="flex items-center justify-between font-tech-data-sm text-tech-data-sm text-outline">
+        <span>{formatDate(post.date, lang)}</span>
+        <span class="text-on-surface-variant">{post.readMin} {d.list.minRead}</span>
+        <button type="button" data-like data-likes={post.likes} aria-pressed="false" aria-label={d.list.like} class="flex items-center gap-1 hover:text-tertiary aria-pressed:text-tertiary transition-colors">
+          <span class="material-symbols-outlined text-[16px]">favorite</span>
+          <span data-like-count>{post.likes}</span>
+        </button>
+      </div>
+      <div class="flex items-center justify-between pt-1">
+        <a href={href} class="font-tech-data-sm text-tech-data-sm text-primary hover:text-secondary-container uppercase tracking-wider flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+          <span>{d.list.readArticle}</span>
+          <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+        </a>
+        <span class="font-label-caps text-label-caps text-outline bg-surface-container px-2 py-0.5 rounded">{post.chip}</span>
+      </div>
+    </div>
+  </div>
+</article>

@@ -21,6 +21,12 @@ const marketDictionaries: Record<Lang, MarketDict> = { ru: marketRu, ua: marketU
 /** Тексты страниц маркетплейса */
 export const tk = (lang: Lang): MarketDict => marketDictionaries[lang];
 
+import { blogEn, blogRu, blogUa, type BlogDict } from './blog';
+
+const blogDictionaries: Record<Lang, BlogDict> = { ru: blogRu, ua: blogUa, en: blogEn };
+/** Тексты страниц блога */
+export const tb = (lang: Lang): BlogDict => blogDictionaries[lang];
+
 const mentoringDictionaries: Record<Lang, MentoringDict> = { ru: mentoringRu, ua: mentoringUa, en: mentoringEn };
 
 export const t = (lang: Lang): Dict => dictionaries[lang];

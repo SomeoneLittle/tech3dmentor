@@ -1,0 +1,600 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { locales, pick, t, tb, path, type Lang } from '../../../i18n';
+import { SITE } from '../../../config';
+import { blogPosts, formatDate } from '../../../data/blog';
+
+export function getStaticPaths() {
+  return locales.flatMap((lang) => blogPosts.map((post) => ({ params: { lang, slug: post.slug } })));
+}
+
+const lang = Astro.params.lang as Lang;
+const slug = Astro.params.slug as string;
+const dict = t(lang);
+const d = tb(lang).article;
+
+const index = blogPosts.findIndex((p) => p.slug === slug);
+const post = blogPosts[index];
+const body = post.article;
+const title = pick(post.title, lang);
+const desc = pick(post.desc, lang);
+const categoryLabel = d.categories[post.category];
+const related = [
+  ...blogPosts.filter((p) => p !== post && p.category === post.category),
+  ...blogPosts.filter((p) => p !== post && p.category !== post.category),
+].slice(0, 3);
+const sectionClass = 'w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const pad = (n: number) => String(n).padStart(2, '0');
+const id = `ART-${post.date.slice(0, 4)}-${post.date.slice(5, 7)}`;
+const initials = 'T3';
+---
+
+<BaseLayout lang={lang} page={`blog/${slug}`} title={`${title} — ${dict.nav.blog} — ${dict.site.name}`} description={desc} image={post.image}>
+  <!-- ПРОГРЕСС ЧТЕНИЯ -->
+  <div class="sticky top-20 z-40 w-full bg-surface-container-lowest/80 backdrop-blur-md">
+    <div id="read-progress" class="h-0.5 bg-gradient-to-r from-primary-container via-tertiary-container to-secondary-container w-0 transition-all duration-150"></div>
+  </div>
+
+  <!-- ЗАГОЛОВОК СТАТЬИ -->
+  <section class={`${sectionClass} pt-space-xl pb-space-lg`}>
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-sm mb-space-md">
+      <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-2 font-tech-data-sm text-tech-data-sm text-on-surface-variant uppercase tracking-wider">
+        <a class="hover:text-primary transition-colors" href={path(lang)}>{dict.common.home}</a>
+        <span class="text-outline text-[10px]" aria-hidden="true">//</span>
+        <a class="hover:text-primary transition-colors" href={path(lang, 'blog')}>{dict.nav.blog}</a>
+        <span class="text-outline text-[10px]" aria-hidden="true">//</span>
+        <span class="text-secondary-fixed font-semibold truncate max-w-xs md:max-w-md" aria-current="page">{title}</span>
+      </nav>
+      <span class="self-start px-2.5 py-1 rounded bg-surface-container text-on-surface-variant font-tech-data-sm text-tech-data-sm">
+        [{d.dispatchId}: <span class="text-primary font-bold">{id}</span>]
+      </span>
+    </div>
+
+    <div class="flex flex-col gap-space-md mb-space-lg max-w-5xl">
+      <div class="flex items-center gap-space-sm flex-wrap">
+        <span class="px-3 py-1 rounded-full bg-surface-container-high text-primary font-tech-data-sm text-tech-data-sm uppercase tracking-wide">
+          {categoryLabel} // {pick(post.topic, lang)}
+        </span>
+        {
+          post.peer && (
+            <span class="px-3 py-1 rounded-full bg-secondary-container/10 text-secondary-container font-label-caps text-label-caps uppercase tracking-wider flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px]">verified</span>
+              {d.peer}
+            </span>
+          )
+        }
+        {body && <span class="px-3 py-1 rounded-full bg-tertiary-container/15 text-tertiary font-tech-data-sm text-tech-data-sm uppercase">{pick(body.badge, lang)}</span>}
+      </div>
+      <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight leading-tight uppercase font-bold">{title}</h1>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-space-md p-space-md rounded-xl bg-surface-container-low shadow-sm">
+      <div class="flex items-center gap-space-md">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-primary-container to-tertiary-container flex items-center justify-center text-on-surface font-headline-sm text-headline-sm uppercase font-bold shadow-md">{initials}</div>
+        <div class="flex flex-col">
+          <span class="font-headline-sm text-tech-data-lg text-on-surface uppercase font-bold">{dict.site.name}</span>
+          <span class="font-tech-data-sm text-tech-data-sm text-on-surface-variant">{dict.about.badge}</span>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-space-lg font-tech-data-sm text-tech-data-sm text-on-surface-variant">
+        <div class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px] text-outline">calendar_today</span>
+          <span>{formatDate(post.date, lang, 'long')}</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px] text-tertiary">schedule</span>
+          <span class="text-tertiary font-semibold">{post.readMin} {d.minRead}</span>
+        </div>
+        {
+          post.views !== undefined && (
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[18px] text-secondary-container">visibility</span>
+              <span>{post.views.toLocaleString(lang === 'en' ? 'en-US' : 'ru-RU')} {d.views}</span>
+            </div>
+          )
+        }
+      </div>
+      <div class="flex items-center gap-space-xs">
+        <button
+          type="button"
+          id="like-btn"
+          data-likes={post.likes}
+          aria-pressed="false"
+          aria-label={d.favorite}
+          class="group flex items-center gap-2 px-space-md py-2 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high hover:text-tertiary transition-all shadow-sm"
+        >
+          <span class="material-symbols-outlined text-[18px] text-tertiary group-hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;">favorite</span>
+          <span class="font-tech-data-sm text-tech-data-sm font-bold" id="like-count">{post.likes}</span>
+        </button>
+        <button
+          type="button"
+          id="share-btn"
+          data-copied={d.copied}
+          class="flex items-center gap-2 px-space-md py-2 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high hover:text-primary transition-all shadow-sm"
+        >
+          <span class="material-symbols-outlined text-[18px]">share</span>
+          <span class="font-tech-data-sm text-tech-data-sm uppercase" id="share-label">{d.share}</span>
+        </button>
+        {
+          body && (
+            <button
+              type="button"
+              id="spec-btn"
+              data-spec={`DISPATCH: ${id} | ${post.slug} | POLY: ${body.hud.poly} | SUBD: ${body.hud.subd}`}
+              data-copied={d.specCopied}
+              class="hidden sm:flex items-center gap-1.5 px-space-md py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:text-secondary-fixed transition-colors font-tech-data-sm text-tech-data-sm"
+            >
+              <span class="material-symbols-outlined text-[16px]">terminal</span>
+              <span id="spec-label">{d.exportSpec}</span>
+            </button>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ВЬЮПОРТ СО ВСТУПИТЕЛЬНОЙ КАРТИНКОЙ -->
+  <section class={`${sectionClass} mb-space-2xl`}>
+    <div class="relative rounded-2xl overflow-hidden bg-surface-container-lowest shadow-2xl">
+      {
+        body && (
+          <div class="bg-surface-container/95 px-space-md py-2.5 flex items-center justify-between gap-space-sm font-tech-data-sm text-tech-data-sm text-on-surface-variant">
+            <div class="flex items-center gap-space-md min-w-0">
+              <div class="flex items-center gap-1.5 shrink-0">
+                <span class="w-2.5 h-2.5 rounded-full bg-tertiary-container" />
+                <span class="w-2.5 h-2.5 rounded-full bg-surface-variant" />
+                <span class="w-2.5 h-2.5 rounded-full bg-secondary-container" />
+              </div>
+              <span class="text-on-surface font-semibold truncate">{d.viewport}</span>
+              <span class="hidden md:inline px-2 py-0.5 rounded bg-surface-container-lowest text-outline text-[10px]">{d.perspective}</span>
+            </div>
+          </div>
+        )
+      }
+      <div class="relative w-full aspect-[16/9] lg:aspect-[21/9] overflow-hidden">
+        <img src={body ? body.hero.image : post.image} alt={body ? pick(body.hero.alt, lang) : title} fetchpriority="high" decoding="async" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent opacity-80 pointer-events-none"></div>
+        {
+          body && (
+            <div class="absolute bottom-4 left-4 right-4 flex flex-wrap items-center justify-between gap-space-sm font-tech-data-sm text-tech-data-sm">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-1 rounded bg-surface-container-lowest/90 backdrop-blur-sm text-secondary-container flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-secondary-container" />
+                  POLY: {body.hud.poly}
+                </span>
+                <span class="hidden sm:inline px-2.5 py-1 rounded bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface-variant">SUBD: {body.hud.subd}</span>
+                <span class="hidden md:inline px-2.5 py-1 rounded bg-surface-container-lowest/90 backdrop-blur-sm text-primary">POLES: {body.hud.poles}</span>
+              </div>
+              <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded bg-surface-container-lowest/90 backdrop-blur-sm text-outline text-[10px]">
+                <span>{d.toolchain}</span>
+                <span class="text-on-surface">{body.hud.toolchain.join(' + ')}</span>
+              </div>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ТЕКСТ СТАТЬИ -->
+  <section class={`${sectionClass} mb-space-2xl`}>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+      <aside class="lg:col-span-4 lg:sticky lg:top-28 space-y-space-md order-2 lg:order-1">
+        {
+          body && (
+            <div class="bg-surface-container rounded-2xl p-space-lg shadow-md">
+              <div class="flex items-center justify-between pb-space-sm mb-space-md">
+                <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[15px]">list_alt</span>
+                  {d.toc}
+                </span>
+                <span class="font-tech-data-sm text-tech-data-sm text-secondary-container">{d.tocActive}</span>
+              </div>
+              <nav class="space-y-1 font-tech-data-sm text-tech-data-sm" id="toc">
+                {body.sections.map((section, i) => (
+                  <a
+                    href={`#section-${i + 1}`}
+                    data-toc
+                    class="group flex items-start gap-2.5 p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors aria-[current=true]:text-primary aria-[current=true]:bg-surface-container-high"
+                  >
+                    <span class="text-outline font-bold">{pad(i + 1)}.</span>
+                    <span class="group-hover:translate-x-0.5 transition-transform">{pick(section.heading, lang)}</span>
+                  </a>
+                ))}
+              </nav>
+            </div>
+          )
+        }
+
+        {
+          post.download && (
+            <div class="bg-surface-container-low rounded-2xl p-space-lg shadow-sm">
+              <div class="flex items-center gap-space-sm mb-space-sm">
+                <div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined text-[20px]">folder_zip</span>
+                </div>
+                <div>
+                  <span class="font-headline-sm text-tech-data-lg text-on-surface font-semibold block leading-tight">{d.download.title}</span>
+                  <span class="font-tech-data-sm text-[10px] text-on-surface-variant">{d.download.files}</span>
+                </div>
+              </div>
+              <a href={post.download.href} download class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-space-md rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-tech-data-sm text-tech-data-sm transition-all group shadow-sm">
+                <span class="material-symbols-outlined text-[18px] text-secondary-container group-hover:translate-y-0.5 transition-transform">download</span>
+                <span class="uppercase">{d.download.button} ({post.download.size})</span>
+              </a>
+              <div class="mt-space-sm pt-space-sm flex items-center justify-between font-tech-data-sm text-[10px] text-outline">
+                <span>MD5: {post.download.md5}</span>
+                <button type="button" id="cite-btn" data-cite={`${dict.site.name} (${post.date.slice(0, 4)}). ${title}.`} data-copied={d.copied} class="hover:text-primary transition-colors flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[12px]">content_copy</span>
+                  <span id="cite-label">{d.cite}</span>
+                </button>
+              </div>
+            </div>
+          )
+        }
+
+        <div class="bg-gradient-to-br from-surface-container-high via-surface-container to-surface-container-lowest p-space-lg rounded-2xl shadow-sm">
+          <div class="flex items-center gap-2 mb-space-xs">
+            <span class="w-2 h-2 rounded-full bg-secondary-container animate-ping"></span>
+            <span class="font-label-caps text-label-caps text-secondary-container tracking-wider uppercase">{d.mentorMini.badge}</span>
+          </div>
+          <h2 class="font-headline-sm text-tech-data-lg text-on-surface font-bold uppercase mb-space-xs">{d.mentorMini.title}</h2>
+          <p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">{d.mentorMini.text}</p>
+          <a href={`${path(lang, 'mentoring')}#apply`} class="text-primary hover:text-tertiary font-tech-data-sm text-tech-data-sm flex items-center gap-1.5 transition-colors font-semibold uppercase">
+            <span>{d.mentorMini.link}</span>
+            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </a>
+        </div>
+      </aside>
+
+      <article class="lg:col-span-8 order-1 lg:order-2 space-y-space-2xl max-w-3xl">
+        {
+          body ? (
+            body.sections.map((section, i) => (
+              <section class="scroll-mt-28 space-y-space-md" id={`section-${i + 1}`} data-section>
+                <div class="flex items-center gap-2 font-tech-data-sm text-tech-data-sm text-primary">
+                  <span>{d.section}_{pad(i + 1)}</span>
+                  <span class="text-outline">---</span>
+                  <span class="text-on-surface-variant uppercase">{pick(section.kicker, lang)}</span>
+                </div>
+                <h2 class="font-headline-md text-headline-md text-on-surface tracking-tight uppercase font-bold">
+                  {pad(i + 1)}. {pick(section.heading, lang)}
+                </h2>
+
+                {section.blocks.map((block) => {
+                  if (block.type === 'p')
+                    return <p class:list={['text-on-surface-variant leading-relaxed', block.lead ? 'font-body-lg text-body-lg' : 'font-body-md text-body-md']}>{pick(block.text, lang)}</p>;
+
+                  if (block.type === 'tip')
+                    return (
+                      <div class="p-space-lg rounded-2xl bg-surface-container-high shadow-md flex items-start gap-space-md">
+                        <div class="w-10 h-10 rounded-xl bg-tertiary-container/20 text-tertiary flex items-center justify-center shrink-0">
+                          <span class="material-symbols-outlined text-[24px]">lightbulb</span>
+                        </div>
+                        <div class="space-y-1">
+                          <span class="font-label-caps text-label-caps text-tertiary tracking-widest uppercase font-bold">{pick(block.label, lang)}</span>
+                          <p class="font-body-sm text-body-sm text-on-surface">{pick(block.text, lang)}</p>
+                        </div>
+                      </div>
+                    );
+
+                  if (block.type === 'figure')
+                    return (
+                      <figure class="space-y-space-sm">
+                        <div class="rounded-2xl overflow-hidden bg-surface-container-lowest shadow-lg relative">
+                          <div class="bg-surface-container/90 px-space-md py-2 flex flex-wrap items-center justify-between gap-x-space-md font-tech-data-sm text-tech-data-sm text-on-surface-variant">
+                            <span>{block.bar}</span>
+                            {block.status && (
+                              <span class="text-error font-semibold flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-error" />
+                                {pick(block.status, lang)}
+                              </span>
+                            )}
+                          </div>
+                          <img src={block.image} alt={pick(block.alt, lang)} loading="lazy" decoding="async" class="w-full h-72 md:h-96 object-cover" />
+                          <div class="absolute bottom-3 right-3 px-3 py-1 rounded bg-surface-container-lowest/80 backdrop-blur-md font-tech-data-sm text-[10px] text-on-surface-variant">{block.stamp}</div>
+                        </div>
+                        <figcaption class="font-tech-data-sm text-tech-data-sm text-outline flex flex-wrap items-center justify-between gap-x-space-md px-1">
+                          <span>{pick(block.caption, lang)}</span>
+                          <span class="text-primary font-bold">FIG_REF: {block.ref}</span>
+                        </figcaption>
+                      </figure>
+                    );
+
+                  if (block.type === 'cards')
+                    return (
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-space-md pt-space-xs">
+                        {block.items.map((item) => (
+                          <div class="p-space-md rounded-xl bg-surface-container-low space-y-2">
+                            <div class="flex items-center justify-between">
+                              <span class="font-tech-data-sm text-tech-data-sm text-error font-bold">[{item.code}]</span>
+                              <span class="material-symbols-outlined text-error text-[18px]">{item.icon}</span>
+                            </div>
+                            <h3 class="font-headline-sm text-tech-data-lg text-on-surface font-semibold">{pick(item.title, lang)}</h3>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">{pick(item.text, lang)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    );
+
+                  if (block.type === 'quote')
+                    return (
+                      <blockquote class="my-space-lg p-space-xl rounded-2xl bg-gradient-to-r from-surface-container-high via-surface-container to-surface-container-high relative shadow-md">
+                        <span class="font-headline-lg text-display-hero text-primary/10 absolute -top-4 left-4 select-none leading-none" aria-hidden="true">“</span>
+                        <p class="font-headline-sm text-headline-sm text-on-surface italic leading-relaxed relative z-10 font-medium">{pick(block.text, lang)}</p>
+                        <div class="mt-space-md flex items-center gap-space-sm relative z-10">
+                          <span class="w-8 h-0.5 bg-tertiary-container" />
+                          <cite class="font-tech-data-sm text-tech-data-sm text-tertiary not-italic uppercase tracking-wider font-bold">
+                            {dict.site.name} — {dict.about.badge}
+                          </cite>
+                        </div>
+                      </blockquote>
+                    );
+
+                  if (block.type === 'steps')
+                    return (
+                      <ol class="space-y-space-sm pt-space-xs">
+                        {block.items.map((step, n) => (
+                          <li class="p-space-md rounded-xl bg-surface-container flex items-start gap-space-md">
+                            <span class="w-8 h-8 rounded-lg bg-surface-container-highest text-primary font-tech-data-sm text-tech-data-sm flex items-center justify-center shrink-0 font-bold">{pad(n + 1)}</span>
+                            <div>
+                              <h3 class="font-headline-sm text-tech-data-lg text-on-surface font-semibold uppercase">{pick(step.title, lang)}</h3>
+                              <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{pick(step.text, lang)}</p>
+                            </div>
+                          </li>
+                        ))}
+                      </ol>
+                    );
+
+                  if (block.type === 'compare')
+                    return (
+                      <div class="bg-surface-container rounded-2xl overflow-hidden shadow-lg p-space-md space-y-space-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-x-space-md gap-y-1 pb-2 font-tech-data-sm text-tech-data-sm">
+                          <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-surface-container-highest text-secondary-container font-semibold">VIEWPORT A/B</span>
+                            <span class="text-on-surface">{pick(block.title, lang)}</span>
+                          </div>
+                          <span class="text-outline text-[11px]">{block.sub}</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
+                          {[block.a, block.b].map((side, n) => (
+                            <div class="relative rounded-xl overflow-hidden">
+                              <img src={side.image} alt={pick(side.alt, lang)} loading="lazy" decoding="async" class="w-full h-64 object-cover" />
+                              <div class="absolute top-2 left-2 px-2.5 py-1 rounded-md bg-surface-container-lowest/85 backdrop-blur-sm font-tech-data-sm text-[10px] text-on-surface font-bold">{side.label}</div>
+                              <div
+                                class:list={[
+                                  'absolute bottom-2 px-2 py-0.5 rounded font-tech-data-sm text-[10px]',
+                                  n === 0 ? 'left-2 bg-secondary-container/20 text-secondary-container' : 'right-2 bg-primary-container/20 text-primary',
+                                ]}
+                              >
+                                {side.note}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <p class="pt-2 flex items-center gap-1.5 text-on-surface-variant font-tech-data-sm text-tech-data-sm">
+                          <span class="material-symbols-outlined text-[16px] text-secondary-container">tune</span>
+                          {pick(block.footnote, lang)}
+                        </p>
+                      </div>
+                    );
+
+                  return (
+                    <ul class="space-y-space-sm pt-space-xs">
+                      {block.items.map((item, n) => (
+                        <li class="p-space-md rounded-xl bg-surface-container-low flex items-start gap-space-md">
+                          <div class="w-6 h-6 rounded-full bg-secondary-container/20 text-secondary-container flex items-center justify-center shrink-0 mt-0.5">
+                            <span class="material-symbols-outlined text-[16px]">check</span>
+                          </div>
+                          <div>
+                            <h3 class="font-headline-sm text-tech-data-lg text-on-surface font-semibold">{n + 1}. {pick(item.title, lang)}</h3>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">{pick(item.text, lang)}</p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  );
+                })}
+              </section>
+            ))
+          ) : (
+            <div class="space-y-space-md">
+              <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">{desc}</p>
+              <p class="font-tech-data-sm text-tech-data-sm text-outline">{d.leadOnly}</p>
+            </div>
+          )
+        }
+
+        <!-- ТЕГИ -->
+        {
+          body && (
+            <div class="pt-space-lg flex flex-wrap items-center justify-between gap-space-md">
+              <div class="flex flex-wrap items-center gap-2 font-tech-data-sm text-tech-data-sm">
+                <span class="text-outline">{d.tags}</span>
+                {body.tags.map((tag) => <span class="px-2.5 py-1 rounded bg-surface-container text-on-surface">#{tag}</span>)}
+              </div>
+              <button
+                type="button"
+                data-favorite-toggle
+                aria-pressed="false"
+                class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors flex items-center gap-1.5 font-tech-data-sm text-tech-data-sm"
+              >
+                <span class="material-symbols-outlined text-[16px]">bookmark_border</span>
+                {d.save}
+              </button>
+            </div>
+          )
+        }
+
+        <!-- ОБ АВТОРЕ -->
+        <div class="p-space-lg md:p-space-xl rounded-2xl bg-surface-container shadow-md space-y-space-md">
+          <div class="flex items-center justify-between pb-space-xs font-label-caps text-label-caps text-primary tracking-widest uppercase">
+            <span>{d.aboutAuthor} {dict.site.name}</span>
+            <span class="text-secondary-container">{d.mentor}</span>
+          </div>
+          <div class="flex flex-col sm:flex-row items-start gap-space-lg">
+            <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-primary-container via-surface-container-high to-tertiary-container p-0.5 shrink-0 shadow-lg">
+              <div class="w-full h-full rounded-2xl bg-surface-container-lowest flex items-center justify-center font-headline-md text-headline-md text-primary font-bold">{initials}</div>
+            </div>
+            <div class="space-y-space-xs flex-1">
+              <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold uppercase">{dict.site.name}</h2>
+              <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">{dict.about.p1}</p>
+              <div class="pt-space-xs flex flex-wrap items-center gap-space-md font-tech-data-sm text-tech-data-sm">
+                <a href={SITE.artstation} target="_blank" rel="noopener noreferrer" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[15px]">deployed_code</span> ArtStation
+                </a>
+                <a href={SITE.cults} target="_blank" rel="noopener noreferrer" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[15px]">view_in_ar</span> 3DCult
+                </a>
+                <a href={SITE.youtube} target="_blank" rel="noopener noreferrer" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[15px]">play_circle</span> YouTube
+                </a>
+                <a href={SITE.discord} target="_blank" rel="noopener noreferrer" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[15px]">forum</span> Discord
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ПРИЗЫВ К МЕНТОРСТВУ -->
+        <div class="p-space-lg md:p-space-xl rounded-2xl bg-gradient-to-br from-surface-container-high via-surface-container to-surface-container-low relative overflow-hidden shadow-xl space-y-space-md">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-pulse"></span>
+            <span class="font-label-caps text-label-caps text-secondary-container tracking-wider uppercase">{d.cta.badge}</span>
+          </div>
+          <h2 class="font-headline-sm md:font-headline-md text-headline-sm md:text-headline-md text-on-surface font-bold uppercase tracking-tight">{d.cta.title}</h2>
+          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">{d.cta.text}</p>
+          <div class="flex flex-wrap items-center gap-space-md pt-space-xs">
+            <a
+              href={`${path(lang, 'mentoring')}#apply`}
+              class="inline-flex items-center justify-center px-space-xl py-3.5 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_rgba(160,120,255,0.4)] hover:shadow-[0_0_32px_rgba(255,87,34,0.55)] transition-all transform active:scale-95 font-bold"
+            >
+              {d.cta.apply}
+            </a>
+            <a href={path(lang, 'mentoring')} class="inline-flex items-center justify-center px-space-lg py-3.5 rounded-full bg-surface-container-highest hover:bg-surface-bright text-on-surface font-tech-data-sm text-tech-data-sm uppercase tracking-wide transition-colors">
+              {d.cta.tracks}
+            </a>
+          </div>
+          <ul class="pt-space-xs flex flex-wrap items-center gap-x-space-md gap-y-1 font-tech-data-sm text-[11px] text-outline">
+            {d.cta.bullets.map((b) => <li>• {b}</li>)}
+          </ul>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ПОХОЖИЕ СТАТЬИ -->
+  <section class={`${sectionClass} py-space-2xl`}>
+    <div class="flex items-end justify-between gap-space-md pb-space-sm mb-space-lg">
+      <div class="space-y-1">
+        <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">{d.related.kicker}</span>
+        <h2 class="font-headline-md text-headline-md text-on-surface font-bold uppercase tracking-tight">{d.related.title}</h2>
+      </div>
+      <a href={path(lang, 'blog')} class="hidden sm:inline-flex items-center gap-1.5 font-tech-data-sm text-tech-data-sm text-primary hover:text-tertiary transition-colors uppercase font-bold">
+        <span>{d.related.all}</span>
+        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+      </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+      {
+        related.map((item) => (
+          <a href={path(lang, `blog/${item.slug}`)} class="bg-surface-container rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
+            <div class="relative w-full aspect-[16/10] overflow-hidden bg-surface-container-lowest">
+              <img src={item.image} alt="" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div class="absolute top-3 left-3 px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-sm text-primary font-tech-data-sm text-[10px] uppercase">
+                {d.categories[item.category]} // {pick(item.topic, lang)}
+              </div>
+              <div class="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-sm text-on-surface-variant font-tech-data-sm text-[10px]">
+                {item.readMin} {d.minRead}
+              </div>
+            </div>
+            <div class="p-space-lg flex-1 flex flex-col justify-between gap-space-md">
+              <div class="space-y-space-xs">
+                <span class="font-tech-data-sm text-[11px] text-outline uppercase">{formatDate(item.date, lang, 'long')}</span>
+                <h3 class="font-headline-sm text-tech-data-lg text-on-surface font-bold uppercase leading-snug group-hover:text-primary transition-colors">{pick(item.title, lang)}</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">{pick(item.desc, lang)}</p>
+              </div>
+              <span class="pt-space-xs flex items-center gap-1.5 font-tech-data-sm text-tech-data-sm text-primary font-semibold uppercase group-hover:text-secondary-fixed transition-colors">
+                <span>{d.related.read}</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Полоса прогресса чтения и подсветка текущего пункта оглавления
+  const bar = document.getElementById('read-progress');
+  const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-section]'));
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc]'));
+
+  const onScroll = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    if (bar) bar.style.width = `${max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0}%`;
+    let current = sections[0]?.id;
+    sections.forEach((s) => {
+      if (s.getBoundingClientRect().top <= 160) current = s.id;
+    });
+    links.forEach((a) => a.setAttribute('aria-current', String(a.getAttribute('href') === `#${current}`)));
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Лайк (пока без сохранения)
+  const like = document.getElementById('like-btn');
+  const likeCount = document.getElementById('like-count');
+  like?.addEventListener('click', () => {
+    const on = like.getAttribute('aria-pressed') !== 'true';
+    like.setAttribute('aria-pressed', String(on));
+    if (likeCount) likeCount.textContent = String(Number(like.dataset.likes) + (on ? 1 : 0));
+  });
+
+  // Копирование ссылки
+  const share = document.getElementById('share-btn');
+  const shareLabel = document.getElementById('share-label');
+  share?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+    } catch {
+      return;
+    }
+    if (!shareLabel) return;
+    const original = shareLabel.textContent;
+    shareLabel.textContent = share.dataset.copied ?? '';
+    setTimeout(() => (shareLabel.textContent = original), 2000);
+  });
+
+  // Копирование спеки и цитаты
+  const copyButton = (btnId: string, labelId: string, attr: string) => {
+    const btn = document.getElementById(btnId);
+    const label = document.getElementById(labelId);
+    btn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset[attr] ?? '');
+      } catch {
+        return;
+      }
+      if (!label) return;
+      const original = label.textContent;
+      label.textContent = btn.dataset.copied ?? '';
+      setTimeout(() => (label.textContent = original), 2000);
+    });
+  };
+  copyButton('spec-btn', 'spec-label', 'spec');
+  copyButton('cite-btn', 'cite-label', 'cite');
+
+  // Сохранить в библиотеку (пока только визуально, дальше подключится FavoritesPanel)
+  document.querySelectorAll<HTMLButtonElement>('[data-favorite-toggle]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(on));
+      const icon = btn.querySelector<HTMLElement>('.material-symbols-outlined');
+      if (icon) icon.style.fontVariationSettings = on ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : '';
+    }),
+  );
+</script>
