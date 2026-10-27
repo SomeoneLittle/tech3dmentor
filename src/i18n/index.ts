@@ -48,6 +48,12 @@ export const tu = (lang: Lang): AccountDict => accountDictionaries[lang];
 /** Тексты окна входа / регистрации */
 export const tx = (lang: Lang): AuthDict => authDictionaries[lang];
 
+import { favEn, favRu, favUa, type FavDict } from './favorites';
+
+const favDictionaries: Record<Lang, FavDict> = { ru: favRu, ua: favUa, en: favEn };
+/** Тексты панели избранного */
+export const tf = (lang: Lang): FavDict => favDictionaries[lang];
+
 const mentoringDictionaries: Record<Lang, MentoringDict> = { ru: mentoringRu, ua: mentoringUa, en: mentoringEn };
 
 export const t = (lang: Lang): Dict => dictionaries[lang];

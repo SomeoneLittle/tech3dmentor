@@ -1,0 +1,295 @@
+---
+import { tf, path, pick, type Lang } from '../i18n';
+import { marketModels } from '../data/marketplace';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const f = tf(lang);
+
+// Пока избранное не хранится на сервере — для показа берём первые модели каталога.
+const items = marketModels.slice(0, 4);
+const counts = { models: items.length, works: 0, articles: 0 };
+const total = counts.models + counts.works + counts.articles;
+
+const tabs = [
+  { key: 'models', label: f.models, count: counts.models },
+  { key: 'works', label: f.works, count: counts.works },
+  { key: 'articles', label: f.articles, count: counts.articles },
+] as const;
+
+const empties = {
+  models: { cta: f.openMarketplace, href: path(lang, 'marketplace') },
+  works: { cta: f.openPortfolio, href: path(lang, 'portfolio') },
+  articles: { cta: f.openBlog, href: path(lang, 'blog') },
+};
+const arrow = 'M14 5l7 7m0 0l-7 7m7-7H3';
+const heart =
+  'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z';
+---
+
+<div id="favorites-panel" class="hidden fixed inset-0 z-[55]" data-fav-root>
+  <div class="absolute inset-0 bg-black/40 sm:bg-transparent" data-fav-close></div>
+  <div
+    role="dialog"
+    aria-label={f.title}
+    class="fav-box absolute top-[84px] right-3 sm:right-margin md:right-margin-desktop w-[calc(100vw-1.5rem)] sm:w-[380px] max-h-[calc(100vh-100px)] h-[560px] bg-surface rounded-2xl border border-outline-variant/40 shadow-2xl shadow-black/80 flex flex-col overflow-hidden"
+  >
+    <div class="h-[2px] w-full bg-gradient-to-r from-primary-container via-pink-500 to-amber-500 shrink-0"></div>
+
+    <div class="px-5 pt-4 pb-3 flex items-center justify-between border-b border-white/5 shrink-0">
+      <div class="flex items-center gap-2">
+        <h2 class="font-headline-md text-lg font-bold text-white tracking-tight">{f.title}</h2>
+        <span
+          data-fav-total
+          class:list={[
+            'px-1.5 py-0.5 rounded-full text-[10px] font-label-caps border font-semibold',
+            total ? 'bg-primary-container/20 text-primary border-primary-container/30' : 'bg-white/5 text-outline border-white/10',
+          ]}>{total}</span
+        >
+      </div>
+      <button type="button" data-fav-close aria-label={f.close} class="w-7 h-7 rounded-lg flex items-center justify-center text-outline hover:text-white hover:bg-white/10 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+
+    <div class="px-5 pt-3 pb-2 border-b border-white/5 bg-surface-container-low/50 shrink-0">
+      <div class="flex items-center gap-1 bg-surface-container-lowest p-1 rounded-xl border border-white/5 font-label-caps text-[11px]" role="tablist" aria-label={f.categories}>
+        {
+          tabs.map((tab, i) => (
+            <button
+              type="button"
+              role="tab"
+              data-fav-tab={tab.key}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              class="fav-tab flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all"
+            >
+              <span>{tab.label}</span>
+              <span class="fav-tab-count px-1 rounded text-[9px]">{tab.count}</span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Модели: заполненное состояние -->
+    <div data-fav-pane="models" class="flex-1 overflow-y-auto fav-scroll px-4 py-3 space-y-2.5">
+      {
+        items.map((model) => {
+          const title = pick(model.title, lang);
+          return (
+            <article class="p-2.5 rounded-xl bg-[#16161c] border border-white/5 hover:border-primary-container/30 transition-all group flex items-center gap-3">
+              <a href={path(lang, `marketplace/${model.slug}`)} class="w-14 h-14 rounded-lg bg-surface-container-lowest border border-white/10 shrink-0 relative overflow-hidden block" aria-label={title}>
+                <img src={model.image} alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                <span class="absolute bottom-1 right-1 text-[8px] font-label-caps text-gray-300 bg-black/70 px-1 rounded">{model.formats[0].replace('.', '')}</span>
+              </a>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-1">
+                  <a href={path(lang, `marketplace/${model.slug}`)} class="font-headline-md text-xs font-semibold text-white truncate group-hover:text-primary transition-colors">
+                    {title}
+                  </a>
+                  <button type="button" data-fav-remove aria-label={`${f.remove}: ${title}`} class="text-pink-500 hover:text-pink-400 transition-colors p-1 -mr-1">
+                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex items-center justify-between mt-1.5">
+                  <span class="font-label-caps text-xs font-bold text-secondary-container">${model.price} USD</span>
+                  <a
+                    href={model.buyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="font-label-caps text-[10px] font-medium px-2 py-0.5 rounded bg-white/5 hover:bg-primary-container/20 text-gray-300 hover:text-primary border border-white/10 hover:border-primary-container/30 transition-all"
+                  >
+                    {f.buy} ↗
+                  </a>
+                </div>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+
+    <!-- Работы и статьи: пустое состояние -->
+    {
+      (['models', 'works', 'articles'] as const).map((key) => (
+        <div data-fav-empty={key} class="hidden flex-1 px-6 py-6 flex-col items-center justify-center text-center">
+          <div class="relative w-20 h-20 mb-4 flex items-center justify-center">
+            <div class="fav-spin absolute inset-0 rounded-full border border-dashed border-white/10" />
+            <div class="absolute inset-2 rounded-full border border-primary-container/20 bg-primary-container/5" />
+            <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary-container/40" />
+            <div class="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary-container/40" />
+            <div class="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary-container/40" />
+            <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary-container/40" />
+            <svg class="w-8 h-8 text-outline relative z-10" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d={heart} />
+            </svg>
+          </div>
+          <h3 class="font-headline-md text-base font-bold text-white tracking-tight">{f.emptyTitle}</h3>
+          <p class="text-xs text-outline mt-1.5 max-w-[240px] leading-relaxed">{f.emptyText}</p>
+          <div class="mt-4 mb-5 font-label-caps text-[10px] text-outline/70 tracking-wider">{f.emptyStatus}</div>
+          <a
+            href={empties[key].href}
+            class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-br from-primary-container to-pink-500 text-white font-headline-md font-semibold text-xs tracking-wide shadow-lg shadow-primary-container/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
+          >
+            <span>{empties[key].cta}</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d={arrow} /></svg>
+          </a>
+        </div>
+      ))
+    }
+
+    <footer data-fav-sync class="p-3.5 bg-surface-container-low border-t border-white/5 flex items-center justify-between gap-3 text-xs shrink-0">
+      <div class="flex items-center gap-2 text-outline text-[11px] min-w-0">
+        <svg class="w-3.5 h-3.5 text-primary-container shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+        <span class="truncate">{f.syncHint}</span>
+      </div>
+      <button type="button" data-open-auth class="font-label-caps text-[11px] font-semibold text-primary-container hover:text-pink-400 transition-colors shrink-0">
+        {f.signIn} →
+      </button>
+    </footer>
+  </div>
+</div>
+
+<style is:global>
+  #favorites-panel .fav-box {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+    transform-origin: top right;
+    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #favorites-panel.fav-open .fav-box {
+    opacity: 1;
+    transform: none;
+  }
+  .fav-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+  .fav-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 9999px;
+  }
+  .fav-scroll::-webkit-scrollbar-thumb {
+    background: #3a3a46;
+    border-radius: 9999px;
+  }
+  .fav-scroll::-webkit-scrollbar-thumb:hover {
+    background: #a078ff;
+  }
+  .fav-tab {
+    color: #958ea0;
+  }
+  .fav-tab:hover {
+    color: #e4e1e7;
+  }
+  .fav-tab .fav-tab-count {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .fav-tab[aria-selected='true'] {
+    background: #131317;
+    color: #fff;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  .fav-tab[aria-selected='true'] .fav-tab-count {
+    background: rgba(160, 120, 255, 0.3);
+    color: #d0bcff;
+  }
+  .fav-spin {
+    animation: fav-spin 20s linear infinite;
+  }
+  @keyframes fav-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #favorites-panel .fav-box {
+      transition: none;
+    }
+    .fav-spin {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { isLoggedIn } from '../scripts/auth';
+
+  const root = document.getElementById('favorites-panel') as HTMLElement;
+  const tabs = root.querySelectorAll<HTMLElement>('[data-fav-tab]');
+  const lists = root.querySelectorAll<HTMLElement>('[data-fav-pane]');
+  const empties = root.querySelectorAll<HTMLElement>('[data-fav-empty]');
+  const total = root.querySelector<HTMLElement>('[data-fav-total]')!;
+  const sync = root.querySelector<HTMLElement>('[data-fav-sync]')!;
+  let current = 'models';
+
+  const countOf = (key: string) => root.querySelector(`[data-fav-pane="${key}"]`)?.querySelectorAll('article').length ?? 0;
+
+  function setTab(key: string) {
+    current = key;
+    tabs.forEach((tab) => tab.setAttribute('aria-selected', String(tab.dataset.favTab === key)));
+    const filled = countOf(key) > 0;
+    lists.forEach((list) => list.classList.toggle('hidden', list.dataset.favPane !== key || !filled));
+    empties.forEach((el) => {
+      const on = el.dataset.favEmpty === key && !filled;
+      el.classList.toggle('hidden', !on);
+      el.classList.toggle('flex', on);
+    });
+  }
+
+  function refreshCounts() {
+    const counts: Record<string, number> = {};
+    tabs.forEach((tab) => (counts[tab.dataset.favTab!] = countOf(tab.dataset.favTab!)));
+    tabs.forEach((tab) => (tab.querySelector('.fav-tab-count')!.textContent = String(counts[tab.dataset.favTab!] ?? 0)));
+    const sum = Object.values(counts).reduce((a, b) => a + b, 0);
+    total.textContent = String(sum);
+    total.className = `px-1.5 py-0.5 rounded-full text-[10px] font-label-caps border font-semibold ${
+      sum ? 'bg-primary-container/20 text-primary border-primary-container/30' : 'bg-white/5 text-outline border-white/10'
+    }`;
+  }
+
+  function open() {
+    sync.classList.toggle('hidden', isLoggedIn());
+    root.classList.remove('hidden');
+    root.getBoundingClientRect();
+    root.classList.add('fav-open');
+  }
+
+  function close() {
+    if (root.classList.contains('hidden')) return;
+    root.classList.remove('fav-open');
+    setTimeout(() => {
+      if (!root.classList.contains('fav-open')) root.classList.add('hidden');
+    }, 250);
+  }
+
+  tabs.forEach((tab) => tab.addEventListener('click', () => setTab(tab.dataset.favTab!)));
+  root.querySelectorAll('[data-fav-close]').forEach((el) => el.addEventListener('click', close));
+  root.querySelectorAll('[data-open-auth]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && close());
+
+  // Убрать карточку из списка (пока только на странице; хранение появится вместе с аккаунтом)
+  root.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('[data-fav-remove]');
+    if (!btn) return;
+    btn.closest('article')?.remove();
+    refreshCounts();
+    setTab(current);
+  });
+
+  document.addEventListener('click', (e) => {
+    const trigger = (e.target as HTMLElement).closest('[data-open-favorites]');
+    if (!trigger) return;
+    e.preventDefault();
+    root.classList.contains('fav-open') ? close() : open();
+  });
+  document.addEventListener('favorites:open', open);
+
+  setTab('models');
+</script>
