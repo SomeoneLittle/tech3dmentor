@@ -1,0 +1,104 @@
+---
+import { pick, tk, t, path, type Lang } from '../i18n';
+import { polyTier, type MarketModel } from '../data/marketplace';
+
+interface Props {
+  model: MarketModel;
+  lang: Lang;
+  /** Позиция в списке (для сортировки «Новинки») */
+  index: number;
+}
+
+const { model, lang, index } = Astro.props;
+const d = tk(lang).list;
+const dict = t(lang);
+const href = path(lang, `marketplace/${model.slug}`);
+const title = pick(model.title, lang);
+const category = d.filters.category[model.category];
+const featureTone = { green: 'text-secondary-container', primary: 'text-primary' };
+---
+
+<article
+  data-model-card
+  data-index={index}
+  data-category={model.category}
+  data-formats={model.formats.join(' ').toLowerCase()}
+  data-tier={polyTier(model.polys)}
+  data-price={model.price}
+  data-poly={model.polys}
+  data-likes={model.likes}
+  data-tags={model.tags.join(' ').toLowerCase()}
+  data-search={`${title} ${category} ${pick(model.sub, lang)} ${model.formats.join(' ')} ${model.tags.map((x) => '#' + x).join(' ')}`.toLowerCase()}
+  class="relative bg-surface-container rounded-xl overflow-hidden shadow-lg flex flex-col group/card hover:shadow-2xl transition-all [[data-view=list]_&]:flex-row"
+>
+  <div class="relative w-full aspect-video bg-surface-container-lowest overflow-hidden [[data-view=list]_&]:w-56 sm:[[data-view=list]_&]:w-72 [[data-view=list]_&]:shrink-0 [[data-view=list]_&]:aspect-auto">
+    <a href={href} class="block w-full h-full" aria-label={title}>
+      <img
+        src={model.image}
+        alt={title}
+        loading={index < 3 ? 'eager' : 'lazy'}
+        decoding="async"
+        class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500"
+      />
+    </a>
+    {
+      model.isNew ? (
+        <div class="absolute top-2 left-2 bg-tertiary-container text-on-tertiary px-2 py-0.5 rounded-full font-label-caps text-label-caps font-bold shadow-md pointer-events-none">{d.newBadge} // V1.2</div>
+      ) : (
+        model.badge && (
+          <div class="absolute top-2 left-2 flex items-center gap-1.5 bg-surface/90 px-2 py-0.5 rounded-full backdrop-blur-md pointer-events-none">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span>
+            <span class="font-tech-data-sm text-[10px] text-on-surface">{model.badge}</span>
+          </div>
+        )
+      )
+    }
+    <div class="absolute top-2 right-2 flex items-center gap-1">
+      <a href={href} aria-label={d.rotate} class="p-1 rounded-full bg-surface-container-high/80 text-on-surface hover:text-primary transition-colors flex">
+        <span class="material-symbols-outlined text-[16px]">360</span>
+      </a>
+      <button
+        type="button"
+        data-favorite-toggle
+        data-favorite={model.slug}
+        aria-pressed="false"
+        aria-label={d.favorite}
+        class="p-1 rounded-full bg-surface-container-high/80 text-on-surface hover:text-tertiary-container transition-colors flex"
+      >
+        <span class="material-symbols-outlined text-[16px]">favorite</span>
+      </button>
+    </div>
+    <div class:list={['absolute bottom-2 left-2 bg-surface/85 backdrop-blur px-2 py-0.5 rounded font-label-caps text-label-caps pointer-events-none', featureTone[model.featureTone]]}>
+      {model.feature}
+    </div>
+  </div>
+
+  <div class="p-space-md flex flex-col flex-1 justify-between gap-space-sm min-w-0">
+    <div class="flex flex-col gap-1">
+      <div class="flex items-center justify-between gap-2 font-tech-data-sm text-tech-data-sm text-outline uppercase">
+        <span class="truncate">{category} // {pick(model.sub, lang).split(' // ')[1] ?? pick(model.sub, lang)}</span>
+        <span class:list={['shrink-0', model.polyHeavy ? 'text-tertiary-container' : 'text-secondary-container']}>{d.poly} {model.polyLabel}</span>
+      </div>
+      <h3 class="font-headline-sm text-base text-on-surface font-bold group-hover/card:text-primary transition-colors">
+        <a href={href}>{title}</a>
+      </h3>
+      <p class="hidden [[data-view=list]_&]:block font-body-sm text-body-sm text-on-surface-variant">{pick(model.desc, lang)}</p>
+      <div class="flex flex-wrap gap-1 mt-1">
+        {[...model.formats, ...model.extras].map((chip) => <span class="px-1.5 py-0.5 rounded bg-surface-container-low text-on-surface-variant font-tech-data-sm text-[10px]">{chip}</span>)}
+      </div>
+    </div>
+    <div class="pt-space-xs flex items-center justify-between">
+      <span class="font-tech-data-lg text-lg text-on-surface font-bold">${model.price}</span>
+      <a
+        href={model.buyUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${dict.marketplace.on}: ${title}`}
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high hover:bg-gradient-to-r hover:from-primary-container hover:to-tertiary-container text-on-surface font-tech-data-sm text-tech-data-sm uppercase transition-all shadow-sm"
+      >
+        <span>{d.store}</span>
+        <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+      </a>
+    </div>
+  </div>
+</article>

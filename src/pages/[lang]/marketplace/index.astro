@@ -1,0 +1,434 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import MarketCard from '../../../components/MarketCard.astro';
+import SubscribeBlock from '../../../components/SubscribeBlock.astro';
+import { locales, t, tk, path, type Lang } from '../../../i18n';
+import { SITE } from '../../../config';
+import { marketModels, marketTags, marketFormats, priceBounds, type MarketCategory, type PolyTier } from '../../../data/marketplace';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const dict = t(lang);
+const d = tk(lang).list;
+const f = d.filters;
+const categories = Object.keys(f.category) as MarketCategory[];
+const tiers: PolyTier[] = ['low', 'mid', 'high'];
+const countBy = (category: MarketCategory) => marketModels.filter((m) => m.category === category).length;
+const sortOptions = Object.entries(d.sort) as [string, string][];
+const PAGE_SIZE = 12;
+const sectionClass = 'w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const labelClass = 'font-label-caps text-label-caps text-outline uppercase tracking-wider';
+const optionClass = 'flex items-center gap-2 p-2 rounded bg-surface-container-low hover:bg-surface-container-high cursor-pointer font-tech-data-sm text-tech-data-sm text-on-surface';
+---
+
+<BaseLayout lang={lang} page="marketplace" title={`${dict.nav.marketplace} — ${dict.site.name}`} description={d.sub} image={marketModels[0].image}>
+  <div class={`${sectionClass} py-space-xl flex flex-col gap-space-xl relative`}>
+    <!-- 1. ХЛЕБНЫЕ КРОШКИ -->
+    <Breadcrumbs items={[{ label: dict.common.home, href: path(lang) }, { label: d.archive }, { label: dict.nav.marketplace }]}>
+      <div class="flex flex-wrap items-center gap-space-sm">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container font-tech-data-sm text-tech-data-sm text-secondary-container shadow-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span>
+          [CATALOG_SYNC: 3DCULTS_EXTERNAL]
+        </span>
+        <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container font-tech-data-sm text-tech-data-sm text-on-surface-variant">
+          <span class="text-primary-container">QUAD_TOPOLOGY:</span>
+          PRODUCTION_READY
+        </span>
+      </div>
+    </Breadcrumbs>
+
+    <!-- 2. ЗАГОЛОВОК -->
+    <header class="flex flex-col gap-space-xs">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="font-tech-data-sm text-tech-data-sm text-secondary-container uppercase tracking-widest px-2 py-0.5 rounded bg-surface-container-high">CAD_REPO // V4.18</span>
+        <span class="font-tech-data-sm text-tech-data-sm text-outline">FPS: 60.0 • ACEScg ACTIVE</span>
+      </div>
+      <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg tracking-tight uppercase text-on-surface">
+        {d.titleBefore}<span class="bg-gradient-to-r from-primary-container via-primary to-tertiary-container bg-clip-text text-transparent">{d.titleAccent}</span>
+      </h1>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">{d.sub}</p>
+    </header>
+
+    <!-- 3. ПЛАШКА: ПОКА ПРОДАЖИ НА 3DCULT -->
+    <section class="relative overflow-hidden rounded-xl bg-surface-container p-space-md sm:p-space-lg shadow-xl">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-space-lg relative z-10">
+        <div class="flex items-start gap-space-md max-w-2xl">
+          <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 shadow-inner">
+            <span class="material-symbols-outlined text-secondary-container text-2xl animate-pulse">sync_saved_locally</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="font-tech-data-sm text-tech-data-sm text-secondary-container font-bold uppercase tracking-wider">{d.notice.tag}</span>
+            <p class="font-body-md text-body-md text-on-surface">
+              {d.notice.before} <a href={SITE.cults} target="_blank" rel="noopener noreferrer" class="text-primary font-medium hover:underline">{d.notice.store}</a>{d.notice.after}
+            </p>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-space-sm w-full lg:w-auto shrink-0">
+          <form data-subscribe class="flex items-center bg-surface-container-lowest rounded-full p-1 shadow-inner focus-within:ring-2 focus-within:ring-primary-container">
+            <span class="material-symbols-outlined text-outline text-[18px] pl-3 pr-1">mail</span>
+            <input type="email" required placeholder={d.notice.email} aria-label={d.notice.email} class="bg-transparent text-on-surface placeholder:text-outline font-tech-data-sm text-tech-data-sm px-2 py-1.5 focus:outline-none w-full sm:w-56 min-w-0" />
+            <button type="submit" class="px-4 py-2 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-tech-data-sm uppercase tracking-wider shadow-md active:scale-95 shrink-0">{d.notice.alert}</button>
+          </form>
+          <p data-subscribe-thanks class="hidden flex items-center gap-1.5 text-secondary-container font-tech-data-sm text-tech-data-sm">
+            <span class="material-symbols-outlined text-[14px]">check_circle</span>
+            {d.notice.thanks}
+          </p>
+          <a href={SITE.cults} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-space-md py-2.5 rounded-full bg-surface-container-high hover:bg-surface-variant text-on-surface font-tech-data-sm text-tech-data-sm uppercase tracking-wider transition-all shadow-md active:scale-95 shrink-0">
+            <span>{d.notice.visit}</span>
+            <span class="material-symbols-outlined text-sm text-secondary-container">open_in_new</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. ПАНЕЛЬ: ПОИСК, СЧЁТЧИК, СОРТИРОВКА -->
+    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-space-md bg-surface-container-low p-space-sm rounded-xl shadow-md">
+      <label class="flex items-center gap-2 bg-surface-container-lowest px-space-md py-2 rounded-lg flex-1 md:max-w-md shadow-inner">
+        <span class="material-symbols-outlined text-outline text-lg">search</span>
+        <input id="market-search" type="search" placeholder={d.search} aria-label={d.search} class="bg-transparent text-on-surface placeholder:text-outline font-tech-data-sm text-tech-data-sm w-full focus:outline-none" />
+        <span class="hidden sm:inline font-label-caps text-label-caps text-outline bg-surface-container px-1.5 py-0.5 rounded">CTRL+K</span>
+      </label>
+      <div class="hidden xl:flex items-center gap-2 px-space-md">
+        <span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+        <span class="font-tech-data-sm text-tech-data-sm text-on-surface-variant">
+          {d.showingBefore} <strong id="market-shown" class="text-on-surface">{Math.min(PAGE_SIZE, marketModels.length)}</strong> {d.showingMid} <span id="market-total">{marketModels.length}</span> {d.showingAfter}
+        </span>
+      </div>
+      <div class="flex items-center justify-between md:justify-end gap-space-sm shrink-0">
+        <label class="flex items-center gap-2 bg-surface-container-lowest px-3 py-1.5 rounded-lg shadow-inner">
+          <span class="material-symbols-outlined text-outline text-base">swap_vert</span>
+          <span class="font-tech-data-sm text-tech-data-sm text-outline uppercase hidden sm:inline">{d.sortLabel}</span>
+          <select id="market-sort" class="bg-transparent font-tech-data-sm text-tech-data-sm text-on-surface focus:outline-none cursor-pointer">
+            {sortOptions.map(([value, label]) => <option class="bg-surface-container-high" value={value}>{label}</option>)}
+          </select>
+        </label>
+        <div id="market-view" class="flex items-center bg-surface-container-lowest rounded-lg p-1 shadow-inner">
+          <button type="button" data-view="grid" aria-pressed="true" title={d.viewGrid} aria-label={d.viewGrid} class="p-1.5 rounded text-outline hover:text-on-surface transition-colors aria-pressed:bg-surface-variant aria-pressed:text-primary aria-pressed:shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">grid_view</span>
+          </button>
+          <button type="button" data-view="list" aria-pressed="false" title={d.viewList} aria-label={d.viewList} class="p-1.5 rounded text-outline hover:text-on-surface transition-colors aria-pressed:bg-surface-variant aria-pressed:text-primary aria-pressed:shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">view_list</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. ФИЛЬТРЫ + КАТАЛОГ -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
+      <aside id="market-filters" class="lg:col-span-3 lg:sticky lg:top-24">
+        <div class="bg-surface-container rounded-xl p-space-md flex flex-col gap-space-md shadow-lg">
+          <div class="flex items-center justify-between pb-space-xs">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-base">tune</span>
+              <span class="font-tech-data-lg text-tech-data-lg uppercase font-bold text-on-surface">{f.title}</span>
+            </div>
+            <button id="filters-reset" type="button" class="font-tech-data-sm text-tech-data-sm text-secondary-container hover:underline uppercase transition-all">{f.reset}</button>
+          </div>
+
+          <fieldset class="flex flex-col gap-2 pt-2">
+            <legend class={`${labelClass} mb-2`}>{f.categories}</legend>
+            <div class="flex flex-col gap-1.5">
+              {
+                categories.map((key) => (
+                  <label class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low hover:bg-surface-container-high cursor-pointer transition-colors group">
+                    <span class="flex items-center gap-2">
+                      <input type="checkbox" data-filter-category value={key} class="rounded accent-primary-container w-4 h-4" />
+                      <span class="font-tech-data-sm text-tech-data-sm text-on-surface group-hover:text-primary transition-colors">{f.category[key]}</span>
+                    </span>
+                    <span class="font-tech-data-sm text-tech-data-sm text-outline">{String(countBy(key)).padStart(2, '0')}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <fieldset class="flex flex-col gap-2 pt-2">
+            <legend class={`${labelClass} mb-2`}>{f.formats}</legend>
+            <div class="grid grid-cols-2 gap-1.5">
+              {
+                marketFormats.map((format) => (
+                  <label class={optionClass}>
+                    <input type="checkbox" data-filter-format value={format.toLowerCase()} class="accent-primary-container" />
+                    {format}
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <div class="flex flex-col gap-2 pt-2">
+            <div class="flex items-center justify-between">
+              <span class={labelClass}>{f.density}</span>
+              <span id="tier-state" class="font-tech-data-sm text-tech-data-sm text-primary">{f.allTiers}</span>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              {
+                tiers.map((tier) => (
+                  <button
+                    type="button"
+                    data-filter-tier={tier}
+                    aria-pressed="false"
+                    class="w-full text-left px-2.5 py-1.5 rounded-lg bg-surface-container-low text-on-surface hover:bg-surface-container-high font-tech-data-sm text-tech-data-sm flex items-center justify-between transition-colors aria-pressed:bg-surface-container-high aria-pressed:text-primary"
+                  >
+                    <span>{f.tier[tier]}</span>
+                    <span class="tier-dot w-2 h-2 rounded-full bg-transparent"></span>
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2 pt-2">
+            <div class="flex items-center justify-between">
+              <span class={labelClass}>{f.price}</span>
+              <span id="price-state" class="font-tech-data-sm text-tech-data-sm text-secondary-container">${priceBounds.min} – ${priceBounds.max}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="bg-surface-container-lowest px-2 py-1 rounded flex-1 flex items-center justify-between gap-1">
+                <span class="font-tech-data-sm text-[10px] text-outline">{f.min}</span>
+                <input id="price-min" type="number" min={priceBounds.min} max={priceBounds.max} value={priceBounds.min} class="w-12 bg-transparent text-right font-tech-data-sm text-tech-data-sm text-on-surface focus:outline-none" />
+              </label>
+              <span class="text-outline">-</span>
+              <label class="bg-surface-container-lowest px-2 py-1 rounded flex-1 flex items-center justify-between gap-1">
+                <span class="font-tech-data-sm text-[10px] text-outline">{f.max}</span>
+                <input id="price-max" type="number" min={priceBounds.min} max={priceBounds.max} value={priceBounds.max} class="w-12 bg-transparent text-right font-tech-data-sm text-tech-data-sm text-on-surface focus:outline-none" />
+              </label>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2 pt-2">
+            <span class={labelClass}>{f.tags}</span>
+            <div class="flex flex-wrap gap-1.5">
+              {
+                marketTags.map((tag) => (
+                  <button
+                    type="button"
+                    data-filter-tag={tag.toLowerCase()}
+                    aria-pressed="false"
+                    class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant font-tech-data-sm text-[11px] hover:bg-surface-variant hover:text-on-surface transition-colors aria-pressed:bg-primary aria-pressed:text-on-primary"
+                  >
+                    #{tag}
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="lg:col-span-9 flex flex-col gap-space-lg">
+        <div
+          id="market-grid"
+          data-view="grid"
+          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-space-md data-[view=list]:!grid-cols-1"
+        >
+          {marketModels.map((model, i) => <MarketCard model={model} lang={lang} index={i} />)}
+        </div>
+        <p id="market-empty" class="hidden py-space-2xl text-center font-tech-data-sm text-tech-data-sm text-outline">{d.empty}</p>
+
+        <!-- ПАГИНАЦИЯ -->
+        <nav id="market-pager" aria-label="Pagination" class="flex flex-col sm:flex-row items-center justify-between gap-space-md bg-surface-container-low px-space-md py-space-sm rounded-xl shadow-md">
+          <div id="pager-buttons" class="flex flex-wrap items-center gap-1" data-prev={d.prev} data-next={d.next}></div>
+          <div class="flex items-center gap-2">
+            <label for="pager-jump" class="font-tech-data-sm text-tech-data-sm text-outline uppercase">{d.jump}</label>
+            <input id="pager-jump" type="number" min="1" value="1" class="w-12 bg-surface-container-lowest text-center py-1 rounded font-tech-data-sm text-tech-data-sm text-on-surface focus:outline-none" />
+            <span class="font-tech-data-sm text-tech-data-sm text-outline">// <span id="pager-total">1</span> {d.totalPages}</span>
+          </div>
+        </nav>
+      </section>
+    </div>
+
+    <!-- 6. ПОДПИСКА НА ЗАПУСК МАГАЗИНА -->
+    <SubscribeBlock lang={lang} variant="page" />
+  </div>
+</BaseLayout>
+
+<script>
+  const PAGE = 12;
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T | null;
+  const grid = $('market-grid')!;
+  const cards = Array.from(grid.querySelectorAll<HTMLElement>('[data-model-card]'));
+  const state = {
+    q: '',
+    sort: 'popular',
+    categories: new Set<string>(),
+    formats: new Set<string>(),
+    tiers: new Set<string>(),
+    tags: new Set<string>(),
+    min: 0,
+    max: Infinity,
+    page: 1,
+  };
+  const priceMin = $<HTMLInputElement>('price-min')!;
+  const priceMax = $<HTMLInputElement>('price-max')!;
+  const bounds = { min: Number(priceMin.min), max: Number(priceMax.max) };
+  state.min = bounds.min;
+  state.max = bounds.max;
+
+  const sortKey = (card: HTMLElement): number => {
+    if (state.sort === 'newest') return Number(card.dataset.index);
+    if (state.sort === 'priceAsc') return Number(card.dataset.price);
+    if (state.sort === 'priceDesc') return -Number(card.dataset.price);
+    if (state.sort === 'poly') return -Number(card.dataset.poly);
+    return -Number(card.dataset.likes);
+  };
+  const hasAll = (haystack: string | undefined, wanted: Set<string>) => {
+    const words = (haystack ?? '').split(' ');
+    return [...wanted].every((w) => words.includes(w));
+  };
+  const matches = (c: HTMLElement) =>
+    (!state.q || (c.dataset.search ?? '').includes(state.q)) &&
+    (!state.categories.size || state.categories.has(c.dataset.category ?? '')) &&
+    (!state.formats.size || [...state.formats].some((f) => (c.dataset.formats ?? '').split(' ').includes(f))) &&
+    (!state.tiers.size || state.tiers.has(c.dataset.tier ?? '')) &&
+    hasAll(c.dataset.tags, state.tags) &&
+    Number(c.dataset.price) >= state.min &&
+    Number(c.dataset.price) <= state.max;
+
+  const pager = $('pager-buttons')!;
+  const btnBase = 'rounded font-tech-data-sm text-tech-data-sm transition-colors';
+  const pageBtn = (label: string, page: number, opts: { active?: boolean; disabled?: boolean; wide?: boolean } = {}) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = label;
+    b.disabled = !!opts.disabled;
+    b.className = `${btnBase} ${opts.wide ? 'px-3 py-1.5' : 'w-8 h-8'} ${
+      opts.active ? 'bg-primary-container text-on-primary-container font-bold shadow-md' : opts.disabled ? 'bg-surface-container text-outline cursor-not-allowed' : 'bg-surface-container hover:bg-surface-variant text-on-surface'
+    }`;
+    if (opts.active) b.setAttribute('aria-current', 'page');
+    b.addEventListener('click', () => {
+      state.page = page;
+      render();
+      grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    return b;
+  };
+
+  const render = () => {
+    const sorted = [...cards].sort((a, b) => sortKey(a) - sortKey(b));
+    sorted.forEach((c, i) => (c.style.order = String(i)));
+    const found = sorted.filter(matches);
+    const pages = Math.max(1, Math.ceil(found.length / PAGE));
+    state.page = Math.min(state.page, pages);
+    const from = (state.page - 1) * PAGE;
+    cards.forEach((c) => c.classList.add('hidden'));
+    found.slice(from, from + PAGE).forEach((c) => c.classList.remove('hidden'));
+
+    $('market-shown')!.textContent = String(Math.min(PAGE, found.length - from));
+    $('market-total')!.textContent = String(found.length);
+    $('market-empty')!.classList.toggle('hidden', found.length > 0);
+    $('market-pager')!.classList.toggle('hidden', found.length === 0);
+    $('pager-total')!.textContent = String(pages);
+    ($('pager-jump') as HTMLInputElement).value = String(state.page);
+    ($('pager-jump') as HTMLInputElement).max = String(pages);
+
+    pager.replaceChildren(
+      pageBtn(pager.dataset.prev ?? '<', state.page - 1, { disabled: state.page === 1, wide: true }),
+      ...Array.from({ length: pages }, (_, i) => pageBtn(String(i + 1), i + 1, { active: i + 1 === state.page })),
+      pageBtn(pager.dataset.next ?? '>', state.page + 1, { disabled: state.page === pages, wide: true }),
+    );
+
+    const tierState = $('tier-state')!;
+    const tierLabels = [...document.querySelectorAll<HTMLButtonElement>('[data-filter-tier][aria-pressed=true] span:first-child')].map((s) => s.textContent);
+    tierState.textContent = tierLabels.length ? String(tierLabels.length) : (tierState.dataset.all ?? tierState.textContent);
+    $('price-state')!.textContent = `$${state.min} – $${state.max}`;
+  };
+  $('tier-state')!.dataset.all = $('tier-state')!.textContent ?? '';
+
+  const reset = () => {
+    state.categories.clear();
+    state.formats.clear();
+    state.tiers.clear();
+    state.tags.clear();
+    state.min = bounds.min;
+    state.max = bounds.max;
+    state.q = '';
+    state.page = 1;
+    document.querySelectorAll<HTMLInputElement>('#market-filters input[type=checkbox]').forEach((i) => (i.checked = false));
+    document.querySelectorAll<HTMLButtonElement>('[data-filter-tier], [data-filter-tag]').forEach((b) => {
+      b.setAttribute('aria-pressed', 'false');
+      b.querySelector('.tier-dot')?.classList.replace('bg-secondary-container', 'bg-transparent');
+    });
+    priceMin.value = String(bounds.min);
+    priceMax.value = String(bounds.max);
+    ($('market-search') as HTMLInputElement).value = '';
+    render();
+  };
+
+  const toggleSet = (set: Set<string>, value: string, on: boolean) => {
+    if (on) set.add(value);
+    else set.delete(value);
+    state.page = 1;
+    render();
+  };
+  document.querySelectorAll<HTMLInputElement>('[data-filter-category]').forEach((i) => i.addEventListener('change', () => toggleSet(state.categories, i.value, i.checked)));
+  document.querySelectorAll<HTMLInputElement>('[data-filter-format]').forEach((i) => i.addEventListener('change', () => toggleSet(state.formats, i.value, i.checked)));
+  const pressButtons = (selector: string, attr: string, set: Set<string>) =>
+    document.querySelectorAll<HTMLButtonElement>(selector).forEach((b) =>
+      b.addEventListener('click', () => {
+        const on = b.getAttribute('aria-pressed') !== 'true';
+        b.setAttribute('aria-pressed', String(on));
+        const dot = b.querySelector('.tier-dot');
+        dot?.classList.toggle('bg-secondary-container', on);
+        dot?.classList.toggle('bg-transparent', !on);
+        toggleSet(set, b.getAttribute(attr) ?? '', on);
+      }),
+    );
+  pressButtons('[data-filter-tier]', 'data-filter-tier', state.tiers);
+  pressButtons('[data-filter-tag]', 'data-filter-tag', state.tags);
+
+  const readPrice = () => {
+    state.min = priceMin.value === '' ? bounds.min : Number(priceMin.value);
+    state.max = priceMax.value === '' ? bounds.max : Number(priceMax.value);
+    state.page = 1;
+    render();
+  };
+  priceMin.addEventListener('input', readPrice);
+  priceMax.addEventListener('input', readPrice);
+
+  const search = $<HTMLInputElement>('market-search')!;
+  search.addEventListener('input', () => {
+    state.q = search.value.trim().toLowerCase();
+    state.page = 1;
+    render();
+  });
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      search.focus();
+    }
+  });
+  $<HTMLSelectElement>('market-sort')!.addEventListener('change', (e) => {
+    state.sort = (e.target as HTMLSelectElement).value;
+    render();
+  });
+  $('filters-reset')!.addEventListener('click', reset);
+  $<HTMLInputElement>('pager-jump')!.addEventListener('change', (e) => {
+    state.page = Math.max(1, Number((e.target as HTMLInputElement).value) || 1);
+    render();
+  });
+
+  const views = document.querySelectorAll<HTMLButtonElement>('#market-view [data-view]');
+  views.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      views.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      grid.setAttribute('data-view', btn.dataset.view ?? 'grid');
+    }),
+  );
+
+  // Избранное (пока только визуально, дальше подключится FavoritesPanel)
+  document.querySelectorAll<HTMLButtonElement>('[data-favorite-toggle]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(on));
+      const icon = btn.querySelector<HTMLElement>('.material-symbols-outlined');
+      if (icon) icon.style.fontVariationSettings = on ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : '';
+    }),
+  );
+
+  render();
+</script>

@@ -1,0 +1,501 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import SubscribeBlock from '../../../components/SubscribeBlock.astro';
+import { locales, pick, t, tk, path, type Lang } from '../../../i18n';
+import { marketModels, type MarketModel } from '../../../data/marketplace';
+
+export function getStaticPaths() {
+  return locales.flatMap((lang) => marketModels.map((model) => ({ params: { lang, slug: model.slug } })));
+}
+
+const lang = Astro.params.lang as Lang;
+const slug = Astro.params.slug as string;
+const dict = t(lang);
+const d = tk(lang).item;
+const list = tk(lang).list;
+
+const model = marketModels.find((m) => m.slug === slug) as MarketModel;
+const detail = model.detail;
+const title = pick(model.title, lang);
+const description = pick(model.desc, lang);
+const categoryLabel = list.filters.category[model.category];
+const subLabel = pick(model.sub, lang).split(' // ')[1] ?? '';
+const kindLabel = `${categoryLabel}${subLabel ? ` // ${subLabel}` : ''}`;
+const similar = [
+  ...marketModels.filter((m) => m !== model && m.category === model.category),
+  ...marketModels.filter((m) => m !== model && m.category !== model.category),
+].slice(0, 4);
+
+const views = detail?.views ?? [{ image: model.image, label: '[3D VIEW]', sub: '', alt: model.title }];
+const titleParts = detail?.accent && title.includes(detail.accent) ? title.split(detail.accent) : null;
+const shadingModes = [
+  { key: 'pbr', label: d.shading.pbr },
+  { key: 'clay', label: d.shading.clay },
+  { key: 'wire', label: d.shading.wire },
+];
+const perks = detail ? detail.perks.map((p) => pick(p, lang)) : [`${d.perksFormats} ${model.formats.join(', ')}`];
+const canBuy = model.status === 'active';
+const buyLabel = canBuy ? d.buyOn : model.status === 'soon' ? d.soon : d.sold;
+const sectionClass = 'w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const specRows: { label: string; value: string; tone?: string; stacked?: boolean }[] = detail
+  ? [
+      { label: d.specs.formats, value: detail.specs.formats, stacked: true },
+      { label: d.specs.polycount, value: detail.specs.polycount, tone: 'text-secondary-fixed' },
+      { label: d.specs.vertices, value: detail.specs.vertices },
+      { label: d.specs.textures, value: pick(detail.specs.textures, lang), stacked: true },
+      { label: d.specs.rig, value: pick(detail.specs.rig, lang) },
+      { label: d.specs.uv, value: pick(detail.specs.uv, lang) },
+      { label: d.specs.software, value: detail.specs.software, stacked: true },
+      { label: d.specs.certification, value: pick(detail.specs.certification, lang), tone: 'text-secondary-fixed' },
+    ]
+  : [
+      { label: d.specs.category, value: kindLabel },
+      { label: d.specs.formats, value: model.formats.join(' • '), stacked: true },
+      { label: d.specs.polycount, value: model.polyLabel, tone: 'text-secondary-fixed' },
+      { label: d.specs.price, value: `$${model.price}` },
+    ];
+const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
+---
+
+<BaseLayout lang={lang} page={`marketplace/${slug}`} title={`${title} — ${dict.nav.marketplace} — ${dict.site.name}`} description={description} image={model.image}>
+  <!-- 1. КРОШКИ И СТАТУСЫ -->
+  <div class={`${sectionClass} pt-space-lg`}>
+    <Breadcrumbs items={[{ label: dict.common.home, href: path(lang) }, { label: dict.nav.marketplace, href: path(lang, 'marketplace') }, { label: categoryLabel }, { label: title }]}>
+      <div class="hidden md:flex items-center flex-wrap gap-space-xs">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container text-secondary-fixed font-tech-data-sm text-tech-data-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim animate-pulse"></span>
+          {d.status}
+        </span>
+        {
+          detail && (
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface font-tech-data-sm text-tech-data-sm">
+              <span class="material-symbols-outlined text-secondary-fixed text-[14px]">check_circle</span>
+              {d.topologyCheck} {detail.topologyCheck}
+            </span>
+          )
+        }
+      </div>
+    </Breadcrumbs>
+  </div>
+
+  <!-- 2. ВЬЮПОРТ + КУПИТЬ -->
+  <section class={`${sectionClass} py-space-xl`}>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
+      <div class="lg:col-span-7 flex flex-col gap-space-md">
+        <div id="viewport-frame" class="relative w-full rounded-xl bg-surface-container-lowest overflow-hidden shadow-2xl group select-none">
+          <div class="w-full bg-surface-container-low px-4 py-2 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 font-tech-data-sm text-tech-data-sm overflow-hidden whitespace-nowrap">
+              <span class="flex items-center gap-1 text-secondary-fixed">
+                <span class="w-2 h-2 rounded-full bg-secondary-fixed-dim animate-pulse"></span>
+                60.0 FPS
+              </span>
+              <span class="hidden sm:inline text-outline-variant">|</span>
+              <span class="hidden sm:inline text-on-surface-variant">CAM_FOV: 45°</span>
+              <span class="hidden md:inline text-outline-variant">|</span>
+              <span class="hidden md:inline text-primary">SHADING: PBR_METALLIC_ROUGHNESS</span>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button id="reset-btn" type="button" title={d.reset} aria-label={d.reset} class="p-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors flex">
+                <span class="material-symbols-outlined text-[16px]">sync</span>
+              </button>
+              <button id="fullscreen-btn" type="button" title={d.fullscreen} aria-label={d.fullscreen} class="p-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors flex">
+                <span class="material-symbols-outlined text-[16px]">fullscreen</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="viewport-stage" class="relative w-full aspect-[16/11] bg-surface flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#d0bcff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none"></div>
+            {
+              detail && (
+                <>
+                  <div class="absolute top-4 left-4 z-10 hidden sm:flex flex-col gap-1 p-2 rounded-lg bg-surface-container-low/85 backdrop-blur-md shadow-md font-tech-data-sm text-[10px] leading-none">
+                    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-tertiary-container"></span><span class="text-tertiary">X: +0.00</span></div>
+                    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-secondary-fixed"></span><span class="text-secondary-fixed">Y: +0.00</span></div>
+                    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-primary-container"></span><span class="text-primary">Z: +1.42</span></div>
+                  </div>
+                  <div class="absolute top-4 right-4 z-10 px-3 py-1.5 rounded-full bg-surface-container-low/90 backdrop-blur-md text-on-surface font-tech-data-sm text-tech-data-sm flex items-center gap-2 shadow-lg">
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+                    <span>TRIS: {detail.tris}</span>
+                    <span class="hidden sm:inline text-outline-variant">/</span>
+                    <span class="hidden sm:inline">VERTS: {detail.verts}</span>
+                    <span class="hidden md:inline text-outline-variant">/</span>
+                    <span class="hidden md:inline text-tertiary">UDIMS: {detail.udims}</span>
+                  </div>
+                </>
+              )
+            }
+            <img
+              id="main-viewport-img"
+              src={views[0].image}
+              alt={pick(views[0].alt, lang)}
+              fetchpriority="high"
+              decoding="async"
+              class="w-full h-full object-cover transition-[transform,filter] duration-700 ease-out group-hover:scale-105"
+            />
+            <div class="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 pointer-events-none hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-md shadow-xl text-on-surface-variant font-tech-data-sm text-tech-data-sm whitespace-nowrap">
+              <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+              <span>{d.hint}</span>
+            </div>
+            <div id="shading-modes" class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 p-1 rounded-full bg-surface-container-low/90 backdrop-blur-xl shadow-2xl max-w-[95%] overflow-x-auto">
+              {
+                shadingModes.map((mode, i) => (
+                  <button
+                    type="button"
+                    data-shading={mode.key}
+                    aria-pressed={i === 0 ? 'true' : 'false'}
+                    class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-tech-data-sm text-tech-data-sm uppercase whitespace-nowrap transition-colors aria-pressed:bg-gradient-to-r aria-pressed:from-primary-container aria-pressed:to-tertiary-container aria-pressed:text-on-surface aria-pressed:shadow-sm"
+                  >
+                    {mode.label}
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+
+        {
+          views.length > 1 && (
+            <div id="view-thumbs" class="grid grid-cols-5 gap-space-xs md:gap-space-sm select-none">
+              {views.map((view, i) => (
+                <button
+                  type="button"
+                  data-view={i}
+                  data-src={view.image}
+                  data-alt={pick(view.alt, lang)}
+                  aria-pressed={i === 0 ? 'true' : 'false'}
+                  class="flex flex-col items-center gap-1.5 p-1.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all aria-pressed:bg-surface-container-high aria-pressed:shadow-lg"
+                >
+                  <span class="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-surface-container-lowest block">
+                    <img src={view.image} alt="" loading="lazy" decoding="async" class="w-full h-full object-cover" />
+                    {i === 0 && (
+                      <span class="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-on-surface text-[20px] drop-shadow">360</span>
+                      </span>
+                    )}
+                  </span>
+                  <span class="font-tech-data-sm text-[10px] text-on-surface-variant tracking-tight uppercase truncate max-w-full">{view.label}</span>
+                </button>
+              ))}
+            </div>
+          )
+        }
+      </div>
+
+      <div class="lg:col-span-5 flex flex-col gap-space-lg">
+        <div class="flex flex-col gap-space-xs">
+          <div class="flex items-center justify-between gap-space-sm flex-wrap">
+            <div class="flex items-center flex-wrap gap-space-xs">
+              <span class="px-2.5 py-0.5 rounded bg-surface-container-high text-primary font-tech-data-sm text-tech-data-sm tracking-wider uppercase">{kindLabel}</span>
+              {
+                detail && (
+                  <span class="px-2 py-0.5 rounded bg-surface-container text-secondary-fixed font-tech-data-sm text-[10px] tracking-widest uppercase flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
+                    {d.verified}
+                  </span>
+                )
+              }
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                data-favorite-toggle
+                id="like-trigger"
+                aria-pressed="false"
+                title={d.favorite}
+                aria-label={d.favorite}
+                class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-tertiary transition-colors font-tech-data-sm text-tech-data-sm"
+              >
+                <span class="material-symbols-outlined text-[16px] text-tertiary-container" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                <span id="like-counter">{model.likes}</span>
+              </button>
+              <button
+                type="button"
+                id="share-btn"
+                data-copied={d.copied}
+                title={d.share}
+                aria-label={d.share}
+                class="p-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors flex"
+              >
+                <span class="material-symbols-outlined text-[16px]" id="share-icon">share</span>
+              </button>
+            </div>
+          </div>
+          <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase text-on-surface tracking-tight mt-1 leading-none">
+            {
+              titleParts ? (
+                <>
+                  {titleParts[0]}
+                  <span class="bg-gradient-to-r from-primary-container via-primary to-tertiary-container bg-clip-text text-transparent">{detail?.accent}</span>
+                  {titleParts[1]}
+                </>
+              ) : (
+                title
+              )
+            }
+          </h1>
+          <p class="font-body-sm text-body-sm text-on-surface-variant">{description}</p>
+        </div>
+
+        <div class="p-space-lg rounded-xl bg-surface-container-low flex flex-col gap-space-md shadow-xl">
+          <div class="flex items-baseline justify-between gap-space-sm flex-wrap">
+            <div class="flex items-baseline gap-2">
+              <span class="font-headline-lg text-[44px] leading-none font-bold text-on-surface">${model.price}</span>
+              <span class="font-tech-data-sm text-tech-data-sm text-outline uppercase">USD</span>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface font-label-caps text-label-caps uppercase tracking-wider">{d.license}</span>
+          </div>
+          {
+            canBuy ? (
+              <a
+                href={model.buyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-full flex items-center justify-center gap-space-sm px-space-lg py-space-md rounded-full bg-gradient-to-r from-primary-container via-primary to-tertiary-container text-on-surface font-headline-sm text-headline-sm uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.5)] hover:shadow-[0_0_32px_rgba(255,87,34,0.6)] transition-all active:scale-[0.98] group/buy"
+              >
+                <span>{buyLabel}</span>
+                <span class="material-symbols-outlined text-[20px] transition-transform group-hover/buy:translate-x-1 group-hover/buy:-translate-y-1">open_in_new</span>
+              </a>
+            ) : (
+              <span class="w-full flex items-center justify-center px-space-lg py-space-md rounded-full bg-surface-container-high text-outline font-headline-sm text-headline-sm uppercase tracking-wider cursor-not-allowed">{buyLabel}</span>
+            )
+          }
+          <div class="flex items-start gap-2 text-on-surface-variant font-tech-data-sm text-[11px] leading-relaxed">
+            <span class="material-symbols-outlined text-secondary-fixed text-[16px] shrink-0">bolt</span>
+            <span>{d.redirect}</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-xs pt-space-xs">
+            <button type="button" data-favorite-toggle aria-pressed="false" class="w-full py-2.5 px-3 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-tech-data-sm text-tech-data-sm uppercase transition-colors flex items-center justify-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px] text-tertiary">bookmark_add</span>
+              <span>{d.wishlist}</span>
+            </button>
+            <button type="button" class="w-full py-2.5 px-3 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-tech-data-sm text-tech-data-sm uppercase transition-colors flex items-center justify-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px] text-primary">download</span>
+              <span>{d.sample}</span>
+            </button>
+          </div>
+          <ul class="flex flex-col gap-2 bg-surface-container rounded-lg p-space-sm">
+            {
+              perks.map((perk) => (
+                <li class="flex items-start gap-2 text-on-surface font-tech-data-sm text-tech-data-sm">
+                  <span class="material-symbols-outlined text-secondary-fixed text-[16px] shrink-0">check_circle</span>
+                  <span>{perk}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="p-space-sm rounded-lg bg-surface-container-lowest flex items-center justify-between gap-space-sm">
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="w-8 h-8 shrink-0 rounded-full bg-primary-container flex items-center justify-center text-on-primary font-bold font-headline-sm text-sm">T3</div>
+            <div class="min-w-0">
+              <span class="font-tech-data-sm text-tech-data-sm text-on-surface block leading-none truncate">{d.sculptedBy} {dict.site.name}</span>
+              <span class="font-tech-data-sm text-[10px] text-outline">{dict.site.role}</span>
+            </div>
+          </div>
+          {detail && <span class="shrink-0 font-tech-data-sm text-[10px] text-secondary-fixed bg-surface-container px-2 py-1 rounded">{detail.version}</span>}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. ОПИСАНИЕ И ХАРАКТЕРИСТИКИ -->
+  <section class="w-full bg-surface-container-lowest py-space-2xl">
+    <div class={`${sectionClass} grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start`}>
+      <div class="lg:col-span-7 flex flex-col gap-space-lg">
+        <div class="flex items-center gap-space-xs">
+          <span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+          <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">{d.dossierKicker}</span>
+        </div>
+        <h2 class="font-headline-md text-headline-md uppercase text-on-surface tracking-tight">{detail ? pick(detail.brief.heading, lang) : title}</h2>
+        <div class="flex flex-col gap-space-md text-on-surface-variant font-body-md text-body-md">
+          {detail ? detail.brief.paragraphs.map((p) => <p>{pick(p, lang)}</p>) : <p>{description}</p>}
+        </div>
+        {
+          detail && (
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md mt-space-sm">
+              {detail.brief.modules.map((module) => (
+                <div class="p-space-md rounded-xl bg-surface-container flex flex-col gap-space-xs shadow-md">
+                  <div class:list={['flex items-center gap-2', moduleTone[module.tone]]}>
+                    <span class="material-symbols-outlined text-[20px]">{module.icon}</span>
+                    <span class="font-headline-sm text-[16px] uppercase tracking-wide">{pick(module.title, lang)}</span>
+                  </div>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant">{pick(module.text, lang)}</p>
+                </div>
+              ))}
+            </div>
+          )
+        }
+        <div class="flex flex-col gap-space-xs pt-space-md">
+          <span class="font-label-caps text-label-caps text-outline tracking-widest uppercase">{d.tags}</span>
+          <div class="flex flex-wrap gap-2">
+            {model.tags.map((tag) => <span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-tech-data-sm text-tech-data-sm">#{tag}</span>)}
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 flex flex-col gap-space-md">
+        <div class="p-space-lg rounded-2xl bg-surface-container flex flex-col gap-space-md shadow-2xl">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-secondary-fixed text-[20px]">terminal</span>
+              <span class="font-headline-sm text-[18px] uppercase tracking-wide text-on-surface">{d.specsTitle}</span>
+            </div>
+            {detail && <span class="font-tech-data-sm text-[10px] text-outline uppercase shrink-0">{detail.build}</span>}
+          </div>
+          <dl class="flex flex-col gap-2 font-tech-data-sm text-tech-data-sm">
+            {
+              specRows.map((row) => (
+                <div class:list={['p-2.5 rounded-lg bg-surface-container-low flex gap-1', row.stacked ? 'flex-col' : 'items-center justify-between gap-space-md']}>
+                  <dt class="text-outline uppercase text-[10px]">{row.label}</dt>
+                  <dd class:list={[row.tone ?? 'text-on-surface', row.stacked ? 'font-semibold' : 'text-right']}>{row.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+          {
+            detail && (
+              <div class="p-space-sm rounded-lg bg-surface-container-lowest flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-secondary-fixed"></span>
+                  <span class="font-tech-data-sm text-[11px] text-on-surface">{d.integrity}</span>
+                </div>
+                <span class="font-tech-data-sm text-[10px] text-outline">{detail.checksum}</span>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. ПОДПИСКА -->
+  <section class={`${sectionClass} py-space-xl`}>
+    <SubscribeBlock lang={lang} variant="item" />
+  </section>
+
+  <!-- 5. ПОХОЖИЕ МОДЕЛИ -->
+  <section class="w-full bg-surface-container-lowest py-space-xl">
+    <div class={`${sectionClass} flex flex-col gap-space-lg`}>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+        <div class="flex items-center gap-space-xs">
+          <span class="w-2.5 h-2.5 rounded-full bg-secondary-container"></span>
+          <h2 class="font-headline-md text-headline-md uppercase text-on-surface tracking-tight">{d.similar}</h2>
+        </div>
+        <a href={path(lang, 'marketplace')} class="font-tech-data-sm text-tech-data-sm text-primary hover:underline uppercase flex items-center gap-1">
+          <span>{d.viewAllBefore} {marketModels.length} {d.viewAllAfter}</span>
+          <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter-desktop">
+        {
+          similar.map((item) => (
+            <article class="rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col overflow-hidden group shadow-lg">
+              <a href={path(lang, `marketplace/${item.slug}`)} class="relative block w-full aspect-[4/3] bg-surface-container-lowest overflow-hidden" aria-label={pick(item.title, lang)}>
+                <img src={item.image} alt={pick(item.title, lang)} loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-surface-container-low/90 backdrop-blur-md text-on-surface font-tech-data-sm text-[10px]">
+                  {list.poly} {item.polyLabel}
+                </span>
+                <span class="absolute bottom-2 right-2 p-1 rounded-full bg-surface-container-lowest/80 text-on-surface flex">
+                  <span class="material-symbols-outlined text-[16px]">360</span>
+                </span>
+              </a>
+              <div class="p-space-md flex flex-col gap-space-xs flex-1 justify-between">
+                <div>
+                  <span class="font-label-caps text-label-caps text-outline uppercase">{list.filters.category[item.category]} // {pick(item.sub, lang).split(' // ')[1]}</span>
+                  <h3 class="font-headline-sm text-[18px] text-on-surface uppercase font-bold mt-0.5">
+                    <a href={path(lang, `marketplace/${item.slug}`)} class="hover:text-primary transition-colors">{pick(item.title, lang)}</a>
+                  </h3>
+                  <span class="font-tech-data-sm text-[11px] text-on-surface-variant block mt-1">{item.formats.join(', ')}</span>
+                </div>
+                <div class="flex items-center justify-between mt-space-xs bg-surface-container-lowest/50 p-2 rounded-lg">
+                  <span class="font-headline-sm text-[20px] font-bold text-on-surface">${item.price}</span>
+                  <a href={item.buyUrl} target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-full bg-surface-container-high hover:bg-primary-container text-on-surface hover:text-on-primary font-tech-data-sm text-tech-data-sm uppercase transition-colors flex items-center gap-1">
+                    <span>{list.store}</span>
+                    <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Ракурсы и режимы шейдинга: пока без настоящего 3D, режимы Clay / Wire показывают кадры 1 / 2, а при их отсутствии — фильтр на основном кадре
+  const main = document.getElementById('main-viewport-img') as HTMLImageElement | null;
+  const thumbs = Array.from(document.querySelectorAll<HTMLButtonElement>('#view-thumbs [data-view]'));
+  const modes = Array.from(document.querySelectorAll<HTMLButtonElement>('#shading-modes [data-shading]'));
+  const filters: Record<string, string> = { pbr: 'none', clay: 'grayscale(100%) contrast(1.1) brightness(0.9)', wire: 'invert(0.9) hue-rotate(180deg) contrast(1.4)' };
+  const modeFrame: Record<string, number> = { pbr: 0, clay: 1, wire: 2 };
+
+  const showFrame = (i: number) => {
+    const thumb = thumbs[i];
+    if (!main || !thumb) return;
+    main.src = thumb.dataset.src ?? main.src;
+    main.alt = thumb.dataset.alt ?? '';
+    thumbs.forEach((t, n) => t.setAttribute('aria-pressed', String(n === i)));
+  };
+  const setMode = (mode: string) => {
+    modes.forEach((m) => m.setAttribute('aria-pressed', String(m.dataset.shading === mode)));
+    if (!main) return;
+    if (thumbs.length > modeFrame[mode]) {
+      showFrame(modeFrame[mode]);
+      main.style.filter = '';
+    } else {
+      main.style.filter = filters[mode];
+    }
+  };
+  modes.forEach((btn) => btn.addEventListener('click', () => setMode(btn.dataset.shading ?? 'pbr')));
+  thumbs.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      modes.forEach((m) => m.setAttribute('aria-pressed', 'false'));
+      if (main) main.style.filter = '';
+      showFrame(Number(btn.dataset.view));
+    }),
+  );
+  document.getElementById('reset-btn')?.addEventListener('click', () => setMode('pbr'));
+  document.getElementById('fullscreen-btn')?.addEventListener('click', () => {
+    const stage = document.getElementById('viewport-stage');
+    if (document.fullscreenElement) document.exitFullscreen();
+    else stage?.requestFullscreen?.();
+  });
+
+  // Счётчик лайков (пока без сохранения)
+  const like = document.getElementById('like-trigger');
+  const likeCount = document.getElementById('like-counter');
+  like?.addEventListener('click', () => {
+    // Срабатывает раньше общего переключателя избранного, поэтому aria-pressed здесь ещё старое
+    const wasOn = like.getAttribute('aria-pressed') === 'true';
+    if (likeCount) likeCount.textContent = String(Number(likeCount.textContent) + (wasOn ? -1 : 1));
+  });
+
+  // Копирование ссылки
+  const share = document.getElementById('share-btn');
+  share?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+    } catch {
+      return;
+    }
+    const icon = document.getElementById('share-icon');
+    if (!icon) return;
+    icon.textContent = 'check';
+    setTimeout(() => (icon.textContent = 'share'), 2000);
+  });
+
+  // Избранное (пока только визуально, дальше подключится FavoritesPanel)
+  document.querySelectorAll<HTMLButtonElement>('[data-favorite-toggle]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(on));
+      const icon = btn.querySelector<HTMLElement>('.material-symbols-outlined');
+      if (icon && btn.id !== 'like-trigger') icon.style.fontVariationSettings = on ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : '';
+    }),
+  );
+</script>

@@ -15,6 +15,12 @@ const dictionaries: Record<Lang, Dict> = { ru, ua, en };
 /** Текст, заданный сразу на трёх языках (так же будут выглядеть поля в Sanity). */
 export type Localized = Record<Lang, string>;
 
+import { marketEn, marketRu, marketUa, type MarketDict } from './marketplace';
+
+const marketDictionaries: Record<Lang, MarketDict> = { ru: marketRu, ua: marketUa, en: marketEn };
+/** Тексты страниц маркетплейса */
+export const tk = (lang: Lang): MarketDict => marketDictionaries[lang];
+
 const mentoringDictionaries: Record<Lang, MentoringDict> = { ru: mentoringRu, ua: mentoringUa, en: mentoringEn };
 
 export const t = (lang: Lang): Dict => dictionaries[lang];
