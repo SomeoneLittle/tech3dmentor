@@ -1,0 +1,433 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { locales, t, tp, path, type Lang } from '../../i18n';
+import { SITE } from '../../config';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const dict = t(lang);
+const p = tp(lang);
+
+const domain = new URL(SITE.url).host;
+const card = 'p-space-lg bg-surface-container-low rounded-xl flex flex-col gap-space-md scroll-mt-28';
+const code = 'flex items-center gap-space-xs font-tech-data-sm text-tech-data-sm';
+const badge = 'font-label-caps text-label-caps px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant uppercase';
+const h2 = 'font-headline-sm text-headline-sm text-on-surface uppercase';
+const lead = 'font-body-md text-body-md text-on-surface-variant leading-relaxed';
+
+const tocIcons = ['domain', 'sensors', 'balance', 'shield_person', 'hub', 'cookie', 'security', 'gavel', 'alternate_email'];
+const s2Colors = ['text-primary', 'text-tertiary', 'text-primary', 'text-on-surface'];
+const s2Terms = ['text-secondary-fixed-dim', 'text-on-surface-variant', 'text-on-surface-variant', 'text-outline'];
+const s3 = [
+  { icon: 'handshake', cls: 'text-primary' },
+  { icon: 'verified_user', cls: 'text-secondary-fixed-dim' },
+  { icon: 'fact_check', cls: 'text-tertiary' },
+];
+const s5Tags = ['text-primary', 'text-primary', 'text-secondary-fixed-dim', 'text-primary'];
+const s6Colors = ['text-tertiary', 'text-primary', 'text-secondary-fixed-dim'];
+const s8 = [
+  { icon: 'download', cls: 'text-primary' },
+  { icon: 'delete_sweep', cls: 'text-tertiary' },
+  { icon: 'edit_note', cls: 'text-secondary-fixed-dim' },
+  { icon: 'do_not_disturb_on', cls: 'text-on-surface' },
+];
+const html = (s: string) => s.replace('{domain}', domain);
+const mail = (subject: string) => `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}`;
+---
+
+<BaseLayout lang={lang} page="privacy" title={`${p.seo.title} — ${dict.site.name}`} description={p.seo.description}>
+  <div class="flex flex-col w-full">
+    <!-- Telemetry ribbon -->
+    <div class="w-full bg-surface-container-lowest/80 backdrop-blur-md">
+      <div class="max-w-[1440px] mx-auto px-margin md:px-margin-desktop py-space-sm flex flex-wrap items-center justify-between gap-space-sm">
+        <div class="flex items-center gap-space-xs font-tech-data-sm text-tech-data-sm text-outline">
+          <a class="text-on-surface-variant hover:text-primary transition-colors uppercase" href={path(lang)}>{p.crumbs.home}</a>
+          <span class="text-outline-variant font-bold">/</span>
+          <span class="text-on-surface-variant uppercase">{p.crumbs.legal}</span>
+          <span class="text-outline-variant font-bold">/</span>
+          <span class="text-secondary-fixed-dim uppercase tracking-wider" aria-current="page">{p.crumbs.current}</span>
+        </div>
+        <div class="flex items-center gap-space-md">
+          <div class="flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-surface-container font-tech-data-sm text-tech-data-sm text-secondary-fixed-dim shadow-inner">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim animate-pulse"></span>
+            <span>{p.hud.status}</span>
+          </div>
+          <div class="hidden sm:flex items-center px-2 py-0.5 rounded-md bg-surface-container font-tech-data-sm text-tech-data-sm text-primary">
+            <span>{p.hud.rev}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="relative w-full bg-surface-dim overflow-hidden py-space-2xl">
+      <div class="absolute -top-32 left-1/4 w-[600px] h-[350px] bg-primary-container/10 rounded-full blur-[140px] pointer-events-none"></div>
+      <div class="absolute top-10 right-10 w-[450px] h-[300px] bg-tertiary-container/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div class="relative max-w-[1440px] mx-auto px-margin md:px-margin-desktop">
+        <div class="flex flex-col gap-space-md max-w-4xl">
+          <div class="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full bg-surface-container font-tech-data-sm text-tech-data-sm text-on-surface-variant">
+            <span class="material-symbols-outlined text-[15px] text-tertiary">lock</span>
+            <span>{p.hero.stamp}</span>
+          </div>
+          <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight uppercase">
+            {p.hero.titleBefore}
+            <span class="bg-gradient-to-r from-primary to-tertiary text-transparent bg-clip-text">{p.hero.titleAccent}</span>
+          </h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+            {p.hero.introBefore}{
+              p.hero.terms.map((term, i) => (
+                <>
+                  {i > 0 && ', '}
+                  <span class="font-tech-data-sm text-secondary-fixed-dim">{term}</span>
+                </>
+              ))
+            }{p.hero.introAfter}
+          </p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-sm font-tech-data-sm text-tech-data-sm">
+            {
+              p.hero.facts.map((f, i) => (
+                <div class="p-space-sm bg-surface-container-low rounded-lg">
+                  <span class="text-outline block text-label-caps font-label-caps uppercase">{f.label}</span>
+                  <span class:list={['font-semibold', i === 2 ? 'text-secondary-fixed-dim' : i === 3 ? 'text-primary' : 'text-on-surface']}>{f.value}</span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOC + policy body -->
+    <section class="w-full bg-background py-space-2xl">
+      <div class="max-w-[1440px] mx-auto px-margin md:px-margin-desktop">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
+          <aside class="lg:col-span-4 lg:sticky lg:top-24 self-start flex flex-col gap-space-md">
+            <div class="bg-surface-container-low rounded-xl p-space-md shadow-md">
+              <div class="flex items-center justify-between pb-space-sm">
+                <div class="flex items-center gap-space-xs font-tech-data-sm text-tech-data-sm text-primary uppercase">
+                  <span class="material-symbols-outlined text-[16px]">menu_book</span>
+                  <span>{p.toc.title}</span>
+                </div>
+                <span class="px-2 py-0.5 rounded-full bg-surface-container font-label-caps text-label-caps text-outline uppercase">{p.toc.items.length} {p.toc.nodes}</span>
+              </div>
+              <nav class="flex flex-col gap-1 mt-space-sm font-tech-data-sm text-tech-data-sm" id="toc-nav">
+                {
+                  p.toc.items.map((item, i) => (
+                    <a
+                      class:list={['toc-link flex items-center justify-between p-2 rounded-lg transition-all group', i === 0 ? 'bg-surface-container text-primary font-medium' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container']}
+                      href={`#sec-0${i + 1}`}
+                    >
+                      <span class="flex items-center gap-2">
+                        <span class="text-outline">0{i + 1}.</span>
+                        <span>{item}</span>
+                      </span>
+                      <span class:list={['toc-arrow material-symbols-outlined text-[14px] transition-opacity', i === 0 ? 'text-primary' : 'opacity-0 group-hover:opacity-100']}>arrow_forward</span>
+                    </a>
+                  ))
+                }
+              </nav>
+            </div>
+
+            <div class="p-space-md bg-surface-container rounded-xl flex flex-col gap-space-sm shadow-md">
+              <div class="flex items-center gap-space-xs text-tertiary">
+                <span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+                <span class="font-tech-data-sm text-tech-data-sm uppercase font-semibold">{p.nda.title}</span>
+              </div>
+              <p class="font-body-sm text-body-sm text-on-surface-variant">{p.nda.text}</p>
+              <a class="inline-flex items-center justify-between px-space-md py-2.5 rounded-lg bg-surface-variant text-on-surface hover:text-primary transition-all font-tech-data-sm text-tech-data-sm group" href={mail(p.nda.subject)}>
+                <span>{p.nda.button}</span>
+                <span class="material-symbols-outlined text-[16px] text-tertiary group-hover:translate-x-1 transition-transform">send</span>
+              </a>
+            </div>
+
+            <div class="p-space-sm bg-surface-container-lowest rounded-lg flex items-center justify-between font-tech-data-sm text-tech-data-sm text-outline">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+                {p.cipher.left}
+              </span>
+              <span>{p.cipher.right}</span>
+            </div>
+          </aside>
+
+          <div class="lg:col-span-8 flex flex-col gap-space-xl">
+            <!-- 01 -->
+            <article class={card} id="sec-01">
+              <div class="flex flex-wrap items-center justify-between gap-space-sm">
+                <div class:list={[code, 'text-primary']}>
+                  <span class="material-symbols-outlined text-[16px]">domain</span>
+                  <span>{p.s1.code}</span>
+                </div>
+                <span class={badge}>{p.s1.badge}</span>
+              </div>
+              <h2 class={h2}>01. {p.s1.title}</h2>
+              <p class={lead} set:html={html(p.s1.text)} />
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm p-space-md bg-surface-container rounded-lg font-tech-data-sm text-tech-data-sm">
+                <div class="flex flex-col gap-1">
+                  <span class="text-outline uppercase text-label-caps font-label-caps">{p.s1.controllerLabel}</span>
+                  <span class="text-on-surface font-semibold">{p.s1.controllerName}</span>
+                  <span class="text-on-surface-variant">{p.s1.controllerRole}</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="text-outline uppercase text-label-caps font-label-caps">{p.s1.contactLabel}</span>
+                  <span class="text-on-surface font-semibold">{p.s1.contactValue}</span>
+                  <a class="text-primary hover:underline" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+                </div>
+              </div>
+            </article>
+
+            <!-- 02 -->
+            <article class={card} id="sec-02">
+              <div class="flex flex-wrap items-center justify-between gap-space-sm">
+                <div class:list={[code, 'text-secondary-fixed-dim']}>
+                  <span class="material-symbols-outlined text-[16px]">sensors</span>
+                  <span>{p.s2.code}</span>
+                </div>
+                <span class={badge}>{p.s2.badge}</span>
+              </div>
+              <h2 class={h2}>02. {p.s2.title}</h2>
+              <p class={lead}>{p.s2.text}</p>
+              <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-inner">
+                <div class="p-space-sm bg-surface-container flex items-center justify-between text-label-caps font-label-caps text-outline uppercase tracking-wider">
+                  <span>{p.s2.cols[0]}</span>
+                  <span class="hidden sm:inline">{p.s2.cols[1]}</span>
+                  <span class="sm:hidden">{p.s2.cols[2]}</span>
+                  <span class="hidden sm:inline">{p.s2.cols[2]}</span>
+                </div>
+                <div class="divide-y divide-surface-container">
+                  {
+                    p.s2.rows.map((r, i) => (
+                      <div class="p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
+                        <div class="flex flex-col">
+                          <span class:list={['font-tech-data-sm text-tech-data-sm font-bold', s2Colors[i]]}>{r.key}</span>
+                          <span class="font-body-sm text-body-sm text-on-surface-variant">{r.text}</span>
+                        </div>
+                        <span class:list={['font-tech-data-sm text-tech-data-sm', s2Terms[i]]}>{r.term}</span>
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            </article>
+
+            <!-- 03 -->
+            <article class={card} id="sec-03">
+              <div class="flex flex-wrap items-center justify-between gap-space-sm">
+                <div class:list={[code, 'text-primary']}>
+                  <span class="material-symbols-outlined text-[16px]">balance</span>
+                  <span>{p.s3.code}</span>
+                </div>
+                <span class={badge}>{p.s3.badge}</span>
+              </div>
+              <h2 class={h2}>03. {p.s3.title}</h2>
+              <p class={lead}>{p.s3.text}</p>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+                {
+                  p.s3.items.map((it, i) => (
+                    <div class="p-space-md bg-surface-container rounded-lg flex flex-col gap-space-xs">
+                      <div class:list={['w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center mb-1', s3[i].cls]}>
+                        <span class="material-symbols-outlined text-[18px]">{s3[i].icon}</span>
+                      </div>
+                      <span class="font-tech-data-sm text-tech-data-sm text-on-surface font-bold uppercase">{it.title}</span>
+                      <p class="font-body-sm text-body-sm text-on-surface-variant">{it.text}</p>
+                    </div>
+                  ))
+                }
+              </div>
+            </article>
+
+            <!-- 04 -->
+            <article class={`${card} relative overflow-hidden`} id="sec-04">
+              <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-secondary-fixed-dim/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div class="flex flex-wrap items-center justify-between gap-space-sm">
+                <div class:list={[code, 'text-secondary-fixed-dim']}>
+                  <span class="material-symbols-outlined text-[16px]">shield_person</span>
+                  <span>{p.s4.code}</span>
+                </div>
+                <div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container font-label-caps text-label-caps text-secondary-fixed-dim">
+                  <span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim"></span>
+                  <span>{p.s4.badge}</span>
+                </div>
+              </div>
+              <h2 class={h2}>04. {p.s4.title}</h2>
+              <div class="p-space-md bg-surface-container rounded-xl flex flex-col gap-space-sm">
+                <div class="flex items-start gap-space-sm">
+                  <span class="material-symbols-outlined text-secondary-fixed-dim text-[24px] mt-0.5">verified</span>
+                  <div>
+                    <h3 class="font-headline-sm text-tech-data-lg text-on-surface uppercase">{p.s4.headTitle}</h3>
+                    <p class={`${lead} mt-1`} set:html={p.s4.head} />
+                  </div>
+                </div>
+                <div class="p-space-sm bg-surface-container-low rounded-lg mt-space-xs font-tech-data-sm text-tech-data-sm text-on-surface-variant flex flex-col gap-1.5">
+                  <div class="flex items-center gap-2 text-on-surface">
+                    <span class="material-symbols-outlined text-[16px] text-tertiary">lock_reset</span>
+                    <span class="font-bold">{p.s4.rulesTitle}</span>
+                  </div>
+                  {
+                    p.s4.rules.map((rule, i) => (
+                      <p set:html={`${i + 1}. ${rule.replace('{never}', `<span class="text-tertiary font-bold">${p.s4.never}</span>`)}`} />
+                    ))
+                  }
+                </div>
+              </div>
+            </article>
+
+            <!-- 05 -->
+            <article class={card} id="sec-05">
+              <div class="flex flex-wrap items-center justify-between gap-space-sm">
+                <div class:list={[code, 'text-primary']}>
+                  <span class="material-symbols-outlined text-[16px]">hub</span>
+                  <span>{p.s5.code}</span>
+                </div>
+                <span class={badge}>{p.s5.badge}</span>
+              </div>
+              <h2 class={h2}>05. {p.s5.title}</h2>
+              <p class={lead}>{p.s5.text}</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+                {
+                  p.s5.items.map((it, i) => (
+                    <div class="p-space-md bg-surface-container rounded-lg flex items-center justify-between gap-space-sm">
+                      <div>
+                        <span class="font-tech-data-sm text-tech-data-sm text-on-surface font-bold block">{it.name}</span>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">{it.text}</span>
+                      </div>
+                      <span class:list={['font-tech-data-sm text-tech-data-sm px-2 py-1 bg-surface-container-low rounded shrink-0', s5Tags[i]]}>{it.tag}</span>
+                    </div>
+                  ))
+                }
+              </div>
+            </article>
+
+            <!-- 06 -->
+            <article class={card} id="sec-06">
+              <div class="flex flex-wrap items-center justify-between gap-space-sm">
+                <div class:list={[code, 'text-tertiary']}>
+                  <span class="material-symbols-outlined text-[16px]">cookie</span>
+                  <span>{p.s6.code}</span>
+                </div>
+                <span class={badge}>{p.s6.badge}</span>
+              </div>
+              <h2 class={h2}>06. {p.s6.title}</h2>
+              <p class={lead} set:html={p.s6.text} />
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm font-tech-data-sm text-tech-data-sm">
+                {
+                  p.s6.items.map((it, i) => (
+                    <div class="p-space-sm bg-surface-container rounded-lg">
+                      <span class:list={['font-bold block mb-1', s6Colors[i]]}>{it.key}</span>
+                      <span class="text-on-surface-variant text-body-sm">{it.text}</span>
+                    </div>
+                  ))
+                }
+              </div>
+            </article>
+
+            <!-- 07 -->
+            <article class={card} id="sec-07">
+              <div class="flex flex-wrap items-center justify-between gap-space-sm">
+                <div class:list={[code, 'text-secondary-fixed-dim']}>
+                  <span class="material-symbols-outlined text-[16px]">security</span>
+                  <span>{p.s7.code}</span>
+                </div>
+                <span class={badge}>{p.s7.badge}</span>
+              </div>
+              <h2 class={h2}>07. {p.s7.title}</h2>
+              <p class={lead} set:html={p.s7.text} />
+              <div class="p-space-md bg-surface-container-lowest rounded-xl flex flex-col sm:flex-row items-center justify-between gap-space-md">
+                <div class="flex items-center gap-space-md">
+                  <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-secondary-fixed-dim shrink-0">
+                    <span class="material-symbols-outlined text-[28px]">lock</span>
+                  </div>
+                  <div>
+                    <span class="font-headline-sm text-tech-data-lg text-on-surface block">{p.s7.cardTitle}</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">{p.s7.cardText}</span>
+                  </div>
+                </div>
+                <div class="px-3 py-1.5 rounded-full bg-surface-container font-tech-data-sm text-tech-data-sm text-secondary-fixed-dim shrink-0">{p.s7.tag}</div>
+              </div>
+            </article>
+
+            <!-- 08 -->
+            <article class={card} id="sec-08">
+              <div class="flex flex-wrap items-center justify-between gap-space-sm">
+                <div class:list={[code, 'text-primary']}>
+                  <span class="material-symbols-outlined text-[16px]">gavel</span>
+                  <span>{p.s8.code}</span>
+                </div>
+                <span class={badge}>{p.s8.badge}</span>
+              </div>
+              <h2 class={h2}>08. {p.s8.title}</h2>
+              <p class={lead}>{p.s8.text}</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+                {
+                  p.s8.items.map((it, i) => (
+                    <div class="p-space-md bg-surface-container rounded-lg flex flex-col gap-1">
+                      <div class:list={['flex items-center gap-2 font-tech-data-sm text-tech-data-sm', s8[i].cls]}>
+                        <span class="material-symbols-outlined text-[16px]">{s8[i].icon}</span>
+                        <span class="font-bold uppercase">{it.title}</span>
+                      </div>
+                      <p class="font-body-sm text-body-sm text-on-surface-variant">{it.text}</p>
+                    </div>
+                  ))
+                }
+              </div>
+            </article>
+
+            <!-- 09 -->
+            <article class={card} id="sec-09">
+              <div class="flex flex-wrap items-center justify-between gap-space-sm">
+                <div class:list={[code, 'text-primary']}>
+                  <span class="material-symbols-outlined text-[16px]">alternate_email</span>
+                  <span>{p.s9.code}</span>
+                </div>
+                <span class:list={[badge, '!text-secondary-fixed-dim']}>{p.s9.badge}</span>
+              </div>
+              <h2 class={h2}>09. {p.s9.title}</h2>
+              <p class={lead} set:html={p.s9.text} />
+              <div class="p-space-lg bg-gradient-to-br from-surface-container via-surface-container to-surface-variant rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md shadow-lg">
+                <div class="flex flex-col gap-1 min-w-0">
+                  <span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">{p.s9.label}</span>
+                  <span class="font-headline-sm text-headline-sm text-on-surface break-all">{SITE.email}</span>
+                </div>
+                <a
+                  class="px-space-lg py-3 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-tech-data-lg text-tech-data-lg uppercase tracking-wider shadow-lg hover:shadow-[0_0_24px_rgba(160,120,255,0.5)] transition-all flex items-center gap-2 shrink-0"
+                  href={mail(p.s9.subject)}
+                >
+                  <span>{p.s9.button}</span>
+                  <span class="material-symbols-outlined text-[18px]">outgoing_mail</span>
+                </a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  // Подсветка пункта оглавления, соответствующего видимому разделу.
+  const links = document.querySelectorAll<HTMLAnchorElement>('#toc-nav .toc-link');
+  const sections = document.querySelectorAll('article[id^="sec-"]');
+  const on = ['bg-surface-container', 'text-primary', 'font-medium'];
+  const off = ['text-on-surface-variant', 'hover:text-on-surface', 'hover:bg-surface-container'];
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        links.forEach((link) => {
+          const active = link.getAttribute('href') === `#${entry.target.id}`;
+          link.classList.remove(...(active ? off : on));
+          link.classList.add(...(active ? on : off));
+          link.querySelector('.toc-arrow')?.classList.toggle('opacity-0', !active);
+          link.querySelector('.toc-arrow')?.classList.toggle('group-hover:opacity-100', !active);
+          link.querySelector('.toc-arrow')?.classList.toggle('text-primary', active);
+        });
+      });
+    },
+    { rootMargin: '-20% 0px -60% 0px', threshold: 0 },
+  );
+  sections.forEach((s) => observer.observe(s));
+</script>

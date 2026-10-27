@@ -39,6 +39,12 @@ const contactsDictionaries: Record<Lang, ContactsDict> = { ru: contactsRu, ua: c
 /** Тексты страницы «Контакты» */
 export const tc = (lang: Lang): ContactsDict => contactsDictionaries[lang];
 
+import { privacyEn, privacyRu, privacyUa, type PrivacyDict } from './privacy';
+
+const privacyDictionaries: Record<Lang, PrivacyDict> = { ru: privacyRu, ua: privacyUa, en: privacyEn };
+/** Тексты страницы «Политика конфиденциальности» */
+export const tp = (lang: Lang): PrivacyDict => privacyDictionaries[lang];
+
 import { accountEn, accountRu, accountUa, authEn, authRu, authUa, type AccountDict, type AuthDict } from './account';
 
 const accountDictionaries: Record<Lang, AccountDict> = { ru: accountRu, ua: accountUa, en: accountEn };
