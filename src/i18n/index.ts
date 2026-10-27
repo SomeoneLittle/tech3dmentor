@@ -27,6 +27,12 @@ const blogDictionaries: Record<Lang, BlogDict> = { ru: blogRu, ua: blogUa, en: b
 /** Тексты страниц блога */
 export const tb = (lang: Lang): BlogDict => blogDictionaries[lang];
 
+import { aboutEn, aboutRu, aboutUa, type AboutDict } from './about';
+
+const aboutDictionaries: Record<Lang, AboutDict> = { ru: aboutRu, ua: aboutUa, en: aboutEn };
+/** Тексты страницы «Обо мне» */
+export const ta = (lang: Lang): AboutDict => aboutDictionaries[lang];
+
 const mentoringDictionaries: Record<Lang, MentoringDict> = { ru: mentoringRu, ua: mentoringUa, en: mentoringEn };
 
 export const t = (lang: Lang): Dict => dictionaries[lang];
