@@ -1,0 +1,277 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PortfolioCard from '../../../components/PortfolioCard.astro';
+import { locales, t, path, type Lang } from '../../../i18n';
+import { portfolioWorks, type PortfolioCategory } from '../../../data/portfolio';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const dict = t(lang);
+const d = dict.portfolio;
+const categories = Object.keys(d.filters).filter((key) => key !== 'all') as PortfolioCategory[];
+const count = (category: PortfolioCategory) => portfolioWorks.filter((w) => w.category === category).length;
+const sectionClass = 'w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const sortOptions = Object.entries(d.sort) as [string, string][];
+const displayModes = Object.entries(d.displayModes) as [string, string][];
+const PAGE_SIZE = 12;
+---
+
+<BaseLayout
+  lang={lang}
+  page="portfolio"
+  title={`${dict.nav.portfolio} — ${dict.site.name}`}
+  description={d.sub}
+  image={portfolioWorks[0].image}
+>
+  <!-- ШАПКА СТРАНИЦЫ -->
+  <section class={`relative ${sectionClass} pt-8 pb-10`}>
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8">
+      <div class="flex flex-col max-w-3xl">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <nav aria-label="Breadcrumb" class="font-tech-data-sm text-tech-data-sm text-secondary-container bg-surface-container-high px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm uppercase">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span>
+            <a href={path(lang)} class="hover:text-on-surface transition-colors">{dict.common.home}</a>
+            <span aria-hidden="true">//</span>
+            <span>{d.archive}</span>
+            <span aria-hidden="true">//</span>
+            <span aria-current="page">{dict.nav.portfolio}</span>
+          </nav>
+          <span class="font-tech-data-sm text-tech-data-sm text-outline px-2 py-0.5 rounded bg-surface-container-low">{d.pipeline}</span>
+        </div>
+        <div class="flex flex-wrap items-baseline gap-4">
+          <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase tracking-tight text-on-surface">
+            {d.titleBefore}<span class="bg-gradient-to-r from-primary-container via-tertiary to-tertiary-container bg-clip-text text-transparent">{d.titleAccent}</span>
+          </h1>
+          <span class="font-label-caps text-label-caps text-secondary-container px-2 py-1 rounded bg-surface-container font-mono">{d.sysState}</span>
+        </div>
+        <p class="font-body-lg text-body-lg text-on-surface-variant mt-3 max-w-2xl">{d.sub}</p>
+      </div>
+
+      <div class="bg-surface-container-high p-4 rounded-xl shadow-md flex flex-col gap-1 min-w-[240px] shrink-0">
+        <div class="flex items-center justify-between">
+          <span class="font-label-caps text-label-caps text-outline uppercase tracking-widest">{d.indexed}</span>
+          <span class="font-tech-data-sm text-tech-data-sm text-secondary-container">{d.buffer}</span>
+        </div>
+        <div class="flex items-baseline justify-between mt-1">
+          <span class="font-headline-sm text-headline-sm text-on-surface font-mono">
+            <span id="works-visible">{Math.min(PAGE_SIZE, portfolioWorks.length)}</span>
+            <span class="text-outline text-body-md font-sans"> / {portfolioWorks.length}</span>
+          </span>
+          <span class="font-tech-data-sm text-tech-data-sm text-primary px-2 py-0.5 rounded-full bg-surface-container-lowest">{d.quadsStat}</span>
+        </div>
+        <div class="w-full bg-surface-container-lowest h-1.5 rounded-full overflow-hidden mt-1">
+          <div id="works-bar" class="bg-gradient-to-r from-primary-container to-tertiary-container h-full w-full rounded-full transition-all duration-300"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ФИЛЬТРЫ И СОРТИРОВКА -->
+  <section class="sticky top-20 z-40 w-full bg-surface/90 backdrop-blur-xl py-4 shadow-md">
+    <div class={`${sectionClass} flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4`}>
+      <div id="category-filters" class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+        <button type="button" data-filter="all" aria-pressed="true" class="filter-chip shrink-0 px-4 py-2 rounded-full font-tech-data-sm text-tech-data-sm uppercase transition-all whitespace-nowrap">
+          {d.filters.all} ({portfolioWorks.length})
+        </button>
+        {
+          categories.map((key) => (
+            <button type="button" data-filter={key} aria-pressed="false" class="filter-chip shrink-0 px-4 py-2 rounded-full font-tech-data-sm text-tech-data-sm uppercase transition-all whitespace-nowrap">
+              {d.filters[key]} ({count(key)})
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="flex items-center justify-between md:justify-end gap-3 shrink-0">
+        <div id="display-modes" class="hidden xl:flex items-center bg-surface-container-low px-2.5 py-1 rounded-full shadow-inner gap-2">
+          <span class="font-label-caps text-label-caps text-outline uppercase">{d.display}</span>
+          {
+            displayModes.map(([key, label], i) => (
+              <button
+                type="button"
+                data-display={key}
+                aria-pressed={i === 0 ? 'true' : 'false'}
+                class="font-tech-data-sm text-tech-data-sm text-outline hover:text-on-surface px-2 py-0.5 rounded uppercase aria-pressed:text-primary aria-pressed:bg-surface-variant"
+              >
+                {label}
+              </button>
+            ))
+          }
+        </div>
+
+        <div class="relative inline-flex items-center bg-surface-container rounded-lg px-3 py-2 shadow-sm">
+          <span class="material-symbols-outlined text-[16px] text-outline mr-2" aria-hidden="true">sort</span>
+          <select id="works-sort" aria-label="Sort" class="bg-transparent font-tech-data-sm text-tech-data-sm text-on-surface outline-none cursor-pointer pr-6 appearance-none">
+            {sortOptions.map(([value, label]) => <option class="bg-surface-container-high text-on-surface" value={value}>{label}</option>)}
+          </select>
+          <span class="material-symbols-outlined text-[16px] text-outline pointer-events-none absolute right-2" aria-hidden="true">expand_more</span>
+        </div>
+
+        <div id="view-modes" class="flex items-center bg-surface-container rounded-lg p-1">
+          <button type="button" data-view="grid" aria-pressed="true" title={d.viewGrid} aria-label={d.viewGrid} class="p-1.5 rounded text-outline hover:text-on-surface transition-colors aria-pressed:bg-surface-container-highest aria-pressed:text-primary aria-pressed:shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">grid_view</span>
+          </button>
+          <button type="button" data-view="list" aria-pressed="false" title={d.viewList} aria-label={d.viewList} class="p-1.5 rounded text-outline hover:text-on-surface transition-colors aria-pressed:bg-surface-container-highest aria-pressed:text-primary aria-pressed:shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">view_agenda</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- СЕТКА РАБОТ -->
+  <section class={`${sectionClass} py-10`}>
+    <div
+      id="works-grid"
+      data-display="beauty"
+      data-view="grid"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch [&[data-view=list]]:!grid-cols-1 [&[data-display=clay]_img]:grayscale [&[data-display=wire]_img]:grayscale [&[data-display=wire]_img]:contrast-150 [&[data-display=wire]_img]:invert"
+    >
+      {portfolioWorks.map((work, i) => <PortfolioCard work={work} lang={lang} index={i} />)}
+    </div>
+
+    <div class="mt-14 flex flex-col items-center justify-center gap-3">
+      <button
+        id="load-more-btn"
+        type="button"
+        data-loading={d.loading}
+        data-loaded={d.allLoaded}
+        class="px-8 py-3.5 rounded-full bg-surface-container-high hover:bg-surface-variant text-on-surface font-tech-data-lg text-tech-data-lg uppercase tracking-wider flex items-center gap-3 shadow-md hover:shadow-xl transition-all transform active:scale-95 group disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        <span class="material-symbols-outlined text-[20px] text-primary group-hover:rotate-180 transition-transform duration-500">sync</span>
+        <span id="load-more-label">{d.loadMore}</span>
+        <span class="material-symbols-outlined text-[18px] text-outline">expand_more</span>
+      </button>
+      <span class="font-tech-data-sm text-tech-data-sm text-outline">
+        {d.remainingBefore} <span id="works-remaining">{Math.max(0, portfolioWorks.length - PAGE_SIZE)}</span> {d.remainingAfter}
+      </span>
+    </div>
+  </section>
+
+  <!-- ПРИЗЫВ К МЕНТОРСТВУ -->
+  <section class={`${sectionClass} py-12 mb-16`}>
+    <div class="relative bg-gradient-to-br from-surface-container-high via-surface-container to-surface-container-lowest p-8 md:p-14 rounded-2xl overflow-hidden shadow-2xl">
+      <div class="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-gradient-to-br from-primary-container/20 to-tertiary-container/10 blur-3xl pointer-events-none"></div>
+      <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-8 flex flex-col gap-4">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+            <span class="font-label-caps text-label-caps text-secondary-container tracking-widest uppercase">{d.cta.badge}</span>
+          </div>
+          <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase text-on-surface tracking-tight">{d.cta.title}</h2>
+          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">{d.cta.text}</p>
+          <div class="flex flex-wrap items-center gap-4 mt-2">
+            {
+              d.cta.tags.map((tag) => (
+                <span class="flex items-center gap-1.5 font-tech-data-sm text-tech-data-sm text-on-surface bg-surface-container-highest px-3 py-1.5 rounded-full">
+                  <span class="material-symbols-outlined text-[16px] text-secondary-container">check_circle</span>
+                  {tag}
+                </span>
+              ))
+            }
+          </div>
+        </div>
+        <div class="lg:col-span-4 flex flex-col lg:items-end justify-center">
+          <a
+            href={`${path(lang, 'mentoring')}#apply`}
+            class="px-8 py-4 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-headline-sm uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.45)] hover:shadow-[0_0_32px_rgba(255,87,34,0.6)] transition-all transform hover:scale-105 active:scale-95 flex items-center gap-3 text-center"
+          >
+            <span>{d.cta.apply}</span>
+            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+          </a>
+          <span class="font-tech-data-sm text-tech-data-sm text-outline mt-3">{d.cta.seats}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const PAGE = 12;
+  const grid = document.getElementById('works-grid') as HTMLElement;
+  const chips = document.querySelectorAll<HTMLButtonElement>('#category-filters [data-filter]');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-work-card]'));
+  const sort = document.getElementById('works-sort') as HTMLSelectElement | null;
+  const visible = document.getElementById('works-visible');
+  const remaining = document.getElementById('works-remaining');
+  const bar = document.getElementById('works-bar');
+  const more = document.getElementById('load-more-btn') as HTMLButtonElement | null;
+  const moreLabel = document.getElementById('load-more-label');
+  const moreDefault = moreLabel?.textContent ?? '';
+  let filter = 'all';
+  let mode = 'recent';
+  let limit = PAGE;
+
+  const key = (card: HTMLElement): number => {
+    const index = Number(card.dataset.index);
+    const poly = Number(card.dataset.poly);
+    if (mode === 'featured') return (card.dataset.featured === '1' ? 0 : 1000) + index;
+    if (mode === 'polyHigh') return -poly;
+    if (mode === 'polyLow') return poly;
+    return index;
+  };
+
+  const render = () => {
+    const sorted = [...cards].sort((a, b) => key(a) - key(b));
+    const matching = sorted.filter((c) => filter === 'all' || c.dataset.category === filter);
+    sorted.forEach((card, i) => (card.style.order = String(i)));
+    cards.forEach((card) => card.classList.add('hidden'));
+    matching.slice(0, limit).forEach((card) => card.classList.remove('hidden'));
+    const shown = Math.min(limit, matching.length);
+    const left = matching.length - shown;
+    if (visible) visible.textContent = String(shown);
+    if (remaining) remaining.textContent = String(left);
+    if (bar) bar.style.width = `${(shown / cards.length) * 100}%`;
+    if (more && moreLabel) {
+      more.disabled = left === 0;
+      moreLabel.textContent = left === 0 && matching.length > PAGE ? (more.dataset.loaded ?? '') : moreDefault;
+    }
+  };
+
+  chips.forEach((chip) =>
+    chip.addEventListener('click', () => {
+      filter = chip.dataset.filter ?? 'all';
+      limit = PAGE;
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      render();
+    }),
+  );
+  sort?.addEventListener('change', () => {
+    mode = sort.value;
+    render();
+  });
+  more?.addEventListener('click', () => {
+    if (!moreLabel) return;
+    moreLabel.textContent = more.dataset.loading ?? '';
+    setTimeout(() => {
+      limit += PAGE;
+      render();
+    }, 400);
+  });
+
+  const radio = (selector: string, attr: string, onPick: (value: string) => void) => {
+    const buttons = document.querySelectorAll<HTMLButtonElement>(selector);
+    buttons.forEach((btn) =>
+      btn.addEventListener('click', () => {
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        onPick(btn.getAttribute(attr) ?? '');
+      }),
+    );
+  };
+  radio('#display-modes [data-display]', 'data-display', (v) => grid.setAttribute('data-display', v));
+  radio('#view-modes [data-view]', 'data-view', (v) => grid.setAttribute('data-view', v));
+
+  document.querySelectorAll<HTMLButtonElement>('[data-favorite-toggle]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(on));
+      const icon = btn.querySelector<HTMLElement>('.material-symbols-outlined');
+      if (icon) icon.style.fontVariationSettings = on ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : '';
+    }),
+  );
+
+  render();
+</script>

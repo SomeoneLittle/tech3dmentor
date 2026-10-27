@@ -1,0 +1,574 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { locales, pick, t, path, type Lang } from '../../../i18n';
+import { SITE } from '../../../config';
+import { portfolioWorks } from '../../../data/portfolio';
+
+export function getStaticPaths() {
+  return locales.flatMap((lang) => portfolioWorks.map((work) => ({ params: { lang, slug: work.slug } })));
+}
+
+const lang = Astro.params.lang as Lang;
+const slug = Astro.params.slug as string;
+const dict = t(lang);
+const d = dict.work;
+
+const index = portfolioWorks.findIndex((w) => w.slug === slug);
+const work = portfolioWorks[index];
+const detail = work.detail;
+const total = portfolioWorks.length;
+const prev = portfolioWorks[(index - 1 + total) % total];
+const next = portfolioWorks[(index + 1) % total];
+const related = [
+  ...portfolioWorks.filter((w) => w !== work && w.category === work.category),
+  ...portfolioWorks.filter((w) => w !== work && w.category !== work.category),
+].slice(0, 3);
+
+const title = pick(work.title, lang);
+const categoryLabel = dict.portfolio.filters[work.category];
+const kindLabel = `${categoryLabel} // ${pick(work.sub, lang)}`;
+const views = detail?.views ?? [];
+const modeViews = [
+  { mode: 'beauty', label: d.modes.beauty },
+  { mode: 'clay', label: d.modes.clay },
+  { mode: 'wire', label: d.modes.wire },
+];
+const mainImage = views[0]?.image ?? work.image;
+const mainAlt = views[0] ? pick(views[0].alt, lang) : title;
+const sectionClass = 'w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+
+const tone = {
+  green: { text: 'text-secondary-container' },
+  primary: { text: 'text-primary' },
+  orange: { text: 'text-tertiary-container' },
+};
+const captionTone = { plain: 'text-on-surface-variant', green: 'text-secondary-container', orange: 'text-tertiary-container' };
+const tileClass = {
+  wide: 'md:col-span-8 aspect-[16/9]',
+  tall: 'md:col-span-4 aspect-square md:aspect-auto',
+  std: 'md:col-span-4 aspect-square md:aspect-[4/3]',
+};
+const specRows: { label: string; value: string; tone?: string }[] = [
+  { label: d.specs.tools, value: work.tools.join(', ') },
+  { label: d.specs.classification, value: detail ? pick(detail.specs.classification, lang) : kindLabel },
+  ...(work.year ? [{ label: d.specs.year, value: String(work.year) }] : []),
+  { label: d.specs.polycount, value: detail?.specs.polycount ?? work.stats[0].text.replace(/^POLY:\s*/, ''), tone: 'text-secondary-container font-bold' },
+  ...(detail
+    ? [
+        { label: d.specs.subdivision, value: pick(detail.specs.subdivision, lang) },
+        { label: d.specs.textures, value: pick(detail.specs.textures, lang) },
+        { label: d.specs.bakes, value: detail.specs.bakes },
+        { label: d.specs.license, value: pick(detail.specs.license, lang), tone: 'text-tertiary-container font-semibold' },
+      ]
+    : []),
+];
+const description = pick(work.desc, lang);
+---
+
+<BaseLayout lang={lang} page={`portfolio/${slug}`} title={`${title} — ${dict.nav.portfolio} — ${dict.site.name}`} description={description} image={work.image}>
+  <div class={`relative ${sectionClass} py-space-xl flex flex-col gap-space-2xl`}>
+    <!-- 1. ЗАГОЛОВОК РАБОТЫ -->
+    <header class="flex flex-col gap-space-md">
+      <Breadcrumbs items={[{ label: dict.common.home, href: path(lang) }, { label: dict.nav.portfolio, href: path(lang, 'portfolio') }, { label: title }]}>
+        <div class="flex items-center gap-space-sm shrink-0">
+          {
+            detail && (
+              <span class="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container font-tech-data-sm text-tech-data-sm text-secondary-container">
+                <span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse" />
+                [MESH_ID: {detail.meshId}]
+              </span>
+            )
+          }
+          <span class="px-2.5 py-0.5 rounded-full bg-surface-container-high font-tech-data-sm text-tech-data-sm text-primary uppercase">{kindLabel}</span>
+        </div>
+      </Breadcrumbs>
+
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg">
+        <div class="flex flex-col gap-space-xs">
+          {
+            detail && (
+              <div class="flex items-center gap-2">
+                <span class="font-tech-data-sm text-tech-data-sm text-outline tracking-wider uppercase">{detail.unit}</span>
+                <span class="h-1 w-8 bg-gradient-to-r from-primary-container to-transparent" />
+              </div>
+            )
+          }
+          <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface uppercase tracking-tight">
+            {title}
+            {detail && <span class="bg-gradient-to-r from-primary-container via-primary to-tertiary-container bg-clip-text text-transparent"> {detail.accent}</span>}
+          </h1>
+        </div>
+        <div class="flex flex-wrap items-center gap-space-sm self-start lg:self-end">
+          {
+            detail && (
+              <div class="hidden sm:flex items-center px-space-sm py-1.5 rounded-full bg-surface-container-high font-tech-data-sm text-tech-data-sm text-on-surface-variant shadow-sm">
+                <span class="text-secondary-container mr-1.5 font-bold">{detail.subd}</span>
+                <span class="text-outline-variant mr-1.5">|</span>
+                <span>{detail.quads}</span>
+              </div>
+            )
+          }
+          <button
+            type="button"
+            id="like-trigger"
+            aria-pressed="false"
+            aria-label={d.favorite}
+            class="group flex items-center gap-1.5 px-space-md py-2 rounded-full bg-surface-container-high hover:bg-surface-variant transition-colors shadow-sm font-tech-data-sm text-tech-data-sm text-on-surface"
+          >
+            <span class="material-symbols-outlined text-[18px] text-tertiary-container group-hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;">favorite</span>
+            <span class="font-semibold" id="like-counter">{work.likes ?? 0}</span>
+          </button>
+          <button
+            type="button"
+            id="share-btn"
+            data-copied={d.copied}
+            class="flex items-center gap-1.5 px-space-md py-2 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors font-tech-data-sm text-tech-data-sm text-on-surface-variant hover:text-on-surface shadow-sm uppercase"
+          >
+            <span class="material-symbols-outlined text-[16px]">share</span>
+            <span id="share-label">{d.share}</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. ВЬЮПОРТ -->
+    <section class="flex flex-col gap-space-md">
+      <div id="viewport-frame" class="relative w-full rounded-xl bg-surface-container-low shadow-xl overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-space-sm px-space-md py-space-xs bg-surface-container text-on-surface-variant font-tech-data-sm text-tech-data-sm">
+          <div class="flex items-center gap-space-md">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-tertiary-container"></span>
+              <span class="text-on-surface font-semibold">{work.cam}</span>
+            </div>
+            {
+              detail && (
+                <>
+                  <span class="hidden md:inline text-outline-variant">•</span>
+                  <span class="hidden md:inline">CAM_LENS: 35.00mm</span>
+                  <span class="hidden md:inline text-outline-variant">•</span>
+                  <span class="hidden md:inline">FOV: 54.4°</span>
+                </>
+              )
+            }
+          </div>
+          {
+            detail && (
+              <div id="viewport-switcher" class="flex items-center gap-1 bg-surface-container-lowest p-1 rounded-full shadow-inner overflow-x-auto">
+                {modeViews.map((m, i) => (
+                  <button
+                    type="button"
+                    data-view={i}
+                    aria-pressed={i === 0 ? 'true' : 'false'}
+                    class="mode-btn px-3 py-1 rounded-full font-label-caps text-label-caps uppercase whitespace-nowrap text-on-surface-variant hover:text-on-surface transition-all aria-pressed:bg-primary-container aria-pressed:text-on-primary-container aria-pressed:font-bold aria-pressed:shadow-sm"
+                  >
+                    {m.label}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  id="turn-btn"
+                  aria-pressed="false"
+                  class="px-3 py-1 rounded-full font-label-caps text-label-caps uppercase whitespace-nowrap text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1 aria-pressed:bg-primary-container aria-pressed:text-on-primary-container aria-pressed:font-bold aria-pressed:shadow-sm"
+                >
+                  <span class="material-symbols-outlined text-[13px]">sync</span>
+                  {d.turn}
+                </button>
+              </div>
+            )
+          }
+        </div>
+
+        <div id="viewport-stage" class="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[21/10] max-h-[680px] bg-surface-container-lowest flex items-center justify-center overflow-hidden">
+          <div class="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#a078ff_1px,transparent_1px)] [background-size:24px_24px]"></div>
+          <img id="main-viewport-img" src={mainImage} alt={mainAlt} fetchpriority="high" decoding="async" class="w-full h-full object-cover" />
+
+          {
+            detail && (
+              <>
+                <div class="absolute top-4 left-4 pointer-events-none flex flex-col gap-1 font-tech-data-sm text-tech-data-sm text-on-surface-variant bg-surface-container-lowest/80 backdrop-blur-md px-3 py-2 rounded-lg shadow-md max-w-[80%]">
+                  <span class="text-secondary-container font-semibold flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 shrink-0 rounded-full bg-secondary-container animate-pulse" />
+                    {detail.renderLine}
+                  </span>
+                  <span class="hidden sm:block">{detail.resLine}</span>
+                </div>
+                <div class="absolute bottom-4 left-4 pointer-events-none flex items-center gap-3 bg-surface-container-lowest/70 backdrop-blur-sm px-3 py-1.5 rounded-lg">
+                  <div class="flex items-center gap-1 font-tech-data-sm text-tech-data-sm font-bold">
+                    <span class="text-tertiary-container">X</span>
+                    <span class="text-secondary-container">Y</span>
+                    <span class="text-primary">Z</span>
+                  </div>
+                  <span class="text-outline-variant text-[11px] font-tech-data-sm">GRID: 0.1M SCALE</span>
+                </div>
+              </>
+            )
+          }
+          <div class="absolute bottom-4 right-4 flex items-center gap-2">
+            <button id="fullscreen-btn" type="button" aria-label={d.fullscreen} class="p-2 rounded-lg bg-surface-container-high/90 hover:bg-surface-variant text-on-surface backdrop-blur-sm transition-all shadow-md">
+              <span class="material-symbols-outlined text-[18px]">fullscreen</span>
+            </button>
+            <button id="reset-btn" type="button" aria-label={d.resetCamera} class="p-2 rounded-lg bg-surface-container-high/90 hover:bg-surface-variant text-on-surface backdrop-blur-sm transition-all shadow-md">
+              <span class="material-symbols-outlined text-[18px]">center_focus_strong</span>
+            </button>
+          </div>
+        </div>
+
+        {
+          detail && (
+            <div class="px-space-md py-space-xs bg-surface-container-low flex flex-wrap items-center justify-between gap-x-space-md text-on-surface-variant font-tech-data-sm text-tech-data-sm">
+              <span>{d.status}: {pick(detail.status, lang)}</span>
+              <span class="text-outline">
+                {d.components}: {detail.componentCount} {d.subObjects}
+              </span>
+            </div>
+          )
+        }
+      </div>
+
+      {
+        views.length > 1 && (
+          <div id="view-thumbs" class="grid grid-cols-5 gap-space-sm sm:gap-space-md">
+            {views.map((view, i) => (
+              <button
+                type="button"
+                data-view={i}
+                data-src={view.image}
+                data-alt={pick(view.alt, lang)}
+                aria-label={view.label}
+                aria-pressed={i === 0 ? 'true' : 'false'}
+                class="thumb group relative aspect-[16/10] rounded-lg overflow-hidden bg-surface-container-low shadow-sm hover:shadow-md transition-all aria-pressed:ring-2 aria-pressed:ring-primary-container"
+              >
+                <img src={view.image} alt="" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                <div class="absolute bottom-0 inset-x-0 bg-surface-container-lowest/80 backdrop-blur-sm px-1.5 py-0.5 flex justify-between items-center gap-1 text-[10px] font-tech-data-sm text-on-surface">
+                  <span class="truncate">{view.label}</span>
+                  <span class="hidden sm:inline text-outline">{view.sub}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        )
+      }
+    </section>
+
+    <!-- 3. ОПИСАНИЕ И ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+      <div class="lg:col-span-7 flex flex-col gap-space-lg">
+        {
+          detail ? (
+            <>
+              <div class="flex flex-col gap-space-xs">
+                <span class="font-tech-data-sm text-tech-data-sm text-primary tracking-wider uppercase">{d.briefKicker}</span>
+                <h2 class="font-headline-md text-headline-md text-on-surface uppercase tracking-tight">{pick(detail.brief.heading, lang)}</h2>
+              </div>
+              <div class="flex flex-col gap-space-md text-on-surface-variant font-body-md text-body-md leading-relaxed">
+                {detail.brief.paragraphs.map((p) => <p>{pick(p, lang)}</p>)}
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm pt-space-xs">
+                {detail.brief.highlights.map((h) => (
+                  <div class="p-space-sm bg-surface-container-low rounded-lg shadow-sm flex flex-col gap-1">
+                    <div class:list={['flex items-center gap-1.5', tone[h.tone].text]}>
+                      <span class="material-symbols-outlined text-[16px]">{h.icon}</span>
+                      <span class="font-tech-data-sm text-tech-data-sm uppercase font-bold">{pick(h.title, lang)}</span>
+                    </div>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">{pick(h.text, lang)}</p>
+                  </div>
+                ))}
+              </div>
+              <div class="p-space-md rounded-xl bg-surface-container flex items-start gap-space-md shadow-md">
+                <div class="p-2 rounded-lg bg-surface-container-high text-primary shrink-0">
+                  <span class="material-symbols-outlined text-[24px]">school</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="font-tech-data-sm text-tech-data-sm text-secondary-container uppercase font-bold">{pick(detail.brief.note.tag, lang)}</span>
+                  <p class="font-body-sm text-body-sm text-on-surface">{pick(detail.brief.note.text, lang)}</p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div class="flex flex-col gap-space-md">
+              <span class="font-tech-data-sm text-tech-data-sm text-primary tracking-wider uppercase">{d.briefKicker}</span>
+              <h2 class="font-headline-md text-headline-md text-on-surface uppercase tracking-tight">{title}</h2>
+              <p class="text-on-surface-variant font-body-md text-body-md leading-relaxed">{description}</p>
+            </div>
+          )
+        }
+      </div>
+
+      <div class="lg:col-span-5 w-full flex flex-col gap-space-md">
+        <div class="p-space-lg rounded-xl bg-surface-container shadow-xl flex flex-col gap-space-md">
+          <div class="flex items-center justify-between pb-space-sm bg-surface-container-high -mx-space-lg -mt-space-lg px-space-lg pt-space-md rounded-t-xl">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-pulse"></span>
+              <span class="font-tech-data-lg text-tech-data-lg text-on-surface uppercase font-bold tracking-wider">{d.specsTitle}</span>
+            </div>
+            {detail && <span class="font-tech-data-sm text-tech-data-sm text-outline uppercase">{detail.specs.revision}</span>}
+          </div>
+          <div class="flex flex-col gap-space-sm font-tech-data-sm text-tech-data-sm">
+            {
+              specRows.map((row) => (
+                <div class="flex items-start justify-between py-1.5 gap-space-md bg-surface-container-low px-space-sm rounded">
+                  <span class="text-outline uppercase">{row.label}</span>
+                  <span class:list={['text-right', row.tone ?? 'text-on-surface font-medium']}>{row.value}</span>
+                </div>
+              ))
+            }
+          </div>
+          <div class="flex flex-col gap-space-sm pt-space-xs">
+            <a
+              href={SITE.artstation}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="w-full flex items-center justify-center gap-2 py-3 px-space-lg rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-lg hover:shadow-xl transition-all transform active:scale-95"
+            >
+              <span>{d.artstation}</span>
+              <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+            </a>
+            {
+              work.pdf ? (
+                <a href={work.pdf} download class="w-full flex items-center justify-center gap-2 py-2.5 px-space-md rounded-full bg-surface-container-high hover:bg-surface-variant text-on-surface-variant hover:text-on-surface font-tech-data-sm text-tech-data-sm uppercase transition-colors shadow-sm">
+                  <span class="material-symbols-outlined text-[16px] text-primary">download</span>
+                  <span>{d.download}</span>
+                </a>
+              ) : (
+                <button type="button" class="w-full flex items-center justify-center gap-2 py-2.5 px-space-md rounded-full bg-surface-container-high hover:bg-surface-variant text-on-surface-variant hover:text-on-surface font-tech-data-sm text-tech-data-sm uppercase transition-colors shadow-sm">
+                  <span class="material-symbols-outlined text-[16px] text-primary">download</span>
+                  <span>{d.download}</span>
+                </button>
+              )
+            }
+          </div>
+        </div>
+
+        {
+          detail && (
+            <div class="p-space-md rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-2">
+              <div class="flex justify-between items-center gap-2 font-tech-data-sm text-tech-data-sm">
+                <span class="text-outline uppercase">{d.topology.title}</span>
+                <span class="text-secondary-container font-bold">
+                  {detail.topology.score} {d.topology.optimized}
+                </span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden flex">
+                <div class="h-full bg-secondary-container" style={`width: ${detail.topology.quads}%`} />
+                <div class="h-full bg-primary-container" style={`width: ${detail.topology.tris}%`} />
+                <div class="h-full bg-tertiary-container" style={`width: ${detail.topology.ngons}%`} />
+              </div>
+              <div class="flex flex-wrap justify-between gap-x-3 text-[10px] font-tech-data-sm text-on-surface-variant">
+                <span>{d.topology.quads}: {detail.topology.quads}%</span>
+                <span>{d.topology.tris}: {detail.topology.tris}%</span>
+                <span>{d.topology.ngons}: {detail.topology.ngons}%</span>
+              </div>
+            </div>
+          )
+        }
+      </div>
+    </section>
+
+    <!-- 4. ГАЛЕРЕЯ -->
+    {
+      detail && detail.gallery.length > 0 && (
+        <section class="flex flex-col gap-space-md">
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-space-sm">
+            <div class="flex flex-col gap-1">
+              <span class="font-tech-data-sm text-tech-data-sm text-primary uppercase">{d.galleryKicker}</span>
+              <h2 class="font-headline-md text-headline-md text-on-surface uppercase tracking-tight">{d.galleryTitle}</h2>
+            </div>
+            <span class="font-tech-data-sm text-tech-data-sm text-outline uppercase">{d.expandHint}</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-space-md">
+            {detail.gallery.map((tile) => (
+              <figure class:list={['group relative rounded-xl overflow-hidden bg-surface-container-low shadow-lg', tileClass[tile.size]]}>
+                <img src={tile.image} alt={pick(tile.title, lang)} loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div class="absolute top-3 left-3 max-w-[85%] bg-surface-container-lowest/80 backdrop-blur-sm px-2.5 py-1 rounded text-on-surface font-tech-data-sm text-tech-data-sm shadow-sm truncate">{tile.cam}</div>
+                <figcaption class="absolute bottom-3 left-3 right-3 bg-surface-container-lowest/90 backdrop-blur-sm p-3 rounded-lg">
+                  <span class={tile.size === 'wide' ? 'font-headline-sm text-headline-sm text-on-surface block uppercase' : 'font-tech-data-lg text-tech-data-lg text-on-surface block uppercase font-bold'}>{pick(tile.title, lang)}</span>
+                  <span class:list={['font-tech-data-sm text-tech-data-sm', captionTone[tile.captionTone]]}>{pick(tile.caption, lang)}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <!-- 5. ПРЕДЫДУЩАЯ / СЛЕДУЮЩАЯ -->
+    <nav aria-label="Adjacent works" class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+      <a href={path(lang, `portfolio/${prev.slug}`)} class="group p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex items-center gap-space-md shadow-md">
+        <div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-highest shrink-0">
+          <img src={prev.image} alt="" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+        </div>
+        <div class="flex flex-col overflow-hidden">
+          <span class="font-tech-data-sm text-tech-data-sm text-outline flex items-center gap-1 uppercase">
+            <span class="material-symbols-outlined text-[14px]">arrow_back</span>
+            {d.prev}
+          </span>
+          <span class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors truncate uppercase">{pick(prev.title, lang)}</span>
+          <span class="font-tech-data-sm text-tech-data-sm text-on-surface-variant truncate">{dict.portfolio.filters[prev.category]} // {pick(prev.sub, lang)}</span>
+        </div>
+      </a>
+      <a href={path(lang, `portfolio/${next.slug}`)} class="group p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex items-center justify-between gap-space-md shadow-md text-right">
+        <div class="flex flex-col overflow-hidden items-end w-full">
+          <span class="font-tech-data-sm text-tech-data-sm text-outline flex items-center gap-1 uppercase">
+            {d.next}
+            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </span>
+          <span class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors truncate uppercase max-w-full">{pick(next.title, lang)}</span>
+          <span class="font-tech-data-sm text-tech-data-sm text-on-surface-variant truncate max-w-full">{dict.portfolio.filters[next.category]} // {pick(next.sub, lang)}</span>
+        </div>
+        <div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-highest shrink-0">
+          <img src={next.image} alt="" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+        </div>
+      </a>
+    </nav>
+
+    <!-- 6. ПРИЗЫВ -->
+    <section class="relative rounded-2xl p-space-lg sm:p-space-xl bg-gradient-to-br from-surface-container via-surface-container-high to-surface-container-low shadow-2xl overflow-hidden">
+      <div class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-primary-container/20 blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-20 -top-20 w-80 h-80 rounded-full bg-tertiary-container/15 blur-3xl pointer-events-none"></div>
+      <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg">
+        <div class="flex flex-col gap-space-xs max-w-2xl">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-secondary-container/10 text-secondary-container font-tech-data-sm text-tech-data-sm uppercase font-bold flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span>
+              {d.cta.badge}
+            </span>
+            <span class="text-outline-variant font-tech-data-sm text-tech-data-sm">{d.cta.limited}</span>
+          </div>
+          <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface uppercase tracking-tight">{d.cta.title}</h2>
+          <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">{d.cta.text}</p>
+        </div>
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-space-md shrink-0">
+          <a href={path(lang, 'contacts')} class="px-space-lg py-3 rounded-full bg-surface-container-highest hover:bg-surface-variant text-on-surface font-tech-data-lg text-tech-data-lg uppercase tracking-wide text-center transition-all shadow-sm">{d.cta.contact}</a>
+          <a
+            href={`${path(lang, 'mentoring')}#apply`}
+            class="px-space-xl py-3 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-lg hover:shadow-2xl transition-all transform active:scale-95 flex items-center justify-center gap-2"
+          >
+            <span>{d.cta.apply}</span>
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. ПОХОЖИЕ РАБОТЫ -->
+    <section class="flex flex-col gap-space-md">
+      <div class="flex items-center justify-between gap-space-md">
+        <span class="font-tech-data-sm text-tech-data-sm text-primary uppercase font-bold">{d.related}</span>
+        <a href={path(lang, 'portfolio')} class="font-tech-data-sm text-tech-data-sm text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 uppercase">
+          {d.archive} ({total})
+          <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+        {
+          related.map((item) => (
+            <a href={path(lang, `portfolio/${item.slug}`)} class="group flex flex-col rounded-xl bg-surface-container-low overflow-hidden shadow-md hover:shadow-xl transition-all">
+              <div class="relative aspect-[16/10] overflow-hidden bg-surface-container-lowest">
+                <img src={item.image} alt="" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div class="absolute top-2 left-2 px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-sm text-secondary-container font-tech-data-sm text-tech-data-sm font-semibold">{item.stats[0].text}</div>
+                <div class="absolute top-2 right-2 px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-sm text-on-surface font-tech-data-sm text-tech-data-sm">{item.stats[1].text}</div>
+              </div>
+              <div class="p-space-md flex flex-col gap-space-xs">
+                <div class="flex items-center justify-between text-outline font-tech-data-sm text-tech-data-sm uppercase">
+                  <span>{dict.portfolio.filters[item.category]} // {pick(item.sub, lang)}</span>
+                  {item.year && <span class="text-primary">{item.year}</span>}
+                </div>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors uppercase">{pick(item.title, lang)}</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">{pick(item.desc, lang)}</p>
+                <span class="pt-2 font-tech-data-sm text-tech-data-sm text-secondary-container uppercase flex items-center gap-1">
+                  {d.inspectAsset}
+                  <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+                </span>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  // Переключение кадров: миниатюры и режимы Beauty / Clay / Wire показывают соответствующий ракурс в главном вьюпорте
+  const main = document.getElementById('main-viewport-img') as HTMLImageElement | null;
+  const thumbs = document.querySelectorAll<HTMLButtonElement>('#view-thumbs [data-view]');
+  const modes = document.querySelectorAll<HTMLButtonElement>('#viewport-switcher [data-view]');
+
+  const show = (i: number) => {
+    const thumb = thumbs[i];
+    if (!main || !thumb) return;
+    main.src = thumb.dataset.src ?? main.src;
+    main.alt = thumb.dataset.alt ?? '';
+    thumbs.forEach((t, n) => t.setAttribute('aria-pressed', String(n === i)));
+    modes.forEach((m) => m.setAttribute('aria-pressed', String(Number(m.dataset.view) === i)));
+  };
+  const turnBtn = document.getElementById('turn-btn');
+  let turnTimer: number | undefined;
+  let current = 0;
+  const stopTurn = () => {
+    clearInterval(turnTimer);
+    turnTimer = undefined;
+    turnBtn?.setAttribute('aria-pressed', 'false');
+  };
+  const pick = (i: number) => {
+    stopTurn();
+    current = i;
+    show(i);
+  };
+  thumbs.forEach((btn) => btn.addEventListener('click', () => pick(Number(btn.dataset.view))));
+  modes.forEach((btn) => btn.addEventListener('click', () => pick(Number(btn.dataset.view))));
+  document.getElementById('reset-btn')?.addEventListener('click', () => pick(0));
+
+  // 360° Turn: пока нет настоящего турнтейбла, по кругу листаются ракурсы
+  turnBtn?.addEventListener('click', () => {
+    if (turnTimer !== undefined) return stopTurn();
+    turnBtn.setAttribute('aria-pressed', 'true');
+    modes.forEach((m) => m.setAttribute('aria-pressed', 'false'));
+    turnTimer = window.setInterval(() => {
+      current = (current + 1) % thumbs.length;
+      show(current);
+      modes.forEach((m) => m.setAttribute('aria-pressed', 'false'));
+    }, 1200);
+  });
+
+  // Счётчик лайков (пока без сохранения)
+  const like = document.getElementById('like-trigger');
+  const likeCount = document.getElementById('like-counter');
+  like?.addEventListener('click', () => {
+    const on = like.getAttribute('aria-pressed') !== 'true';
+    like.setAttribute('aria-pressed', String(on));
+    if (likeCount) likeCount.textContent = String(Number(likeCount.textContent) + (on ? 1 : -1));
+  });
+
+  document.getElementById('fullscreen-btn')?.addEventListener('click', () => {
+    const stage = document.getElementById('viewport-stage');
+    if (document.fullscreenElement) document.exitFullscreen();
+    else stage?.requestFullscreen?.();
+  });
+
+  // Копирование ссылки
+  const share = document.getElementById('share-btn');
+  const shareLabel = document.getElementById('share-label');
+  share?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+    } catch {
+      return;
+    }
+    if (!shareLabel) return;
+    const original = shareLabel.textContent;
+    shareLabel.textContent = share.dataset.copied ?? '';
+    setTimeout(() => (shareLabel.textContent = original), 2000);
+  });
+
+  // Избранное (пока только визуально, дальше подключится FavoritesPanel)
+  document.querySelectorAll<HTMLButtonElement>('[data-favorite-toggle]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(on));
+      const icon = btn.querySelector<HTMLElement>('.material-symbols-outlined');
+      if (icon) icon.style.fontVariationSettings = on ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" : '';
+    }),
+  );
+</script>
