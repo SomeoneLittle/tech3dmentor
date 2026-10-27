@@ -9,6 +9,8 @@
     padding: 0;
   }
   html {
+    /* место под скроллбар зарезервировано, страница не прыгает при блокировке прокрутки (модалка) */
+    scrollbar-gutter: stable;
     scroll-behavior: smooth;
     scroll-padding-top: 5rem;
   }

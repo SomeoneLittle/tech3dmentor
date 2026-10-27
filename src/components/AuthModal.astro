@@ -142,6 +142,26 @@ const eye =
 </div>
 
 <style is:global>
+  #auth-modal {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  #auth-modal > div {
+    transform: translateY(16px) scale(0.97);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #auth-modal.auth-open {
+    opacity: 1;
+  }
+  #auth-modal.auth-open > div {
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #auth-modal,
+    #auth-modal > div {
+      transition: none;
+    }
+  }
   .auth-input:focus {
     outline: none;
     border-color: #a078ff;
@@ -195,13 +215,20 @@ const eye =
     setTab(mode);
     modal.classList.remove('hidden');
     modal.classList.add('flex');
+    modal.getBoundingClientRect(); // фиксируем начальное состояние, чтобы анимация сработала
+    modal.classList.add('auth-open');
     document.body.style.overflow = 'hidden';
   }
 
   function close() {
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
+    if (modal.classList.contains('hidden')) return;
+    modal.classList.remove('auth-open');
     document.body.style.overflow = '';
+    setTimeout(() => {
+      if (modal.classList.contains('auth-open')) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }, 300);
   }
 
   tabs.forEach((tab) => tab.addEventListener('click', () => setTab(tab.dataset.authTab as 'in' | 'up')));
