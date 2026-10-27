@@ -33,6 +33,12 @@ const aboutDictionaries: Record<Lang, AboutDict> = { ru: aboutRu, ua: aboutUa, e
 /** Тексты страницы «Обо мне» */
 export const ta = (lang: Lang): AboutDict => aboutDictionaries[lang];
 
+import { contactsEn, contactsRu, contactsUa, type ContactsDict } from './contacts';
+
+const contactsDictionaries: Record<Lang, ContactsDict> = { ru: contactsRu, ua: contactsUa, en: contactsEn };
+/** Тексты страницы «Контакты» */
+export const tc = (lang: Lang): ContactsDict => contactsDictionaries[lang];
+
 const mentoringDictionaries: Record<Lang, MentoringDict> = { ru: mentoringRu, ua: mentoringUa, en: mentoringEn };
 
 export const t = (lang: Lang): Dict => dictionaries[lang];

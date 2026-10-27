@@ -1,0 +1,326 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { locales, t, tc, path, type Lang } from '../../i18n';
+import { SITE } from '../../config';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const dict = t(lang);
+const c = tc(lang);
+
+const wrap = 'max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const label = 'font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider';
+const field =
+  'w-full bg-surface-container-lowest text-on-surface font-tech-data-lg text-tech-data-lg rounded-lg px-space-md py-3 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner placeholder:text-outline-variant placeholder:font-body-md';
+const topics = Object.entries(c.form.topics) as [string, string][];
+
+const isLink = (href: string) => href !== '#';
+// Иконки и ссылки не переводятся, подписи берутся из словаря.
+const channels = [
+  { icon: 'mail', title: SITE.email, text: c.channels.email, href: `mailto:${SITE.email}`, hover: 'group-hover:text-tertiary', primary: true },
+  { icon: 'palette', title: 'ArtStation', text: c.channels.artstation, href: SITE.artstation, hover: 'group-hover:text-secondary-container' },
+  { icon: 'view_in_ar', title: '3DCult', text: c.channels.cults, href: SITE.cults, hover: 'group-hover:text-tertiary' },
+  { icon: 'send', title: SITE.telegramHandle, text: c.channels.telegram, href: SITE.telegram, hover: 'group-hover:text-secondary-container' },
+  { icon: 'photo_camera', title: 'Instagram', text: c.channels.instagram, href: SITE.instagram, hover: 'group-hover:text-tertiary' },
+];
+const cardStyles = [
+  { icon: 'view_in_ar', iconCls: 'text-primary', tagCls: 'text-tertiary bg-tertiary-container/10', linkCls: 'text-primary group-hover:text-tertiary' },
+  { icon: 'school', iconCls: 'text-secondary-container', tagCls: 'text-secondary-container bg-secondary-container/10', linkCls: 'text-secondary-container group-hover:text-primary' },
+  { icon: 'hub', iconCls: 'text-primary', tagCls: 'text-primary bg-primary/10', linkCls: 'text-primary group-hover:text-tertiary' },
+];
+---
+
+<BaseLayout lang={lang} page="contacts" title={`${c.seo.title} — ${dict.site.name}`} description={c.seo.description}>
+  <div class="relative w-full overflow-hidden pb-space-2xl">
+    <div class="absolute -top-32 -left-20 w-[520px] h-[520px] rounded-full bg-primary-container/10 blur-[130px] pointer-events-none"></div>
+    <div class="absolute top-1/3 -right-24 w-[480px] h-[480px] rounded-full bg-tertiary-container/10 blur-[140px] pointer-events-none"></div>
+    <div class="absolute bottom-10 left-1/3 w-[600px] h-[300px] rounded-full bg-secondary-container/5 blur-[120px] pointer-events-none"></div>
+
+    <div class={`${wrap} relative z-10`}>
+      <!-- HERO -->
+      <section class="pt-space-xl pb-space-lg">
+        <div class="flex flex-wrap items-center justify-between gap-space-sm mb-space-md">
+          <nav aria-label="Breadcrumb" class="flex items-center gap-2 flex-wrap">
+            <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase bg-surface-container-high px-2 py-1 rounded">SYS_LOC</span>
+            <a href={path(lang)} class="font-tech-data-sm text-tech-data-sm text-outline hover:text-primary tracking-wider uppercase">{c.crumbs.home}</a>
+            <span class="text-outline-variant font-tech-data-sm">//</span>
+            <span class="font-tech-data-sm text-tech-data-sm text-outline tracking-wider uppercase">{c.crumbs.transmission}</span>
+            <span class="text-outline-variant font-tech-data-sm">//</span>
+            <span class="font-tech-data-sm text-tech-data-sm text-on-surface tracking-wider uppercase" aria-current="page">{c.crumbs.contacts}</span>
+          </nav>
+          <div class="flex flex-wrap items-center gap-space-sm">
+            <div class="flex items-center gap-2 bg-surface-container-low px-3 py-1 rounded-full shadow-inner">
+              <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+              <span class="font-tech-data-sm text-tech-data-sm text-secondary-container uppercase">{c.hud.status}</span>
+            </div>
+            <div class="flex items-center gap-2 bg-surface-container-low px-3 py-1 rounded-full shadow-inner">
+              <span class="material-symbols-outlined text-[14px] text-tertiary">bolt</span>
+              <span class="font-tech-data-sm text-tech-data-sm text-on-surface-variant uppercase">{c.hud.response}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative bg-surface-container-lowest/80 backdrop-blur-md rounded-xl p-space-lg sm:p-space-xl shadow-xl overflow-hidden">
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="font-label-caps text-label-caps text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">{c.hero.badge}</span>
+            <span class="font-tech-data-sm text-tech-data-sm text-secondary-container tracking-wider">{c.hero.version}</span>
+          </div>
+          <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase text-on-surface tracking-tight max-w-4xl">
+            {c.hero.titleBefore}
+            <span class="bg-gradient-to-r from-primary via-primary-container to-tertiary-container bg-clip-text text-transparent">{c.hero.titleAccent}</span>
+          </h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl mt-space-sm">{c.hero.sub}</p>
+          <div class="mt-space-lg pt-space-sm flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-low/60 rounded px-space-md py-1.5">
+            <div class="flex items-center gap-4 text-outline font-tech-data-sm text-tech-data-sm">
+              <span>X: +142.84</span>
+              <span>Y: -088.19</span>
+              <span>Z: +340.00</span>
+              <span class="hidden sm:inline text-secondary-container">{c.hero.shader}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+              <span class="font-label-caps text-label-caps text-secondary-container tracking-widest uppercase">{c.hero.encryption}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FORM + CHANNELS -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start mb-space-2xl">
+        <div class="lg:col-span-7 bg-surface-container-low rounded-xl p-space-lg sm:p-space-xl shadow-2xl relative overflow-hidden">
+          <div class="flex items-center justify-between bg-surface-container-high px-space-md py-space-sm -mx-space-lg -mt-space-lg sm:-mx-space-xl sm:-mt-space-xl mb-space-lg shadow-sm">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="material-symbols-outlined text-[16px] text-primary">terminal</span>
+              <span class="font-tech-data-lg text-tech-data-lg text-on-surface uppercase tracking-wider truncate">{c.form.header}</span>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <span class="w-2.5 h-2.5 rounded-full bg-surface-variant"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-surface-variant"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-secondary-container/80"></span>
+            </div>
+          </div>
+
+          <form
+            id="contact-form"
+            class="space-y-space-md"
+            data-mailto={SITE.email}
+            data-subject={c.form.subjectPrefix}
+            data-counter-suffix={c.form.chars}
+          >
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+              <div class="flex flex-col gap-1.5">
+                <div class="flex justify-between items-center">
+                  <label class={label} for="f-name">{c.form.name}</label>
+                  <span class="font-tech-data-sm text-tech-data-sm text-outline">{c.form.required}</span>
+                </div>
+                <div class="relative">
+                  <input class={field} id="f-name" name="name" type="text" required placeholder={c.form.namePlaceholder} autocomplete="name" />
+                  <span class="absolute right-3 top-3 text-outline-variant material-symbols-outlined text-[18px] pointer-events-none">badge</span>
+                </div>
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <div class="flex justify-between items-center">
+                  <label class={label} for="f-email">{c.form.email}</label>
+                  <span class="font-tech-data-sm text-tech-data-sm text-outline">{c.form.required}</span>
+                </div>
+                <div class="relative">
+                  <input class={field} id="f-email" name="email" type="email" required placeholder={c.form.emailPlaceholder} autocomplete="email" />
+                  <span class="absolute right-3 top-3 text-outline-variant material-symbols-outlined text-[18px] pointer-events-none">alternate_email</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <div class="flex justify-between items-center">
+                <label class={label} for="f-topic">{c.form.topic}</label>
+                <span class="font-tech-data-sm text-tech-data-sm text-secondary-container">{c.form.selectOne}</span>
+              </div>
+              <div class="relative">
+                <select class={`${field} appearance-none cursor-pointer`} id="f-topic" name="topic" required>
+                  <option class="bg-surface-container text-outline" value="" disabled selected>{c.form.topicPlaceholder}</option>
+                  {topics.map(([value, text]) => <option class="bg-surface-container text-on-surface" value={text}>{text}</option>)}
+                </select>
+                <span class="absolute right-3 top-3 text-outline pointer-events-none material-symbols-outlined text-[20px]">unfold_more</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <div class="flex justify-between items-center">
+                <label class={label} for="f-message">{c.form.message}</label>
+                <span class="font-tech-data-sm text-tech-data-sm text-outline" id="char-counter">0 / 2500 {c.form.chars}</span>
+              </div>
+              <textarea class={`${field} resize-y`} id="f-message" name="message" rows="6" maxlength="2500" required placeholder={c.form.messagePlaceholder}></textarea>
+            </div>
+
+            <div class="bg-surface-container/70 rounded-lg p-space-sm flex items-start gap-space-sm">
+              <span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">attachment</span>
+              <div class="flex flex-col">
+                <span class="font-label-caps text-label-caps text-primary uppercase">{c.form.noticeTitle}</span>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">{c.form.noticeText}</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3 pt-1">
+              <input class="mt-1 w-4 h-4 rounded bg-surface-container-lowest accent-primary cursor-pointer shrink-0" id="f-consent" type="checkbox" required />
+              <label class="font-body-sm text-body-sm text-on-surface-variant cursor-pointer select-none" for="f-consent">{c.form.consent}</label>
+            </div>
+
+            <div class="pt-space-sm">
+              <button
+                type="submit"
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-space-xl py-space-md rounded-full bg-gradient-to-r from-primary-container via-primary-container to-tertiary-container text-on-surface font-headline-sm text-headline-sm uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.45),0_0_12px_-2px_rgba(255,87,34,0.35)] hover:shadow-[0_0_36px_rgba(255,87,34,0.6)] transition-all transform active:scale-[0.98] group"
+              >
+                <span class="material-symbols-outlined text-[20px] text-on-surface transition-transform group-hover:rotate-12">send</span>
+                <span>{c.form.submit}</span>
+              </button>
+            </div>
+
+            <div id="form-success" class="hidden bg-secondary-container/15 text-secondary-container rounded-lg p-space-md items-center gap-3 mt-4" role="status">
+              <span class="material-symbols-outlined text-[24px]">verified</span>
+              <div>
+                <span class="font-tech-data-lg text-tech-data-lg block uppercase font-bold">{c.form.successTitle}</span>
+                <span class="font-body-sm text-body-sm text-on-surface">{c.form.successText}</span>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="lg:col-span-5 flex flex-col gap-space-lg">
+          <div class="bg-surface-container rounded-xl p-space-lg shadow-xl">
+            <div class="flex items-center justify-between gap-2 mb-space-md pb-space-sm border-b border-surface-variant">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px] text-primary">router</span>
+                <h2 class="font-headline-sm text-headline-sm text-on-surface uppercase tracking-tight">{c.channels.title}</h2>
+              </div>
+              <span class="hidden sm:inline font-tech-data-sm text-tech-data-sm text-secondary-container bg-surface-container-highest px-2 py-0.5 rounded">{c.channels.badge}</span>
+            </div>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">{c.channels.text}</p>
+            <div class="space-y-space-sm">
+              {
+                channels.map((ch) => (
+                  <a
+                    class="group flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-all shadow-sm"
+                    href={ch.href}
+                    {...(ch.primary || !isLink(ch.href) ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
+                  >
+                    <div class="flex items-center gap-space-sm min-w-0">
+                      <div class:list={['w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary transition-colors shrink-0', ch.hover]}>
+                        <span class="material-symbols-outlined text-[20px]">{ch.icon}</span>
+                      </div>
+                      <div class="flex flex-col min-w-0">
+                        <div class="flex items-center gap-2 min-w-0">
+                          <span class="font-tech-data-lg text-tech-data-lg text-on-surface truncate font-semibold">{ch.title}</span>
+                          {ch.primary && <span class="font-label-caps text-label-caps text-primary px-1.5 rounded bg-primary/10 hidden sm:inline">{c.channels.primary}</span>}
+                        </div>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant truncate">{ch.text}</span>
+                      </div>
+                    </div>
+                    <span class="material-symbols-outlined text-outline group-hover:text-primary transition-transform group-hover:translate-x-1 shrink-0 ml-2">
+                      {ch.primary ? 'arrow_forward' : 'north_east'}
+                    </span>
+                  </a>
+                ))
+              }
+            </div>
+          </div>
+
+          <div class="bg-surface-container-low rounded-xl p-space-md shadow-lg">
+            <div class="flex items-start gap-space-sm">
+              <div class="mt-1 relative flex items-center justify-center">
+                <span class="w-3 h-3 rounded-full bg-secondary-container"></span>
+                <span class="w-3 h-3 rounded-full bg-secondary-container animate-ping absolute"></span>
+              </div>
+              <div class="flex flex-col">
+                <div class="flex flex-wrap items-center gap-x-2">
+                  <span class="font-label-caps text-label-caps text-secondary-container uppercase tracking-wider font-bold">{c.capacity.title}</span>
+                  <span class="font-tech-data-sm text-tech-data-sm text-outline">{c.capacity.zone}</span>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface mt-1">{c.capacity.text}</p>
+                <div class="mt-space-sm pt-space-xs flex flex-wrap items-center gap-x-4 gap-y-1 text-outline font-tech-data-sm text-tech-data-sm border-t border-surface-variant">
+                  <span>{c.capacity.hours}</span>
+                  <span>{c.capacity.tz}</span>
+                  <span class="text-primary">{c.capacity.chat}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WHAT TO WRITE ABOUT -->
+      <section class="mt-space-lg pt-space-xl border-t border-surface-variant/40">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-space-sm mb-space-lg">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase bg-surface-container-high px-2 py-0.5 rounded">{c.guide.tag}</span>
+              <span class="font-tech-data-sm text-tech-data-sm text-secondary-container uppercase">{c.guide.kicker}</span>
+            </div>
+            <h2 class="font-headline-md text-headline-md uppercase text-on-surface tracking-tight">{c.guide.title}</h2>
+          </div>
+          <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">{c.guide.sub}</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+          {
+            c.guide.cards.map((card, i) => (
+              <div class="bg-surface-container rounded-xl p-space-lg flex flex-col justify-between hover:bg-surface-container-high transition-all shadow-md group">
+                <div>
+                  <div class="flex items-center justify-between mb-space-md">
+                    <div class:list={['w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center group-hover:scale-105 transition-transform', cardStyles[i].iconCls]}>
+                      <span class="material-symbols-outlined text-[24px]">{cardStyles[i].icon}</span>
+                    </div>
+                    <span class:list={['font-tech-data-sm text-tech-data-sm px-2 py-0.5 rounded uppercase font-semibold', cardStyles[i].tagCls]}>{card.tag}</span>
+                  </div>
+                  <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase mb-space-xs">{card.title}</h3>
+                  <p class="font-body-md text-body-md text-on-surface-variant mb-space-md">{card.text}</p>
+                </div>
+                <div class="pt-space-sm border-t border-surface-variant/40 flex items-center justify-between">
+                  <a class:list={['font-tech-data-lg text-tech-data-lg flex items-center gap-1.5 transition-colors uppercase', cardStyles[i].linkCls]} href={path(lang, card.page)}>
+                    <span>{card.link}</span>
+                    <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  </a>
+                  <span class="font-tech-data-sm text-tech-data-sm text-outline">0{i + 1} / 03</span>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="mt-space-2xl pt-space-lg flex flex-wrap items-center justify-between gap-4 text-outline font-tech-data-sm text-tech-data-sm border-t border-surface-variant/30">
+        <div class="flex items-center gap-6">
+          <span>FOCAL: 50.0mm</span>
+          <span>{c.strip.cam}</span>
+        </div>
+        <span class="text-secondary-container">{c.strip.shading}</span>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Сайт статичный, без сервера: форма собирает письмо и открывает почтовую программу (mailto).
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const message = document.getElementById('f-message') as HTMLTextAreaElement | null;
+  const counter = document.getElementById('char-counter');
+  const success = document.getElementById('form-success');
+
+  if (form && message && counter) {
+    const suffix = form.dataset.counterSuffix ?? '';
+    message.addEventListener('input', () => {
+      counter.textContent = `${message.value.length} / 2500 ${suffix}`;
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const subject = `${form.dataset.subject}: ${data.get('topic')}`;
+      const body = `${data.get('message')}\n\n— ${data.get('name')} <${data.get('email')}>`;
+      window.location.href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      success?.classList.remove('hidden');
+      success?.classList.add('flex');
+    });
+  }
+</script>
