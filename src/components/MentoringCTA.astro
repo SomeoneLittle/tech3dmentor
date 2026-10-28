@@ -9,32 +9,32 @@ const { lang } = Astro.props;
 const dict = t(lang).cta;
 ---
 
-<section class="w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop py-space-2xl">
-  <div class="relative rounded-2xl overflow-hidden p-space-lg md:p-space-2xl bg-surface-container-lowest shadow-2xl flex flex-col items-center text-center">
+<section class="w-full max-w-[1440px] mx-auto px-4 md:px-margin-desktop py-5 md:py-space-2xl">
+  <div class="relative rounded-2xl overflow-hidden p-5 md:p-space-2xl bg-surface-container-lowest shadow-2xl flex flex-col items-center text-center">
     <div class="absolute inset-0 p-[2px] rounded-2xl bg-gradient-to-r from-primary via-primary-container to-tertiary-container -z-10 pointer-events-none"></div>
     <div class="absolute -top-24 left-1/4 w-80 h-80 rounded-full bg-primary-container/25 blur-[120px] pointer-events-none"></div>
     <div class="absolute -bottom-24 right-1/4 w-80 h-80 rounded-full bg-tertiary-container/25 blur-[120px] pointer-events-none"></div>
 
-    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container mb-space-md">
+    <div class="inline-flex items-center gap-2 px-3 md:px-4 py-1 md:py-1.5 rounded-full bg-surface-container mb-3 md:mb-space-md">
       <span class="w-2 h-2 rounded-full bg-tertiary-container animate-ping"></span>
-      <span class="font-tech-data-sm text-tech-data-sm text-tertiary uppercase tracking-widest font-bold">{dict.badge}</span>
+      <span class="font-tech-data-sm text-[9px] md:text-tech-data-sm text-tertiary uppercase tracking-widest font-bold">{dict.badge}</span>
     </div>
 
-    <h2 class="font-headline-lg-mobile md:font-display-hero text-headline-lg-mobile md:text-display-hero text-on-surface tracking-tight uppercase max-w-3xl mb-space-sm">
+    <h2 class="font-headline-lg-mobile md:font-display-hero text-headline-lg-mobile md:text-display-hero text-on-surface tracking-tight uppercase max-w-3xl mb-2 md:mb-space-sm">
       {dict.titleBefore}
       <span class="bg-gradient-to-r from-primary via-primary-container to-tertiary-container bg-clip-text text-transparent">{dict.titleAccent}</span>
     </h2>
-    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-space-xl">{dict.text}</p>
+    <p class="font-body-lg text-xs md:text-body-lg text-on-surface-variant max-w-xs md:max-w-xl mb-4 md:mb-space-xl leading-relaxed md:leading-normal">{dict.text}</p>
 
     <a
       href={`${path(lang, 'mentoring')}#apply`}
-      class="px-10 py-4 rounded-full bg-gradient-to-r from-primary-container via-inverse-primary to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-[0_0_32px_-4px_rgba(160,120,255,0.5)] hover:shadow-[0_0_48px_rgba(255,87,34,0.7)] transition-all hover:-translate-y-1 active:translate-y-0 flex items-center gap-3"
+      class="w-full md:w-auto justify-center min-h-[48px] px-6 md:px-10 py-3.5 md:py-4 rounded-full bg-gradient-to-r from-primary-container via-inverse-primary to-tertiary-container text-on-surface font-headline-sm text-xs md:text-tech-data-lg uppercase tracking-wider shadow-[0_0_32px_-4px_rgba(160,120,255,0.5)] hover:shadow-[0_0_48px_rgba(255,87,34,0.7)] transition-all hover:-translate-y-1 active:translate-y-0 flex items-center gap-3"
     >
       <span>{dict.apply}</span>
       <span class="material-symbols-outlined text-[20px]">bolt</span>
     </a>
 
-    <div class="mt-space-lg flex flex-wrap justify-center items-center gap-x-space-lg gap-y-space-sm font-tech-data-sm text-tech-data-sm text-outline">
+    <div class="mt-4 md:mt-space-lg flex flex-col md:flex-row justify-center items-center gap-x-space-lg gap-y-1.5 md:gap-y-space-sm font-tech-data-sm text-[10px] md:text-tech-data-sm text-outline">
       <div class="flex items-center gap-1.5">
         <span class="material-symbols-outlined text-[16px] text-secondary-container">verified</span>
         <span>{dict.g1}</span>

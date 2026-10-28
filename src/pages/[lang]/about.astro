@@ -12,11 +12,11 @@ const lang = Astro.params.lang as Lang;
 const dict = t(lang);
 const a = ta(lang);
 
-const wrap = 'max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const wrap = 'max-w-[1440px] mx-auto px-4 md:px-margin-desktop';
 const kicker = 'font-tech-data-sm text-tech-data-sm tracking-widest uppercase';
 const h2 = 'font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight uppercase';
 const gradientBtn =
-  'rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.45)] hover:shadow-[0_0_32px_rgba(255,87,34,0.6)] transition-all transform active:scale-95';
+  'rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-xs md:text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.45)] hover:shadow-[0_0_32px_rgba(255,87,34,0.6)] transition-all transform active:scale-95';
 
 // Иконки и цвета не переводятся, лежат рядом с текстами из словаря по индексу.
 const statTone = ['text-secondary-container', 'text-primary', 'text-tertiary'];
@@ -67,7 +67,7 @@ const workVisuals = [
   </section>
 
   <!-- HERO -->
-  <section class="w-full relative overflow-hidden py-space-xl lg:py-space-2xl bg-surface">
+  <section class="w-full relative overflow-hidden py-4 md:py-space-xl lg:py-space-2xl bg-surface">
     <div class="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(#a078ff_1px,transparent_1px)] [background-size:32px_32px]" aria-hidden="true"></div>
     <div class={`${wrap} relative z-10`}>
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg lg:gap-gutter-desktop items-center">
@@ -108,7 +108,7 @@ const workVisuals = [
           </div>
           <div class="absolute -bottom-4 -right-4 hidden sm:flex flex-col bg-surface-container-high px-space-md py-space-xs rounded-lg shadow-xl">
             <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">{a.hero.clearance}</span>
-            <span class="font-tech-data-lg text-tech-data-lg text-on-surface font-bold">{a.hero.clearanceValue}</span>
+            <span class="font-tech-data-lg text-xs md:text-tech-data-lg text-on-surface font-bold">{a.hero.clearanceValue}</span>
           </div>
         </div>
 
@@ -121,14 +121,14 @@ const workVisuals = [
             {a.hero.titleBefore}
             <span class="bg-gradient-to-r from-primary-container via-tertiary to-secondary-container bg-clip-text text-transparent">{a.hero.titleAccent}</span>
           </h1>
-          <p class="font-headline-sm text-headline-sm text-primary tracking-tight font-medium">{a.hero.role}</p>
-          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">{a.hero.p1}</p>
-          <p class="font-body-md text-body-md text-outline max-w-2xl">{a.hero.p2}</p>
+          <p class="font-headline-sm text-base md:text-headline-sm text-primary tracking-tight font-medium">{a.hero.role}</p>
+          <p class="font-body-lg text-sm md:text-body-lg text-on-surface-variant max-w-2xl">{a.hero.p1}</p>
+          <p class="font-body-md text-[13px] leading-5 md:text-body-md text-outline max-w-2xl">{a.hero.p2}</p>
           <div class="grid grid-cols-3 gap-space-sm py-space-sm max-w-xl">
             {
               a.hero.stats.map((stat, i) => (
                 <div class="p-space-sm bg-surface-container rounded-lg">
-                  <span class:list={['font-tech-data-lg text-tech-data-lg font-bold block', statTone[i]]}>{stat.value}</span>
+                  <span class:list={['font-tech-data-lg text-xs md:text-tech-data-lg font-bold block', statTone[i]]}>{stat.value}</span>
                   <span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">{stat.label}</span>
                 </div>
               ))
@@ -143,14 +143,14 @@ const workVisuals = [
               href={SITE.cults}
               target="_blank"
               rel="noopener noreferrer"
-              class="px-space-lg py-space-sm rounded-full bg-surface-container-high text-on-surface hover:text-secondary-container hover:bg-surface-container-highest transition-all flex items-center gap-2 font-tech-data-lg text-tech-data-lg uppercase tracking-wide"
+              class="px-space-lg py-space-sm rounded-full bg-surface-container-high text-on-surface hover:text-secondary-container hover:bg-surface-container-highest transition-all flex items-center gap-2 font-tech-data-lg text-xs md:text-tech-data-lg uppercase tracking-wide"
             >
               <span>{a.hero.cults}</span>
               <span class="material-symbols-outlined text-[18px]">north_east</span>
             </a>
             <a
               href="#resume"
-              class="px-space-lg py-space-sm rounded-full bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all flex items-center gap-2 font-tech-data-lg text-tech-data-lg uppercase tracking-wide"
+              class="px-space-lg py-space-sm rounded-full bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all flex items-center gap-2 font-tech-data-lg text-xs md:text-tech-data-lg uppercase tracking-wide"
             >
               <span class="material-symbols-outlined text-[18px]">description</span>
               <span>{a.hero.resume}</span>
@@ -162,19 +162,19 @@ const workVisuals = [
   </section>
 
   <!-- КАК Я РАБОТАЮ -->
-  <section class="w-full py-space-2xl bg-surface-container-lowest relative">
+  <section class="w-full py-6 md:py-space-2xl bg-surface-container-lowest relative">
     <div class={wrap}>
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-space-sm mb-space-xl">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-space-sm mb-4 md:mb-space-xl">
         <div class="flex flex-col gap-space-xs">
           <span class={`${kicker} text-primary`}>{a.pillars.kicker}</span>
           <h2 class={h2}>{a.pillars.title}</h2>
         </div>
-        <p class="font-body-md text-body-md text-on-surface-variant max-w-md">{a.pillars.sub}</p>
+        <p class="font-body-md text-[13px] leading-5 md:text-body-md text-on-surface-variant max-w-md">{a.pillars.sub}</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
         {
           a.pillars.items.map((item, i) => (
-            <div class="flex flex-col justify-between p-space-lg bg-surface-container-low rounded-xl hover:bg-surface-container transition-all duration-300 shadow-md">
+            <div class="flex flex-col justify-between p-4 md:p-space-lg bg-surface-container-low rounded-xl hover:bg-surface-container transition-all duration-300 shadow-md">
               <div class="flex flex-col gap-space-md">
                 <div class="flex items-center justify-between">
                   <span class="font-display-hero text-headline-lg text-outline-variant font-bold">{`0${i + 1}`}</span>
@@ -187,9 +187,9 @@ const workVisuals = [
                     <span class:list={['w-1.5 h-1.5 rounded-full', pillarVisuals[i].dot]}></span>
                     <span class:list={['font-tech-data-sm text-tech-data-sm uppercase', pillarVisuals[i].text]}>{item.tag}</span>
                   </div>
-                  <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase">{item.title}</h3>
+                  <h3 class="font-headline-sm text-base md:text-headline-sm text-on-surface uppercase">{item.title}</h3>
                 </div>
-                <p class="font-body-md text-body-md text-on-surface-variant">{item.text}</p>
+                <p class="font-body-md text-[13px] leading-5 md:text-body-md text-on-surface-variant">{item.text}</p>
               </div>
               <div class="pt-space-md mt-space-md flex flex-wrap gap-1.5">
                 {item.chips.map((chip) => <span class="font-tech-data-sm text-tech-data-sm bg-surface-container px-2 py-0.5 rounded text-outline">{chip}</span>)}
@@ -202,7 +202,7 @@ const workVisuals = [
   </section>
 
   <!-- ИНСТРУМЕНТЫ -->
-  <section class="w-full py-space-2xl bg-surface relative">
+  <section class="w-full py-6 md:py-space-2xl bg-surface relative">
     <div class={wrap}>
       <div class="flex flex-col gap-space-xs mb-space-lg">
         <span class={`${kicker} text-secondary-container`}>{a.tools.kicker}</span>
@@ -217,7 +217,7 @@ const workVisuals = [
                   <span class="material-symbols-outlined text-[22px]">{toolVisuals[i].icon}</span>
                 </div>
                 <div class="flex flex-col min-w-0">
-                  <span class="font-headline-sm text-body-lg text-on-surface font-semibold">{tool.name}</span>
+                  <span class="font-headline-sm text-sm md:text-body-lg text-on-surface font-semibold">{tool.name}</span>
                   <span class="font-tech-data-sm text-tech-data-sm text-outline">{tool.desc}</span>
                 </div>
               </div>
@@ -230,26 +230,26 @@ const workVisuals = [
   </section>
 
   <!-- ОПЫТ -->
-  <section class="w-full py-space-2xl bg-surface-container-lowest relative">
+  <section class="w-full py-6 md:py-space-2xl bg-surface-container-lowest relative">
     <div class={wrap}>
-      <div class="flex flex-col gap-space-xs mb-space-xl">
+      <div class="flex flex-col gap-space-xs mb-4 md:mb-space-xl">
         <span class={`${kicker} text-tertiary`}>{a.experience.kicker}</span>
         <h2 class={h2}>{a.experience.title}</h2>
       </div>
       <div class="flex flex-col gap-space-md">
         {
           a.experience.items.map((item, i) => (
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-space-md p-space-lg bg-surface-container-low rounded-xl hover:bg-surface-container transition-all">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-space-md p-4 md:p-space-lg bg-surface-container-low rounded-xl hover:bg-surface-container transition-all">
               <div class="md:col-span-3 flex flex-col justify-start">
-                <span class:list={['font-tech-data-lg text-tech-data-lg font-bold', expTone[i]]}>{item.period}</span>
+                <span class:list={['font-tech-data-lg text-xs md:text-tech-data-lg font-bold', expTone[i]]}>{item.period}</span>
                 <span class="font-tech-data-sm text-tech-data-sm text-outline mt-1">{item.duration}</span>
               </div>
               <div class="md:col-span-9 flex flex-col gap-space-xs">
                 <div class="flex flex-wrap items-center justify-between gap-space-xs">
-                  <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase">{item.title}</h3>
+                  <h3 class="font-headline-sm text-base md:text-headline-sm text-on-surface uppercase">{item.title}</h3>
                   <span class="font-tech-data-sm text-tech-data-sm text-on-surface-variant bg-surface-container-high px-2.5 py-1 rounded">{item.company}</span>
                 </div>
-                <p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">{item.text}</p>
+                <p class="font-body-md text-[13px] leading-5 md:text-body-md text-on-surface-variant max-w-3xl">{item.text}</p>
                 <div class="flex flex-wrap items-center gap-space-xs mt-2 text-outline font-tech-data-sm text-tech-data-sm">
                   <span class={expTone[i]}>▸ {item.tags[0]}</span>
                   <span>•</span>
@@ -266,14 +266,14 @@ const workVisuals = [
   </section>
 
   <!-- ИЗБРАННЫЕ РАБОТЫ -->
-  <section class="w-full py-space-2xl bg-surface relative">
+  <section class="w-full py-6 md:py-space-2xl bg-surface relative">
     <div class={wrap}>
-      <div class="flex items-end justify-between gap-space-md mb-space-xl">
+      <div class="flex items-end justify-between gap-space-md mb-4 md:mb-space-xl">
         <div class="flex flex-col gap-space-xs">
           <span class={`${kicker} text-primary`}>{a.works.kicker}</span>
           <h2 class={h2}>{a.works.title}</h2>
         </div>
-        <a href={path(lang, 'portfolio')} class="hidden sm:inline-flex items-center gap-2 font-tech-data-lg text-tech-data-lg text-primary hover:text-on-surface transition-colors uppercase tracking-wider">
+        <a href={path(lang, 'portfolio')} class="hidden sm:inline-flex items-center gap-2 font-tech-data-lg text-xs md:text-tech-data-lg text-primary hover:text-on-surface transition-colors uppercase tracking-wider">
           <span>{a.works.all}</span>
           <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
         </a>
@@ -294,7 +294,7 @@ const workVisuals = [
               <div class="p-space-md flex flex-col gap-space-xs flex-grow justify-between">
                 <div class="flex flex-col gap-1">
                   <span class:list={['font-tech-data-sm text-tech-data-sm uppercase', workVisuals[i].text]}>{work.tag}</span>
-                  <h3 class="font-headline-sm text-body-lg text-on-surface font-bold uppercase tracking-tight">{work.title}</h3>
+                  <h3 class="font-headline-sm text-sm md:text-body-lg text-on-surface font-bold uppercase tracking-tight">{work.title}</h3>
                   <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">{work.desc}</p>
                 </div>
                 <span class="mt-space-sm pt-space-xs flex items-center justify-between text-secondary-container font-tech-data-sm text-tech-data-sm uppercase tracking-wide group-hover:underline">
@@ -316,9 +316,9 @@ const workVisuals = [
   </section>
 
   <!-- ФИНАЛЬНЫЙ ПРИЗЫВ -->
-  <section class="w-full py-space-2xl bg-surface-container-lowest relative overflow-hidden">
+  <section class="w-full py-6 md:py-space-2xl bg-surface-container-lowest relative overflow-hidden">
     <div class={`${wrap} relative z-10`}>
-      <div class="flex flex-col gap-space-xs mb-space-xl text-center md:text-left">
+      <div class="flex flex-col gap-space-xs mb-4 md:mb-space-xl text-center md:text-left">
         <span class={`${kicker} text-primary`}>{a.cta.kicker}</span>
         <h2 class={h2}>{a.cta.title}</h2>
       </div>
@@ -328,15 +328,15 @@ const workVisuals = [
             { card: a.cta.mentoring, blob: 'bg-primary-container/10', badge: 'text-secondary-container', check: 'text-primary', href: path(lang, 'mentoring'), primary: true },
             { card: a.cta.collab, blob: 'bg-secondary-container/10', badge: 'text-primary', check: 'text-secondary-container', href: path(lang, 'contacts'), primary: false },
           ].map(({ card, blob, badge, check, href, primary }) => (
-            <div class="p-space-lg md:p-space-xl bg-surface-container-low rounded-2xl flex flex-col justify-between gap-space-lg relative overflow-hidden shadow-xl">
+            <div class="p-4 md:p-space-lg md:p-space-xl bg-surface-container-low rounded-2xl flex flex-col justify-between gap-space-lg relative overflow-hidden shadow-xl">
               <div class:list={['absolute -right-12 -top-12 w-48 h-48 rounded-full filter blur-3xl pointer-events-none', blob]}></div>
               <div class="flex flex-col gap-space-sm">
                 <div class="flex flex-wrap items-center justify-between gap-2">
                   <span class:list={['font-label-caps text-label-caps uppercase bg-surface-container px-2 py-0.5 rounded-full', badge]}>{card.badge}</span>
                   <span class="font-tech-data-sm text-tech-data-sm text-outline">{card.track}</span>
                 </div>
-                <h3 class="font-headline-md text-headline-md text-on-surface uppercase">{card.title}</h3>
-                <p class="font-body-md text-body-md text-on-surface-variant">{card.text}</p>
+                <h3 class="font-headline-md text-lg md:text-headline-md text-on-surface uppercase">{card.title}</h3>
+                <p class="font-body-md text-[13px] leading-5 md:text-body-md text-on-surface-variant">{card.text}</p>
                 <ul class="flex flex-col gap-2 font-tech-data-sm text-tech-data-sm text-on-surface-variant pt-space-xs">
                   {
                     card.list.map((line) => (
@@ -354,7 +354,7 @@ const workVisuals = [
                   'w-full py-space-sm text-center flex items-center justify-center gap-2',
                   primary
                     ? gradientBtn
-                    : 'rounded-full bg-surface-container-high text-on-surface hover:text-secondary-container hover:bg-surface-container-highest transition-all font-headline-sm text-tech-data-lg uppercase tracking-wider',
+                    : 'rounded-full bg-surface-container-high text-on-surface hover:text-secondary-container hover:bg-surface-container-highest transition-all font-headline-sm text-xs md:text-tech-data-lg uppercase tracking-wider',
                 ]}
               >
                 <span>{card.button}</span>

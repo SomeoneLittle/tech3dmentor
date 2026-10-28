@@ -23,7 +23,7 @@ const related = [
   ...blogPosts.filter((p) => p !== post && p.category === post.category),
   ...blogPosts.filter((p) => p !== post && p.category !== post.category),
 ].slice(0, 3);
-const sectionClass = 'w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const sectionClass = 'w-full max-w-[1440px] mx-auto px-4 md:px-margin-desktop';
 const pad = (n: number) => String(n).padStart(2, '0');
 const id = `ART-${post.date.slice(0, 4)}-${post.date.slice(5, 7)}`;
 const initials = 'T3';
@@ -70,9 +70,9 @@ const initials = 'T3';
 
     <div class="flex flex-wrap items-center justify-between gap-space-md p-space-md rounded-xl bg-surface-container-low shadow-sm">
       <div class="flex items-center gap-space-md">
-        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-primary-container to-tertiary-container flex items-center justify-center text-on-surface font-headline-sm text-headline-sm uppercase font-bold shadow-md">{initials}</div>
+        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-primary-container to-tertiary-container flex items-center justify-center text-on-surface font-headline-sm text-base md:text-headline-sm uppercase font-bold shadow-md">{initials}</div>
         <div class="flex flex-col">
-          <span class="font-headline-sm text-tech-data-lg text-on-surface uppercase font-bold">{dict.site.name}</span>
+          <span class="font-headline-sm text-xs md:text-tech-data-lg text-on-surface uppercase font-bold">{dict.site.name}</span>
           <span class="font-tech-data-sm text-tech-data-sm text-on-surface-variant">{dict.about.badge}</span>
         </div>
       </div>
@@ -134,7 +134,7 @@ const initials = 'T3';
   </section>
 
   <!-- ВЬЮПОРТ СО ВСТУПИТЕЛЬНОЙ КАРТИНКОЙ -->
-  <section class={`${sectionClass} mb-space-2xl`}>
+  <section class={`${sectionClass} mb-6 md:mb-space-2xl`}>
     <div class="relative rounded-2xl overflow-hidden bg-surface-container-lowest shadow-2xl">
       {
         body && (
@@ -177,12 +177,12 @@ const initials = 'T3';
   </section>
 
   <!-- ТЕКСТ СТАТЬИ -->
-  <section class={`${sectionClass} mb-space-2xl`}>
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+  <section class={`${sectionClass} mb-6 md:mb-space-2xl`}>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-space-xl items-start">
       <aside class="lg:col-span-4 lg:sticky lg:top-28 space-y-space-md order-2 lg:order-1">
         {
           body && (
-            <div class="bg-surface-container rounded-2xl p-space-lg shadow-md">
+            <div class="bg-surface-container rounded-2xl p-4 md:p-space-lg shadow-md">
               <div class="flex items-center justify-between pb-space-sm mb-space-md">
                 <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase flex items-center gap-1.5">
                   <span class="material-symbols-outlined text-[15px]">list_alt</span>
@@ -208,13 +208,13 @@ const initials = 'T3';
 
         {
           post.download && (
-            <div class="bg-surface-container-low rounded-2xl p-space-lg shadow-sm">
+            <div class="bg-surface-container-low rounded-2xl p-4 md:p-space-lg shadow-sm">
               <div class="flex items-center gap-space-sm mb-space-sm">
                 <div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
                   <span class="material-symbols-outlined text-[20px]">folder_zip</span>
                 </div>
                 <div>
-                  <span class="font-headline-sm text-tech-data-lg text-on-surface font-semibold block leading-tight">{d.download.title}</span>
+                  <span class="font-headline-sm text-xs md:text-tech-data-lg text-on-surface font-semibold block leading-tight">{d.download.title}</span>
                   <span class="font-tech-data-sm text-[10px] text-on-surface-variant">{d.download.files}</span>
                 </div>
               </div>
@@ -233,12 +233,12 @@ const initials = 'T3';
           )
         }
 
-        <div class="bg-gradient-to-br from-surface-container-high via-surface-container to-surface-container-lowest p-space-lg rounded-2xl shadow-sm">
+        <div class="bg-gradient-to-br from-surface-container-high via-surface-container to-surface-container-lowest p-4 md:p-space-lg rounded-2xl shadow-sm">
           <div class="flex items-center gap-2 mb-space-xs">
             <span class="w-2 h-2 rounded-full bg-secondary-container animate-ping"></span>
             <span class="font-label-caps text-label-caps text-secondary-container tracking-wider uppercase">{d.mentorMini.badge}</span>
           </div>
-          <h2 class="font-headline-sm text-tech-data-lg text-on-surface font-bold uppercase mb-space-xs">{d.mentorMini.title}</h2>
+          <h2 class="font-headline-sm text-xs md:text-tech-data-lg text-on-surface font-bold uppercase mb-space-xs">{d.mentorMini.title}</h2>
           <p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">{d.mentorMini.text}</p>
           <a href={`${path(lang, 'mentoring')}#apply`} class="text-primary hover:text-tertiary font-tech-data-sm text-tech-data-sm flex items-center gap-1.5 transition-colors font-semibold uppercase">
             <span>{d.mentorMini.link}</span>
@@ -257,17 +257,17 @@ const initials = 'T3';
                   <span class="text-outline">---</span>
                   <span class="text-on-surface-variant uppercase">{pick(section.kicker, lang)}</span>
                 </div>
-                <h2 class="font-headline-md text-headline-md text-on-surface tracking-tight uppercase font-bold">
+                <h2 class="font-headline-md text-lg md:text-headline-md text-on-surface tracking-tight uppercase font-bold">
                   {pad(i + 1)}. {pick(section.heading, lang)}
                 </h2>
 
                 {section.blocks.map((block) => {
                   if (block.type === 'p')
-                    return <p class:list={['text-on-surface-variant leading-relaxed', block.lead ? 'font-body-lg text-body-lg' : 'font-body-md text-body-md']}>{pick(block.text, lang)}</p>;
+                    return <p class:list={['text-on-surface-variant leading-relaxed', block.lead ? 'font-body-lg text-sm md:text-body-lg' : 'font-body-md text-[13px] leading-5 md:text-body-md']}>{pick(block.text, lang)}</p>;
 
                   if (block.type === 'tip')
                     return (
-                      <div class="p-space-lg rounded-2xl bg-surface-container-high shadow-md flex items-start gap-space-md">
+                      <div class="p-4 md:p-space-lg rounded-2xl bg-surface-container-high shadow-md flex items-start gap-space-md">
                         <div class="w-10 h-10 rounded-xl bg-tertiary-container/20 text-tertiary flex items-center justify-center shrink-0">
                           <span class="material-symbols-outlined text-[24px]">lightbulb</span>
                         </div>
@@ -310,7 +310,7 @@ const initials = 'T3';
                               <span class="font-tech-data-sm text-tech-data-sm text-error font-bold">[{item.code}]</span>
                               <span class="material-symbols-outlined text-error text-[18px]">{item.icon}</span>
                             </div>
-                            <h3 class="font-headline-sm text-tech-data-lg text-on-surface font-semibold">{pick(item.title, lang)}</h3>
+                            <h3 class="font-headline-sm text-xs md:text-tech-data-lg text-on-surface font-semibold">{pick(item.title, lang)}</h3>
                             <p class="font-body-sm text-body-sm text-on-surface-variant">{pick(item.text, lang)}</p>
                           </div>
                         ))}
@@ -319,9 +319,9 @@ const initials = 'T3';
 
                   if (block.type === 'quote')
                     return (
-                      <blockquote class="my-space-lg p-space-xl rounded-2xl bg-gradient-to-r from-surface-container-high via-surface-container to-surface-container-high relative shadow-md">
+                      <blockquote class="my-space-lg p-5 md:p-space-xl rounded-2xl bg-gradient-to-r from-surface-container-high via-surface-container to-surface-container-high relative shadow-md">
                         <span class="font-headline-lg text-display-hero text-primary/10 absolute -top-4 left-4 select-none leading-none" aria-hidden="true">“</span>
-                        <p class="font-headline-sm text-headline-sm text-on-surface italic leading-relaxed relative z-10 font-medium">{pick(block.text, lang)}</p>
+                        <p class="font-headline-sm text-base md:text-headline-sm text-on-surface italic leading-relaxed relative z-10 font-medium">{pick(block.text, lang)}</p>
                         <div class="mt-space-md flex items-center gap-space-sm relative z-10">
                           <span class="w-8 h-0.5 bg-tertiary-container" />
                           <cite class="font-tech-data-sm text-tech-data-sm text-tertiary not-italic uppercase tracking-wider font-bold">
@@ -338,7 +338,7 @@ const initials = 'T3';
                           <li class="p-space-md rounded-xl bg-surface-container flex items-start gap-space-md">
                             <span class="w-8 h-8 rounded-lg bg-surface-container-highest text-primary font-tech-data-sm text-tech-data-sm flex items-center justify-center shrink-0 font-bold">{pad(n + 1)}</span>
                             <div>
-                              <h3 class="font-headline-sm text-tech-data-lg text-on-surface font-semibold uppercase">{pick(step.title, lang)}</h3>
+                              <h3 class="font-headline-sm text-xs md:text-tech-data-lg text-on-surface font-semibold uppercase">{pick(step.title, lang)}</h3>
                               <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{pick(step.text, lang)}</p>
                             </div>
                           </li>
@@ -387,7 +387,7 @@ const initials = 'T3';
                             <span class="material-symbols-outlined text-[16px]">check</span>
                           </div>
                           <div>
-                            <h3 class="font-headline-sm text-tech-data-lg text-on-surface font-semibold">{n + 1}. {pick(item.title, lang)}</h3>
+                            <h3 class="font-headline-sm text-xs md:text-tech-data-lg text-on-surface font-semibold">{n + 1}. {pick(item.title, lang)}</h3>
                             <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">{pick(item.text, lang)}</p>
                           </div>
                         </li>
@@ -399,7 +399,7 @@ const initials = 'T3';
             ))
           ) : (
             <div class="space-y-space-md">
-              <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">{desc}</p>
+              <p class="font-body-lg text-sm md:text-body-lg text-on-surface-variant leading-relaxed">{desc}</p>
               <p class="font-tech-data-sm text-tech-data-sm text-outline">{d.leadOnly}</p>
             </div>
           )
@@ -427,18 +427,18 @@ const initials = 'T3';
         }
 
         <!-- ОБ АВТОРЕ -->
-        <div class="p-space-lg md:p-space-xl rounded-2xl bg-surface-container shadow-md space-y-space-md">
+        <div class="p-4 md:p-space-lg md:p-space-xl rounded-2xl bg-surface-container shadow-md space-y-space-md">
           <div class="flex items-center justify-between pb-space-xs font-label-caps text-label-caps text-primary tracking-widest uppercase">
             <span>{d.aboutAuthor} {dict.site.name}</span>
             <span class="text-secondary-container">{d.mentor}</span>
           </div>
           <div class="flex flex-col sm:flex-row items-start gap-space-lg">
             <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-primary-container via-surface-container-high to-tertiary-container p-0.5 shrink-0 shadow-lg">
-              <div class="w-full h-full rounded-2xl bg-surface-container-lowest flex items-center justify-center font-headline-md text-headline-md text-primary font-bold">{initials}</div>
+              <div class="w-full h-full rounded-2xl bg-surface-container-lowest flex items-center justify-center font-headline-md text-lg md:text-headline-md text-primary font-bold">{initials}</div>
             </div>
             <div class="space-y-space-xs flex-1">
-              <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold uppercase">{dict.site.name}</h2>
-              <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">{dict.about.p1}</p>
+              <h2 class="font-headline-sm text-base md:text-headline-sm text-on-surface font-bold uppercase">{dict.site.name}</h2>
+              <p class="font-body-md text-[13px] leading-5 md:text-body-md text-on-surface-variant leading-relaxed">{dict.about.p1}</p>
               <div class="pt-space-xs flex flex-wrap items-center gap-space-md font-tech-data-sm text-tech-data-sm">
                 <a href={SITE.artstation} target="_blank" rel="noopener noreferrer" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1">
                   <span class="material-symbols-outlined text-[15px]">deployed_code</span> ArtStation
@@ -458,17 +458,17 @@ const initials = 'T3';
         </div>
 
         <!-- ПРИЗЫВ К МЕНТОРСТВУ -->
-        <div class="p-space-lg md:p-space-xl rounded-2xl bg-gradient-to-br from-surface-container-high via-surface-container to-surface-container-low relative overflow-hidden shadow-xl space-y-space-md">
+        <div class="p-4 md:p-space-lg md:p-space-xl rounded-2xl bg-gradient-to-br from-surface-container-high via-surface-container to-surface-container-low relative overflow-hidden shadow-xl space-y-space-md">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-pulse"></span>
             <span class="font-label-caps text-label-caps text-secondary-container tracking-wider uppercase">{d.cta.badge}</span>
           </div>
-          <h2 class="font-headline-sm md:font-headline-md text-headline-sm md:text-headline-md text-on-surface font-bold uppercase tracking-tight">{d.cta.title}</h2>
-          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">{d.cta.text}</p>
+          <h2 class="font-headline-sm md:font-headline-md text-base md:text-headline-sm md:text-headline-md text-on-surface font-bold uppercase tracking-tight">{d.cta.title}</h2>
+          <p class="font-body-lg text-sm md:text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">{d.cta.text}</p>
           <div class="flex flex-wrap items-center gap-space-md pt-space-xs">
             <a
               href={`${path(lang, 'mentoring')}#apply`}
-              class="inline-flex items-center justify-center px-space-xl py-3.5 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_rgba(160,120,255,0.4)] hover:shadow-[0_0_32px_rgba(255,87,34,0.55)] transition-all transform active:scale-95 font-bold"
+              class="inline-flex items-center justify-center px-space-xl py-3.5 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-xs md:text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_rgba(160,120,255,0.4)] hover:shadow-[0_0_32px_rgba(255,87,34,0.55)] transition-all transform active:scale-95 font-bold"
             >
               {d.cta.apply}
             </a>
@@ -485,11 +485,11 @@ const initials = 'T3';
   </section>
 
   <!-- ПОХОЖИЕ СТАТЬИ -->
-  <section class={`${sectionClass} py-space-2xl`}>
+  <section class={`${sectionClass} py-6 md:py-space-2xl`}>
     <div class="flex items-end justify-between gap-space-md pb-space-sm mb-space-lg">
       <div class="space-y-1">
         <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">{d.related.kicker}</span>
-        <h2 class="font-headline-md text-headline-md text-on-surface font-bold uppercase tracking-tight">{d.related.title}</h2>
+        <h2 class="font-headline-md text-lg md:text-headline-md text-on-surface font-bold uppercase tracking-tight">{d.related.title}</h2>
       </div>
       <a href={path(lang, 'blog')} class="hidden sm:inline-flex items-center gap-1.5 font-tech-data-sm text-tech-data-sm text-primary hover:text-tertiary transition-colors uppercase font-bold">
         <span>{d.related.all}</span>
@@ -509,10 +509,10 @@ const initials = 'T3';
                 {item.readMin} {d.minRead}
               </div>
             </div>
-            <div class="p-space-lg flex-1 flex flex-col justify-between gap-space-md">
+            <div class="p-4 md:p-space-lg flex-1 flex flex-col justify-between gap-space-md">
               <div class="space-y-space-xs">
                 <span class="font-tech-data-sm text-[11px] text-outline uppercase">{formatDate(item.date, lang, 'long')}</span>
-                <h3 class="font-headline-sm text-tech-data-lg text-on-surface font-bold uppercase leading-snug group-hover:text-primary transition-colors">{pick(item.title, lang)}</h3>
+                <h3 class="font-headline-sm text-xs md:text-tech-data-lg text-on-surface font-bold uppercase leading-snug group-hover:text-primary transition-colors">{pick(item.title, lang)}</h3>
                 <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">{pick(item.desc, lang)}</p>
               </div>
               <span class="pt-space-xs flex items-center gap-1.5 font-tech-data-sm text-tech-data-sm text-primary font-semibold uppercase group-hover:text-secondary-fixed transition-colors">

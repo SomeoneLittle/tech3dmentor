@@ -13,7 +13,7 @@ const lang = Astro.params.lang as Lang;
 const dict = t(lang);
 const d = tb(lang);
 const l = d.list;
-const sectionClass = 'w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const sectionClass = 'w-full max-w-[1440px] mx-auto px-4 md:px-margin-desktop';
 const PAGE_SIZE = 9;
 
 // Главная статья вынесена в верхний блок, остальные идут в сетку
@@ -26,11 +26,11 @@ const hud = featuredPost.article?.hud;
 ---
 
 <BaseLayout lang={lang} page="blog" title={`${dict.nav.blog} — ${dict.site.name}`} description={l.sub} image={featuredPost.image}>
-  <div class={`${sectionClass} pt-8 pb-10 flex flex-col gap-space-xl`}>
+  <div class={`${sectionClass} pt-4 md:pt-8 pb-6 md:pb-10 flex flex-col gap-4 md:gap-space-xl`}>
     <!-- ШАПКА СТРАНИЦЫ -->
-    <header class="flex flex-col gap-space-md">
-      <div class="flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-lowest px-space-md py-space-xs rounded-full shadow-md">
-        <nav aria-label="Breadcrumb" class="flex items-center gap-2 overflow-x-auto whitespace-nowrap font-tech-data-sm text-tech-data-sm text-primary tracking-wider uppercase">
+    <header class="flex flex-col gap-3 md:gap-space-md">
+      <div class="flex flex-wrap items-center justify-between gap-2 md:gap-space-sm bg-surface-container-lowest px-3 md:px-space-md py-1.5 md:py-space-xs rounded-full shadow-md">
+        <nav aria-label="Breadcrumb" class="flex items-center gap-2 overflow-x-auto whitespace-nowrap font-tech-data-sm text-[10px] md:text-tech-data-sm text-primary tracking-wider uppercase">
           <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
           <a href={path(lang)} class="hover:text-on-surface transition-colors">{dict.common.home}</a>
           <span aria-hidden="true">//</span>
@@ -47,27 +47,27 @@ const hud = featuredPost.article?.hud;
           <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg tracking-tight uppercase text-on-surface">
             {l.titleBefore}<span class="bg-gradient-to-r from-primary-container via-primary to-tertiary-container bg-clip-text text-transparent">{l.titleAccent}</span>
           </h1>
-          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">{l.sub}</p>
+          <p class="font-body-lg text-sm md:text-body-lg text-on-surface-variant max-w-2xl">{l.sub}</p>
         </div>
-        <div class="flex items-center gap-space-sm self-start lg:self-end bg-surface-container-low p-2 rounded-lg shadow-sm">
+        <div class="grid grid-cols-3 sm:flex items-center gap-2 md:gap-space-sm w-full sm:w-auto self-start lg:self-end bg-surface-container-low p-1.5 md:p-2 rounded-lg shadow-sm">
           <div class="flex flex-col px-3 py-1 bg-surface-container rounded">
             <span class="font-label-caps text-label-caps text-outline uppercase">{l.chips.avgRead}</span>
-            <span class="font-tech-data-lg text-tech-data-lg text-on-surface">{avgRead} {l.chips.minutes}</span>
+            <span class="font-tech-data-lg text-xs md:text-tech-data-lg text-on-surface">{avgRead} {l.chips.minutes}</span>
           </div>
           <div class="flex flex-col px-3 py-1 bg-surface-container rounded">
             <span class="font-label-caps text-label-caps text-outline uppercase">{l.chips.articles}</span>
-            <span class="font-tech-data-lg text-tech-data-lg text-secondary-container">{blogPosts.length}</span>
+            <span class="font-tech-data-lg text-xs md:text-tech-data-lg text-secondary-container">{blogPosts.length}</span>
           </div>
-          <div class="hidden sm:flex flex-col px-3 py-1 bg-surface-container rounded">
+          <div class="flex flex-col px-3 py-1 bg-surface-container rounded">
             <span class="font-label-caps text-label-caps text-outline uppercase">{l.chips.langs}</span>
-            <span class="font-tech-data-lg text-tech-data-lg text-tertiary">RU/UA/EN</span>
+            <span class="font-tech-data-lg text-xs md:text-tech-data-lg text-tertiary">RU/UA/EN</span>
           </div>
         </div>
       </div>
     </header>
 
     <!-- ФИЛЬТРЫ И ПОИСК -->
-    <section class="flex flex-col md:flex-row md:items-center justify-between gap-space-md bg-surface-container-low p-space-md rounded-xl shadow-lg">
+    <section class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-space-md bg-surface-container-low p-3 md:p-space-md rounded-xl shadow-lg">
       <div id="category-filters" class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
         <button type="button" data-filter="all" aria-pressed="true" class="filter-chip shrink-0 px-space-md py-1.5 rounded-full font-tech-data-sm text-tech-data-sm uppercase transition-all whitespace-nowrap">
           {l.filters.all} ({gridPosts.length})
@@ -95,8 +95,8 @@ const hud = featuredPost.article?.hud;
 
     <!-- ГЛАВНАЯ СТАТЬЯ -->
     <section class="w-full bg-surface-container-low rounded-2xl overflow-hidden shadow-2xl relative group">
-      <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[460px]">
-        <a href={featuredHref} class="lg:col-span-7 relative min-h-[320px] lg:min-h-[460px] overflow-hidden bg-surface-container-lowest block" tabindex="-1" aria-hidden="true">
+      <div class="grid grid-cols-1 lg:grid-cols-12 lg:min-h-[460px]">
+        <a href={featuredHref} class="lg:col-span-7 relative min-h-[240px] md:min-h-[320px] lg:min-h-[460px] overflow-hidden bg-surface-container-lowest block" tabindex="-1" aria-hidden="true">
           <img src={featuredPost.image} alt="" fetchpriority="high" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-90" />
           <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-surface-container-lowest/60"></div>
           <div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
@@ -116,7 +116,7 @@ const hud = featuredPost.article?.hud;
           }
         </a>
 
-        <div class="lg:col-span-5 p-space-lg lg:p-space-xl flex flex-col justify-between gap-space-lg bg-surface-container-low">
+        <div class="lg:col-span-5 p-4 md:p-space-lg lg:p-space-xl flex flex-col justify-between gap-4 md:gap-space-lg bg-surface-container-low">
           <div class="flex flex-col gap-space-md">
             <div class="flex items-center justify-between gap-space-xs">
               <span class="font-tech-data-sm text-tech-data-sm bg-surface-container text-primary-container px-3 py-1 rounded-full font-bold uppercase tracking-wider">
@@ -131,10 +131,10 @@ const hud = featuredPost.article?.hud;
                 )
               }
             </div>
-            <h2 class="font-headline-md text-headline-md text-on-surface leading-snug group-hover:text-primary transition-colors">
+            <h2 class="font-headline-md text-lg md:text-headline-md text-on-surface leading-snug group-hover:text-primary transition-colors">
               <a href={featuredHref}>{featuredTitle}</a>
             </h2>
-            <p class="font-body-md text-body-md text-on-surface-variant line-clamp-4">{pick(featuredPost.desc, lang)}</p>
+            <p class="font-body-md text-[13px] leading-5 md:text-body-md text-on-surface-variant line-clamp-4">{pick(featuredPost.desc, lang)}</p>
           </div>
           <div class="flex flex-col gap-space-md">
             <div class="flex flex-wrap items-center justify-between gap-space-xs text-on-surface-variant font-tech-data-sm text-tech-data-sm">
@@ -158,7 +158,7 @@ const hud = featuredPost.article?.hud;
             <div>
               <a
                 href={featuredHref}
-                class="inline-flex items-center justify-center gap-2 px-space-xl py-3 rounded-full bg-gradient-to-r from-primary-container via-primary to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.45)] hover:shadow-[0_0_32px_rgba(255,87,34,0.55)] transition-all transform active:scale-95"
+                class="inline-flex items-center justify-center gap-2 px-space-xl py-3 rounded-full bg-gradient-to-r from-primary-container via-primary to-tertiary-container text-on-surface font-headline-sm text-xs md:text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.45)] hover:shadow-[0_0_32px_rgba(255,87,34,0.55)] transition-all transform active:scale-95"
               >
                 <span>{l.readFeatured}</span>
                 <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -173,7 +173,7 @@ const hud = featuredPost.article?.hud;
     <section class="flex flex-col gap-space-lg">
       <div class="flex flex-wrap items-center justify-between gap-space-xs">
         <div class="flex items-center gap-space-xs">
-          <h2 class="font-headline-sm text-headline-sm uppercase text-on-surface">{l.indexTitle}</h2>
+          <h2 class="font-headline-sm text-base md:text-headline-sm uppercase text-on-surface">{l.indexTitle}</h2>
           <span class="font-tech-data-sm text-tech-data-sm text-outline">[{l.showing} <span id="posts-visible">{Math.min(PAGE_SIZE, gridPosts.length)}</span> {l.of} <span id="posts-total">{gridPosts.length}</span>]</span>
         </div>
         <div class="flex items-center gap-2 font-tech-data-sm text-tech-data-sm text-on-surface-variant">
@@ -182,10 +182,10 @@ const hud = featuredPost.article?.hud;
         </div>
       </div>
 
-      <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter-desktop">
+      <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-gutter-desktop">
         {gridPosts.map((post, i) => <BlogCard post={post} lang={lang} index={i} />)}
       </div>
-      <p id="posts-empty" class="hidden text-center font-tech-data-sm text-tech-data-sm text-outline py-space-xl">{l.noResults}</p>
+      <p id="posts-empty" class="hidden text-center font-tech-data-sm text-tech-data-sm text-outline py-4 md:py-space-xl">{l.noResults}</p>
 
       <div class="flex flex-col items-center justify-center gap-space-md pt-space-md">
         <button
@@ -193,7 +193,7 @@ const hud = featuredPost.article?.hud;
           type="button"
           data-loading={l.loading}
           data-loaded={l.allLoaded}
-          class="px-space-xl py-3 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider flex flex-wrap items-center justify-center gap-3 shadow-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          class="px-space-xl py-3 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-headline-sm text-xs md:text-tech-data-lg uppercase tracking-wider flex flex-wrap items-center justify-center gap-3 shadow-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <span class="material-symbols-outlined text-secondary-container text-[20px]">refresh</span>
           <span id="load-more-label">{l.loadMore}</span>

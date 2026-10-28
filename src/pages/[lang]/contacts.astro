@@ -11,10 +11,10 @@ const lang = Astro.params.lang as Lang;
 const dict = t(lang);
 const c = tc(lang);
 
-const wrap = 'max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const wrap = 'max-w-[1440px] mx-auto px-4 md:px-margin-desktop';
 const label = 'font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider';
 const field =
-  'w-full bg-surface-container-lowest text-on-surface font-tech-data-lg text-tech-data-lg rounded-lg px-space-md py-3 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner placeholder:text-outline-variant placeholder:font-body-md';
+  'w-full bg-surface-container-lowest text-on-surface font-tech-data-lg text-xs md:text-tech-data-lg rounded-lg px-space-md py-3 focus:outline-none focus:ring-2 focus:ring-primary shadow-inner placeholder:text-outline-variant placeholder:font-body-md';
 const topics = Object.entries(c.form.topics) as [string, string][];
 
 const isLink = (href: string) => href !== '#';
@@ -63,7 +63,7 @@ const cardStyles = [
           </div>
         </div>
 
-        <div class="relative bg-surface-container-lowest/80 backdrop-blur-md rounded-xl p-space-lg sm:p-space-xl shadow-xl overflow-hidden">
+        <div class="relative bg-surface-container-lowest/80 backdrop-blur-md rounded-xl p-4 md:p-space-lg sm:p-space-xl shadow-xl overflow-hidden">
           <div class="flex items-baseline gap-2 mb-2">
             <span class="font-label-caps text-label-caps text-primary uppercase bg-primary/10 px-2 py-0.5 rounded">{c.hero.badge}</span>
             <span class="font-tech-data-sm text-tech-data-sm text-secondary-container tracking-wider">{c.hero.version}</span>
@@ -72,7 +72,7 @@ const cardStyles = [
             {c.hero.titleBefore}
             <span class="bg-gradient-to-r from-primary via-primary-container to-tertiary-container bg-clip-text text-transparent">{c.hero.titleAccent}</span>
           </h1>
-          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl mt-space-sm">{c.hero.sub}</p>
+          <p class="font-body-lg text-sm md:text-body-lg text-on-surface-variant max-w-3xl mt-space-sm">{c.hero.sub}</p>
           <div class="mt-space-lg pt-space-sm flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-low/60 rounded px-space-md py-1.5">
             <div class="flex items-center gap-4 text-outline font-tech-data-sm text-tech-data-sm">
               <span>X: +142.84</span>
@@ -89,12 +89,12 @@ const cardStyles = [
       </section>
 
       <!-- FORM + CHANNELS -->
-      <section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start mb-space-2xl">
-        <div class="lg:col-span-7 bg-surface-container-low rounded-xl p-space-lg sm:p-space-xl shadow-2xl relative overflow-hidden">
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-gutter-desktop items-start mb-6 md:mb-space-2xl">
+        <div class="lg:col-span-7 bg-surface-container-low rounded-xl p-4 md:p-space-lg sm:p-space-xl shadow-2xl relative overflow-hidden">
           <div class="flex items-center justify-between bg-surface-container-high px-space-md py-space-sm -mx-space-lg -mt-space-lg sm:-mx-space-xl sm:-mt-space-xl mb-space-lg shadow-sm">
             <div class="flex items-center gap-2 min-w-0">
               <span class="material-symbols-outlined text-[16px] text-primary">terminal</span>
-              <span class="font-tech-data-lg text-tech-data-lg text-on-surface uppercase tracking-wider truncate">{c.form.header}</span>
+              <span class="font-tech-data-lg text-xs md:text-tech-data-lg text-on-surface uppercase tracking-wider truncate">{c.form.header}</span>
             </div>
             <div class="flex items-center gap-1.5 shrink-0">
               <span class="w-2.5 h-2.5 rounded-full bg-surface-variant"></span>
@@ -171,7 +171,7 @@ const cardStyles = [
             <div class="pt-space-sm">
               <button
                 type="submit"
-                class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-space-xl py-space-md rounded-full bg-gradient-to-r from-primary-container via-primary-container to-tertiary-container text-on-surface font-headline-sm text-headline-sm uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.45),0_0_12px_-2px_rgba(255,87,34,0.35)] hover:shadow-[0_0_36px_rgba(255,87,34,0.6)] transition-all transform active:scale-[0.98] group"
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-space-xl py-space-md rounded-full bg-gradient-to-r from-primary-container via-primary-container to-tertiary-container text-on-surface font-headline-sm text-base md:text-headline-sm uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.45),0_0_12px_-2px_rgba(255,87,34,0.35)] hover:shadow-[0_0_36px_rgba(255,87,34,0.6)] transition-all transform active:scale-[0.98] group"
               >
                 <span class="material-symbols-outlined text-[20px] text-on-surface transition-transform group-hover:rotate-12">send</span>
                 <span>{c.form.submit}</span>
@@ -181,7 +181,7 @@ const cardStyles = [
             <div id="form-success" class="hidden bg-secondary-container/15 text-secondary-container rounded-lg p-space-md items-center gap-3 mt-4" role="status">
               <span class="material-symbols-outlined text-[24px]">verified</span>
               <div>
-                <span class="font-tech-data-lg text-tech-data-lg block uppercase font-bold">{c.form.successTitle}</span>
+                <span class="font-tech-data-lg text-xs md:text-tech-data-lg block uppercase font-bold">{c.form.successTitle}</span>
                 <span class="font-body-sm text-body-sm text-on-surface">{c.form.successText}</span>
               </div>
             </div>
@@ -189,11 +189,11 @@ const cardStyles = [
         </div>
 
         <div class="lg:col-span-5 flex flex-col gap-space-lg">
-          <div class="bg-surface-container rounded-xl p-space-lg shadow-xl">
+          <div class="bg-surface-container rounded-xl p-4 md:p-space-lg shadow-xl">
             <div class="flex items-center justify-between gap-2 mb-space-md pb-space-sm border-b border-surface-variant">
               <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-[18px] text-primary">router</span>
-                <h2 class="font-headline-sm text-headline-sm text-on-surface uppercase tracking-tight">{c.channels.title}</h2>
+                <h2 class="font-headline-sm text-base md:text-headline-sm text-on-surface uppercase tracking-tight">{c.channels.title}</h2>
               </div>
               <span class="hidden sm:inline font-tech-data-sm text-tech-data-sm text-secondary-container bg-surface-container-highest px-2 py-0.5 rounded">{c.channels.badge}</span>
             </div>
@@ -212,7 +212,7 @@ const cardStyles = [
                       </div>
                       <div class="flex flex-col min-w-0">
                         <div class="flex items-center gap-2 min-w-0">
-                          <span class="font-tech-data-lg text-tech-data-lg text-on-surface truncate font-semibold">{ch.title}</span>
+                          <span class="font-tech-data-lg text-xs md:text-tech-data-lg text-on-surface truncate font-semibold">{ch.title}</span>
                           {ch.primary && <span class="font-label-caps text-label-caps text-primary px-1.5 rounded bg-primary/10 hidden sm:inline">{c.channels.primary}</span>}
                         </div>
                         <span class="font-body-sm text-body-sm text-on-surface-variant truncate">{ch.text}</span>
@@ -238,7 +238,7 @@ const cardStyles = [
                   <span class="font-label-caps text-label-caps text-secondary-container uppercase tracking-wider font-bold">{c.capacity.title}</span>
                   <span class="font-tech-data-sm text-tech-data-sm text-outline">{c.capacity.zone}</span>
                 </div>
-                <p class="font-body-md text-body-md text-on-surface mt-1">{c.capacity.text}</p>
+                <p class="font-body-md text-[13px] leading-5 md:text-body-md text-on-surface mt-1">{c.capacity.text}</p>
                 <div class="mt-space-sm pt-space-xs flex flex-wrap items-center gap-x-4 gap-y-1 text-outline font-tech-data-sm text-tech-data-sm border-t border-surface-variant">
                   <span>{c.capacity.hours}</span>
                   <span>{c.capacity.tz}</span>
@@ -258,14 +258,14 @@ const cardStyles = [
               <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase bg-surface-container-high px-2 py-0.5 rounded">{c.guide.tag}</span>
               <span class="font-tech-data-sm text-tech-data-sm text-secondary-container uppercase">{c.guide.kicker}</span>
             </div>
-            <h2 class="font-headline-md text-headline-md uppercase text-on-surface tracking-tight">{c.guide.title}</h2>
+            <h2 class="font-headline-md text-lg md:text-headline-md uppercase text-on-surface tracking-tight">{c.guide.title}</h2>
           </div>
-          <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">{c.guide.sub}</p>
+          <p class="font-body-md text-[13px] leading-5 md:text-body-md text-on-surface-variant max-w-lg">{c.guide.sub}</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
           {
             c.guide.cards.map((card, i) => (
-              <div class="bg-surface-container rounded-xl p-space-lg flex flex-col justify-between hover:bg-surface-container-high transition-all shadow-md group">
+              <div class="bg-surface-container rounded-xl p-4 md:p-space-lg flex flex-col justify-between hover:bg-surface-container-high transition-all shadow-md group">
                 <div>
                   <div class="flex items-center justify-between mb-space-md">
                     <div class:list={['w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center group-hover:scale-105 transition-transform', cardStyles[i].iconCls]}>
@@ -273,11 +273,11 @@ const cardStyles = [
                     </div>
                     <span class:list={['font-tech-data-sm text-tech-data-sm px-2 py-0.5 rounded uppercase font-semibold', cardStyles[i].tagCls]}>{card.tag}</span>
                   </div>
-                  <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase mb-space-xs">{card.title}</h3>
-                  <p class="font-body-md text-body-md text-on-surface-variant mb-space-md">{card.text}</p>
+                  <h3 class="font-headline-sm text-base md:text-headline-sm text-on-surface uppercase mb-space-xs">{card.title}</h3>
+                  <p class="font-body-md text-[13px] leading-5 md:text-body-md text-on-surface-variant mb-space-md">{card.text}</p>
                 </div>
                 <div class="pt-space-sm border-t border-surface-variant/40 flex items-center justify-between">
-                  <a class:list={['font-tech-data-lg text-tech-data-lg flex items-center gap-1.5 transition-colors uppercase', cardStyles[i].linkCls]} href={path(lang, card.page)}>
+                  <a class:list={['font-tech-data-lg text-xs md:text-tech-data-lg flex items-center gap-1.5 transition-colors uppercase', cardStyles[i].linkCls]} href={path(lang, card.page)}>
                     <span>{card.link}</span>
                     <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                   </a>

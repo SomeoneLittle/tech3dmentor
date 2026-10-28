@@ -11,7 +11,7 @@ const lang = Astro.params.lang as Lang;
 const dict = t(lang);
 const u = tu(lang);
 
-const section = 'w-full p-space-lg rounded-xl bg-surface-container-low shadow-xl flex flex-col gap-space-md';
+const section = 'w-full p-4 md:p-space-lg rounded-xl bg-surface-container-low shadow-xl flex flex-col gap-space-md';
 const labelCls = 'font-tech-data-sm text-tech-data-sm text-outline flex items-center justify-between uppercase';
 const fieldCls =
   'w-full bg-surface-container-lowest text-on-surface font-tech-data-sm text-tech-data-sm px-3.5 py-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary shadow-inner';
@@ -47,19 +47,19 @@ const navItems = [
 
 <BaseLayout lang={lang} page="account" title={`${u.seo.title} — ${dict.site.name}`} description={u.seo.description}>
   <!-- Пока не вошли: заглушка и окно входа -->
-  <div id="account-guard" class="hidden max-w-[1440px] mx-auto px-margin md:px-margin-desktop py-space-2xl">
-    <div class="max-w-md mx-auto text-center bg-surface-container-low rounded-xl p-space-xl shadow-xl flex flex-col items-center gap-space-md">
+  <div id="account-guard" class="hidden max-w-[1440px] mx-auto px-4 md:px-margin-desktop py-6 md:py-space-2xl">
+    <div class="max-w-md mx-auto text-center bg-surface-container-low rounded-xl p-5 md:p-space-xl shadow-xl flex flex-col items-center gap-space-md">
       <span class="material-symbols-outlined text-primary text-[40px]">lock</span>
-      <h1 class="font-headline-sm text-headline-sm text-on-surface uppercase">{u.guard.title}</h1>
-      <p class="font-body-md text-body-md text-on-surface-variant">{u.guard.text}</p>
-      <button type="button" data-open-auth class="px-space-lg py-2.5 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_rgba(160,120,255,0.4)] transition-all active:scale-95">
+      <h1 class="font-headline-sm text-base md:text-headline-sm text-on-surface uppercase">{u.guard.title}</h1>
+      <p class="font-body-md text-[13px] leading-5 md:text-body-md text-on-surface-variant">{u.guard.text}</p>
+      <button type="button" data-open-auth class="px-space-lg py-2.5 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-xs md:text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_rgba(160,120,255,0.4)] transition-all active:scale-95">
         {u.guard.button}
       </button>
     </div>
   </div>
 
   <div id="account-content" class="hidden w-full">
-    <div class="relative w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop py-space-lg flex flex-col gap-space-xl">
+    <div class="relative w-full max-w-[1440px] mx-auto px-4 md:px-margin-desktop py-space-lg flex flex-col gap-5 md:gap-space-xl">
       <!-- Хлебные крошки и телеметрия -->
       <div class="w-full flex flex-col gap-space-sm">
         <div class="flex flex-wrap items-center justify-between gap-space-sm">
@@ -99,10 +99,10 @@ const navItems = [
       </div>
 
       <!-- Карточка пользователя -->
-      <div class="w-full p-space-lg rounded-xl bg-surface-container-low shadow-xl relative overflow-hidden flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg">
+      <div class="w-full p-4 md:p-space-lg rounded-xl bg-surface-container-low shadow-xl relative overflow-hidden flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg">
         <div class="flex items-center gap-space-md min-w-0">
           <div class="relative shrink-0 w-20 h-20 rounded-xl bg-surface-container-high p-1 shadow-[0_0_24px_rgba(160,120,255,0.25)] flex items-center justify-center">
-            <div class="w-full h-full rounded-lg bg-gradient-to-br from-primary-container to-tertiary-container flex items-center justify-center font-headline-md text-headline-sm text-on-surface">AV</div>
+            <div class="w-full h-full rounded-lg bg-gradient-to-br from-primary-container to-tertiary-container flex items-center justify-center font-headline-md text-base md:text-headline-sm text-on-surface">AV</div>
             <div class="absolute -bottom-1 -right-1 flex items-center justify-center w-5 h-5 rounded-full bg-surface-container-lowest shadow-md">
               <span class="w-3 h-3 rounded-full bg-secondary-fixed shadow-[0_0_8px_rgba(0,255,135,0.7)]"></span>
             </div>
@@ -110,7 +110,7 @@ const navItems = [
           </div>
           <div class="flex flex-col gap-1 min-w-0">
             <div class="flex flex-wrap items-center gap-2">
-              <h2 class="font-headline-md text-headline-sm sm:text-headline-md text-on-surface leading-tight truncate">{u.hello} Alex Vance</h2>
+              <h2 class="font-headline-md text-base md:text-headline-sm sm:text-headline-md text-on-surface leading-tight truncate">{u.hello} Alex Vance</h2>
               <span class="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary font-label-caps text-label-caps uppercase flex items-center gap-1">
                 <span class="material-symbols-outlined text-[12px]">verified</span> VERIFIED_CADET
               </span>
@@ -213,7 +213,7 @@ const navItems = [
         </div>
 
         <!-- Правая колонка -->
-        <div class="lg:col-span-9 flex flex-col gap-space-xl">
+        <div class="lg:col-span-9 flex flex-col gap-5 md:gap-space-xl">
           <!-- 01 Профиль -->
           <section id="profile-section" class={`${section} gap-space-lg relative overflow-hidden`}>
             <div class={frameHead}>
@@ -281,7 +281,7 @@ const navItems = [
                 </div>
                 <div class="flex items-center gap-space-md">
                   <button type="reset" class="font-tech-data-sm text-tech-data-sm text-outline hover:text-on-surface transition-colors uppercase">{u.profile.discard}</button>
-                  <button type="submit" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container hover:from-primary hover:to-tertiary-fixed text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_rgba(160,120,255,0.4)] hover:shadow-[0_0_28px_rgba(255,87,34,0.55)] transition-all active:scale-95 flex items-center gap-2">
+                  <button type="submit" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container hover:from-primary hover:to-tertiary-fixed text-on-surface font-headline-sm text-xs md:text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_rgba(160,120,255,0.4)] hover:shadow-[0_0_28px_rgba(255,87,34,0.55)] transition-all active:scale-95 flex items-center gap-2">
                     <span>{u.profile.save}</span>
                     <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
                   </button>

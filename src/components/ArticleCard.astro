@@ -14,7 +14,7 @@ const tones = { green: 'text-secondary-container', peach: 'text-tertiary', viole
 
 <article class="bg-surface-container rounded-xl overflow-hidden shadow-xl hover:bg-surface-container-high transition-all group">
   <a href={path(lang, `blog/${article.slug}`)} class="flex flex-col h-full">
-    <div class="relative h-52 bg-surface-container-lowest overflow-hidden">
+    <div class="relative h-44 md:h-52 bg-surface-container-lowest overflow-hidden">
       <img
         src={article.image}
         alt={pick(article.title, lang)}
@@ -22,19 +22,19 @@ const tones = { green: 'text-secondary-container', peach: 'text-tertiary', viole
         decoding="async"
         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
       />
-      <div class:list={['absolute top-3 left-3 px-2.5 py-1 rounded-full bg-surface-container-lowest/85 font-tech-data-sm text-tech-data-sm', tones[article.tone]]}>
+      <div class:list={['absolute top-2 left-2 md:top-3 md:left-3 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full bg-surface-container-lowest/85 font-tech-data-sm text-[9px] md:text-tech-data-sm', tones[article.tone]]}>
         {pick(article.tag, lang)}
       </div>
     </div>
-    <div class="p-space-lg flex flex-col flex-1 justify-between gap-space-md">
+    <div class="p-3.5 md:p-space-lg flex flex-col flex-1 justify-between gap-2.5 md:gap-space-md">
       <div>
-        <span class="font-tech-data-sm text-tech-data-sm text-outline block mb-2">{pick(article.date, lang)}</span>
-        <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase tracking-tight group-hover:text-primary transition-colors">
+        <span class="font-tech-data-sm text-[10px] md:text-tech-data-sm text-outline block mb-1.5 md:mb-2">{pick(article.date, lang)}</span>
+        <h3 class="font-headline-sm text-sm md:text-headline-sm font-bold md:font-semibold leading-snug md:leading-normal text-on-surface uppercase tracking-tight group-hover:text-primary transition-colors">
           {pick(article.title, lang)}
         </h3>
-        <p class="font-body-md text-body-md text-on-surface-variant mt-2 line-clamp-3">{pick(article.desc, lang)}</p>
+        <p class="font-body-md text-xs md:text-body-md text-on-surface-variant mt-1.5 md:mt-2 line-clamp-2 md:line-clamp-3">{pick(article.desc, lang)}</p>
       </div>
-      <span class="inline-flex items-center gap-2 font-tech-data-sm text-tech-data-sm text-primary group-hover:text-secondary-container font-semibold uppercase tracking-wider">
+      <span class="inline-flex items-center gap-2 font-tech-data-sm text-xs md:text-tech-data-sm text-primary group-hover:text-secondary-container font-semibold uppercase tracking-wider">
         <span>{dict.blog.read}</span>
         <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
       </span>

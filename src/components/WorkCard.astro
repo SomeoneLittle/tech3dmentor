@@ -18,7 +18,7 @@ const tone = work.badgeTone === 'green' ? 'text-secondary-container' : 'text-ter
   data-category={work.category}
   class="bg-surface-container rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group flex flex-col"
 >
-  <div class="relative h-72 bg-surface-container-lowest overflow-hidden">
+  <div class="relative h-36 md:h-72 bg-surface-container-lowest overflow-hidden">
     <img
       src={work.image}
       alt={pick(work.title, lang)}
@@ -26,22 +26,22 @@ const tone = work.badgeTone === 'green' ? 'text-secondary-container' : 'text-ter
       decoding="async"
       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
     />
-    <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md font-tech-data-sm text-tech-data-sm text-on-surface">
+    <div class="absolute top-1.5 left-1.5 md:top-3 md:left-3 px-1.5 md:px-2.5 py-0.5 md:py-1 rounded max-md:bg-surface-container-lowest/85 md:rounded-full md:bg-surface-container-lowest/80 md:backdrop-blur-md font-tech-data-sm text-[8px] md:text-tech-data-sm text-on-surface">
       {pick(work.tag, lang)}
     </div>
-    <div class:list={['absolute top-3 right-3 px-2.5 py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md font-tech-data-sm text-tech-data-sm', tone]}>
+    <div class:list={['absolute bottom-1.5 right-1.5 md:bottom-auto md:top-3 md:right-3 px-1.5 md:px-2.5 py-0.5 md:py-1 rounded md:rounded-full bg-surface-container-lowest/85 md:bg-surface-container-lowest/80 md:backdrop-blur-md font-tech-data-sm text-[8px] md:text-tech-data-sm font-semibold md:font-medium', tone]}>
       {work.badge}
     </div>
-    <div class="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-between bg-surface-container-lowest/90 backdrop-blur-md px-3 py-2 rounded-lg font-tech-data-sm text-tech-data-sm">
+    <div class="hidden md:flex absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-between bg-surface-container-lowest/90 backdrop-blur-md px-3 py-2 rounded-lg font-tech-data-sm text-tech-data-sm">
       <span class="text-outline">{work.hover}</span>
       <span class="text-primary font-bold">{dict.works.view}</span>
     </div>
   </div>
-  <div class="p-space-md flex flex-col gap-1">
+  <div class="p-2 md:p-space-md flex flex-col gap-1 flex-1 justify-between">
     <div class="flex items-center justify-between">
-      <h3 class="font-headline-sm text-headline-sm text-on-surface uppercase tracking-tight">{pick(work.title, lang)}</h3>
-      <span class="material-symbols-outlined text-outline text-[20px]">view_in_ar</span>
+      <h3 class="font-headline-sm text-xs md:text-headline-sm font-bold md:font-semibold text-on-surface uppercase tracking-tight line-clamp-1 md:line-clamp-none">{pick(work.title, lang)}</h3>
+      <span class="material-symbols-outlined hidden md:block text-outline text-[20px]">view_in_ar</span>
     </div>
-    <p class="font-body-sm text-body-sm text-on-surface-variant">{pick(work.desc, lang)}</p>
+    <p class="font-tech-data-sm text-[9px] md:font-body-sm md:text-body-sm text-outline md:text-on-surface-variant line-clamp-1 md:line-clamp-none">{pick(work.desc, lang)}</p>
   </div>
 </a>

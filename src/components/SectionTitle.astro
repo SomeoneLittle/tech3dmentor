@@ -9,25 +9,28 @@ interface Props {
   linkHref?: string;
 }
 
-const { kicker, title, sub, tag, linkLabel, linkHref } = Astro.props;
+const { kicker, title, sub, tag, linkLabel, linkHref, hideLinkMobile } = Astro.props;
 ---
 
-<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div class="flex items-end justify-between gap-space-md">
   <div>
-    <div class="inline-flex items-center gap-2 font-tech-data-sm text-tech-data-sm text-primary tracking-widest uppercase mb-2">
+    <div class="inline-flex items-center gap-1.5 md:gap-2 font-tech-data-sm text-[10px] md:text-tech-data-sm text-primary tracking-widest uppercase mb-1 md:mb-2">
       <span>{kicker}</span>
       {tag && (<><span class="text-outline-variant">•</span><span>{tag}</span></>)}
     </div>
     <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight uppercase">
       {title}
     </h2>
-    {sub && <p class="font-body-md text-body-md text-on-surface-variant mt-1 max-w-md md:max-w-none">{sub}</p>}
+    {sub && <p class="font-body-md text-xs md:text-body-md text-on-surface-variant mt-1 leading-relaxed md:leading-normal max-w-md md:max-w-none">{sub}</p>}
   </div>
   {
     linkLabel && linkHref && (
       <a
         href={linkHref}
-        class="inline-flex items-center gap-2 font-tech-data-lg text-tech-data-lg text-primary hover:text-on-surface transition-colors uppercase tracking-wider group"
+        class:list={[
+          'items-center gap-1 md:gap-2 font-tech-data-lg text-xs md:text-tech-data-lg text-primary hover:text-on-surface transition-colors uppercase tracking-wider group shrink-0',
+          hideLinkMobile ? 'hidden md:inline-flex' : 'inline-flex',
+        ]}
       >
         <span>{linkLabel}</span>
         <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>

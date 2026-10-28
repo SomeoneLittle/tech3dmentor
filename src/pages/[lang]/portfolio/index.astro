@@ -13,7 +13,7 @@ const dict = t(lang);
 const d = dict.portfolio;
 const categories = Object.keys(d.filters).filter((key) => key !== 'all') as PortfolioCategory[];
 const count = (category: PortfolioCategory) => portfolioWorks.filter((w) => w.category === category).length;
-const sectionClass = 'w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const sectionClass = 'w-full max-w-[1440px] mx-auto px-4 md:px-margin-desktop';
 const sortOptions = Object.entries(d.sort) as [string, string][];
 const displayModes = Object.entries(d.displayModes) as [string, string][];
 const PAGE_SIZE = 12;
@@ -27,11 +27,11 @@ const PAGE_SIZE = 12;
   image={portfolioWorks[0].image}
 >
   <!-- ШАПКА СТРАНИЦЫ -->
-  <section class={`relative ${sectionClass} pt-8 pb-10`}>
-    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8">
+  <section class={`relative ${sectionClass} pt-4 md:pt-8 pb-5 md:pb-10`}>
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 md:gap-6 pb-0 md:pb-8">
       <div class="flex flex-col max-w-3xl">
-        <div class="flex flex-wrap items-center gap-3 mb-4">
-          <nav aria-label="Breadcrumb" class="font-tech-data-sm text-tech-data-sm text-secondary-container bg-surface-container-high px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm uppercase">
+        <div class="flex items-center gap-2 md:gap-3 mb-3 md:mb-4 overflow-x-auto md:flex-wrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <nav aria-label="Breadcrumb" class="font-tech-data-sm text-tech-data-sm text-[10px] md:text-tech-data-sm text-secondary-container bg-surface-container-high px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm uppercase whitespace-nowrap shrink-0">
             <span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span>
             <a href={path(lang)} class="hover:text-on-surface transition-colors">{dict.common.home}</a>
             <span aria-hidden="true">//</span>
@@ -39,18 +39,18 @@ const PAGE_SIZE = 12;
             <span aria-hidden="true">//</span>
             <span aria-current="page">{dict.nav.portfolio}</span>
           </nav>
-          <span class="font-tech-data-sm text-tech-data-sm text-outline px-2 py-0.5 rounded bg-surface-container-low">{d.pipeline}</span>
+          <span class="font-tech-data-sm text-[10px] md:text-tech-data-sm text-outline px-2 py-0.5 rounded bg-surface-container-low whitespace-nowrap shrink-0 hidden sm:inline">{d.pipeline}</span>
         </div>
-        <div class="flex flex-wrap items-baseline gap-4">
+        <div class="flex flex-wrap items-baseline gap-2 md:gap-4">
           <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase tracking-tight text-on-surface">
             {d.titleBefore}<span class="bg-gradient-to-r from-primary-container via-tertiary to-tertiary-container bg-clip-text text-transparent">{d.titleAccent}</span>
           </h1>
           <span class="font-label-caps text-label-caps text-secondary-container px-2 py-1 rounded bg-surface-container font-mono">{d.sysState}</span>
         </div>
-        <p class="font-body-lg text-body-lg text-on-surface-variant mt-3 max-w-2xl">{d.sub}</p>
+        <p class="font-body-lg text-sm md:text-body-lg text-on-surface-variant mt-2 md:mt-3 max-w-2xl leading-relaxed md:leading-normal">{d.sub}</p>
       </div>
 
-      <div class="bg-surface-container-high p-4 rounded-xl shadow-md flex flex-col gap-1 min-w-[240px] shrink-0">
+      <div class="bg-surface-container-high p-3 md:p-4 rounded-xl shadow-md flex flex-col gap-1 md:min-w-[240px] shrink-0">
         <div class="flex items-center justify-between">
           <span class="font-label-caps text-label-caps text-outline uppercase tracking-widest">{d.indexed}</span>
           <span class="font-tech-data-sm text-tech-data-sm text-secondary-container">{d.buffer}</span>
@@ -70,9 +70,9 @@ const PAGE_SIZE = 12;
   </section>
 
   <!-- ФИЛЬТРЫ И СОРТИРОВКА -->
-  <section class="sticky top-20 z-40 w-full bg-surface/90 backdrop-blur-xl py-4 shadow-md">
-    <div class={`${sectionClass} flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4`}>
-      <div id="category-filters" class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+  <section class="sticky top-14 lg:top-20 z-40 w-full bg-surface/90 backdrop-blur-xl py-2.5 md:py-4 shadow-md">
+    <div class={`${sectionClass} flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 md:gap-4`}>
+      <div id="category-filters" class="flex items-center gap-2 overflow-x-auto py-0.5 md:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <button type="button" data-filter="all" aria-pressed="true" class="filter-chip shrink-0 px-4 py-2 rounded-full font-tech-data-sm text-tech-data-sm uppercase transition-all whitespace-nowrap">
           {d.filters.all} ({portfolioWorks.length})
         </button>
@@ -85,16 +85,16 @@ const PAGE_SIZE = 12;
         }
       </div>
 
-      <div class="flex items-center justify-between md:justify-end gap-3 shrink-0">
-        <div id="display-modes" class="hidden xl:flex items-center bg-surface-container-low px-2.5 py-1 rounded-full shadow-inner gap-2">
-          <span class="font-label-caps text-label-caps text-outline uppercase">{d.display}</span>
+      <div class="flex flex-wrap items-center justify-between md:justify-end gap-2 md:gap-3 md:shrink-0">
+        <div id="display-modes" class="flex items-center bg-surface-container-low p-0.5 xl:px-2.5 xl:py-1 rounded-lg xl:rounded-full shadow-inner gap-1 xl:gap-2">
+          <span class="hidden xl:inline font-label-caps text-label-caps text-outline uppercase">{d.display}</span>
           {
             displayModes.map(([key, label], i) => (
               <button
                 type="button"
                 data-display={key}
                 aria-pressed={i === 0 ? 'true' : 'false'}
-                class="font-tech-data-sm text-tech-data-sm text-outline hover:text-on-surface px-2 py-0.5 rounded uppercase aria-pressed:text-primary aria-pressed:bg-surface-variant"
+                class="font-tech-data-sm text-[11px] xl:text-tech-data-sm text-outline hover:text-on-surface px-2 py-1 xl:py-0.5 rounded uppercase aria-pressed:text-primary aria-pressed:bg-surface-variant"
               >
                 {label}
               </button>
@@ -102,9 +102,9 @@ const PAGE_SIZE = 12;
           }
         </div>
 
-        <div class="relative inline-flex items-center bg-surface-container rounded-lg px-3 py-2 shadow-sm">
-          <span class="material-symbols-outlined text-[16px] text-outline mr-2" aria-hidden="true">sort</span>
-          <select id="works-sort" aria-label="Sort" class="bg-transparent font-tech-data-sm text-tech-data-sm text-on-surface outline-none cursor-pointer pr-6 appearance-none">
+        <div class="relative inline-flex items-center bg-surface-container rounded-lg px-2.5 md:px-3 h-9 md:h-auto md:py-2 shadow-sm">
+          <span class="hidden sm:inline material-symbols-outlined text-[16px] text-outline mr-2" aria-hidden="true">sort</span>
+          <select id="works-sort" aria-label="Sort" class="bg-transparent font-tech-data-sm text-[11px] md:text-tech-data-sm text-on-surface outline-none cursor-pointer pr-5 md:pr-6 appearance-none max-w-[92px] md:max-w-none truncate">
             {sortOptions.map(([value, label]) => <option class="bg-surface-container-high text-on-surface" value={value}>{label}</option>)}
           </select>
           <span class="material-symbols-outlined text-[16px] text-outline pointer-events-none absolute right-2" aria-hidden="true">expand_more</span>
@@ -123,23 +123,23 @@ const PAGE_SIZE = 12;
   </section>
 
   <!-- СЕТКА РАБОТ -->
-  <section class={`${sectionClass} py-10`}>
+  <section class={`${sectionClass} py-4 md:py-10`}>
     <div
       id="works-grid"
       data-display="beauty"
       data-view="grid"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch [&[data-view=list]]:!grid-cols-1 [&[data-display=clay]_img]:grayscale [&[data-display=wire]_img]:grayscale [&[data-display=wire]_img]:contrast-150 [&[data-display=wire]_img]:invert"
+      class="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 items-stretch [&[data-view=list]]:!grid-cols-1 [&[data-display=clay]_img]:grayscale [&[data-display=wire]_img]:grayscale [&[data-display=wire]_img]:contrast-150 [&[data-display=wire]_img]:invert"
     >
       {portfolioWorks.map((work, i) => <PortfolioCard work={work} lang={lang} index={i} />)}
     </div>
 
-    <div class="mt-14 flex flex-col items-center justify-center gap-3">
+    <div class="mt-6 md:mt-14 flex flex-col items-center justify-center gap-3">
       <button
         id="load-more-btn"
         type="button"
         data-loading={d.loading}
         data-loaded={d.allLoaded}
-        class="px-8 py-3.5 rounded-full bg-surface-container-high hover:bg-surface-variant text-on-surface font-tech-data-lg text-tech-data-lg uppercase tracking-wider flex items-center gap-3 shadow-md hover:shadow-xl transition-all transform active:scale-95 group disabled:opacity-60 disabled:cursor-not-allowed"
+        class="max-md:w-full justify-center min-h-[46px] px-8 py-3 md:py-3.5 rounded-full bg-surface-container-high hover:bg-surface-variant text-on-surface font-tech-data-lg text-xs md:text-tech-data-lg uppercase tracking-wider flex items-center gap-3 shadow-md hover:shadow-xl transition-all transform active:scale-95 group disabled:opacity-60 disabled:cursor-not-allowed"
       >
         <span class="material-symbols-outlined text-[20px] text-primary group-hover:rotate-180 transition-transform duration-500">sync</span>
         <span id="load-more-label">{d.loadMore}</span>
@@ -152,18 +152,18 @@ const PAGE_SIZE = 12;
   </section>
 
   <!-- ПРИЗЫВ К МЕНТОРСТВУ -->
-  <section class={`${sectionClass} py-12 mb-16`}>
-    <div class="relative bg-gradient-to-br from-surface-container-high via-surface-container to-surface-container-lowest p-8 md:p-14 rounded-2xl overflow-hidden shadow-2xl">
+  <section class={`${sectionClass} py-6 md:py-12 mb-8 md:mb-16`}>
+    <div class="relative bg-gradient-to-br from-surface-container-high via-surface-container to-surface-container-lowest p-5 md:p-14 rounded-2xl overflow-hidden shadow-2xl">
       <div class="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-gradient-to-br from-primary-container/20 to-tertiary-container/10 blur-3xl pointer-events-none"></div>
-      <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div class="lg:col-span-8 flex flex-col gap-4">
+      <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-8 items-center max-md:text-center">
+        <div class="lg:col-span-8 flex flex-col gap-3 md:gap-4 max-md:items-center">
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
             <span class="font-label-caps text-label-caps text-secondary-container tracking-widest uppercase">{d.cta.badge}</span>
           </div>
           <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase text-on-surface tracking-tight">{d.cta.title}</h2>
-          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">{d.cta.text}</p>
-          <div class="flex flex-wrap items-center gap-4 mt-2">
+          <p class="font-body-lg text-xs md:text-body-lg text-on-surface-variant max-w-2xl">{d.cta.text}</p>
+          <div class="flex flex-wrap items-center max-md:justify-center gap-2 md:gap-4 mt-1 md:mt-2">
             {
               d.cta.tags.map((tag) => (
                 <span class="flex items-center gap-1.5 font-tech-data-sm text-tech-data-sm text-on-surface bg-surface-container-highest px-3 py-1.5 rounded-full">
@@ -174,10 +174,10 @@ const PAGE_SIZE = 12;
             }
           </div>
         </div>
-        <div class="lg:col-span-4 flex flex-col lg:items-end justify-center">
+        <div class="lg:col-span-4 flex flex-col items-center lg:items-end justify-center">
           <a
             href={`${path(lang, 'mentoring')}#apply`}
-            class="px-8 py-4 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-headline-sm uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.45)] hover:shadow-[0_0_32px_rgba(255,87,34,0.6)] transition-all transform hover:scale-105 active:scale-95 flex items-center gap-3 text-center"
+            class="max-md:w-full justify-center min-h-[48px] px-8 py-3 md:py-4 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-sm md:text-headline-sm uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.45)] hover:shadow-[0_0_32px_rgba(255,87,34,0.6)] transition-all transform hover:scale-105 active:scale-95 flex items-center gap-3 text-center"
           >
             <span>{d.cta.apply}</span>
             <span class="material-symbols-outlined text-[20px]">arrow_forward</span>

@@ -37,7 +37,7 @@ const shadingModes = [
 const perks = detail ? detail.perks.map((p) => pick(p, lang)) : [`${d.perksFormats} ${model.formats.join(', ')}`];
 const canBuy = model.status === 'active';
 const buyLabel = canBuy ? d.buyOn : model.status === 'soon' ? d.soon : d.sold;
-const sectionClass = 'w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const sectionClass = 'w-full max-w-[1440px] mx-auto px-4 md:px-margin-desktop';
 const specRows: { label: string; value: string; tone?: string; stacked?: boolean }[] = detail
   ? [
       { label: d.specs.formats, value: detail.specs.formats, stacked: true },
@@ -60,7 +60,7 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
 
 <BaseLayout lang={lang} page={`marketplace/${slug}`} title={`${title} — ${dict.nav.marketplace} — ${dict.site.name}`} description={description} image={model.image}>
   <!-- 1. КРОШКИ И СТАТУСЫ -->
-  <div class={`${sectionClass} pt-space-lg`}>
+  <div class={`${sectionClass} pt-3 md:pt-space-lg`}>
     <Breadcrumbs items={[{ label: dict.common.home, href: path(lang) }, { label: dict.nav.marketplace, href: path(lang, 'marketplace') }, { label: categoryLabel }, { label: title }]}>
       <div class="hidden md:flex items-center flex-wrap gap-space-xs">
         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container text-secondary-fixed font-tech-data-sm text-tech-data-sm">
@@ -80,9 +80,9 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
   </div>
 
   <!-- 2. ВЬЮПОРТ + КУПИТЬ -->
-  <section class={`${sectionClass} py-space-xl`}>
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
-      <div class="lg:col-span-7 flex flex-col gap-space-md">
+  <section class={`${sectionClass} py-4 md:py-space-xl`}>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-gutter-desktop items-start">
+      <div class="lg:col-span-7 flex flex-col gap-2.5 md:gap-space-md">
         <div id="viewport-frame" class="relative w-full rounded-xl bg-surface-container-lowest overflow-hidden shadow-2xl group select-none">
           <div class="w-full bg-surface-container-low px-4 py-2 flex items-center justify-between gap-3">
             <div class="flex items-center gap-3 font-tech-data-sm text-tech-data-sm overflow-hidden whitespace-nowrap">
@@ -105,7 +105,7 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
             </div>
           </div>
 
-          <div id="viewport-stage" class="relative w-full aspect-[16/11] bg-surface flex items-center justify-center overflow-hidden">
+          <div id="viewport-stage" class="relative w-full aspect-video sm:aspect-[16/11] bg-surface flex items-center justify-center overflow-hidden">
             <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#d0bcff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none"></div>
             {
               detail && (
@@ -157,7 +157,7 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
 
         {
           views.length > 1 && (
-            <div id="view-thumbs" class="grid grid-cols-5 gap-space-xs md:gap-space-sm select-none">
+            <div id="view-thumbs" class="flex md:grid md:grid-cols-5 gap-space-xs md:gap-space-sm select-none overflow-x-auto md:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {views.map((view, i) => (
                 <button
                   type="button"
@@ -165,7 +165,7 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
                   data-src={view.image}
                   data-alt={pick(view.alt, lang)}
                   aria-pressed={i === 0 ? 'true' : 'false'}
-                  class="flex flex-col items-center gap-1.5 p-1.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all aria-pressed:bg-surface-container-high aria-pressed:shadow-lg"
+                  class="flex flex-col items-center gap-1.5 p-1.5 shrink-0 w-24 md:w-auto rounded-xl bg-surface-container-low hover:bg-surface-container transition-all aria-pressed:bg-surface-container-high aria-pressed:shadow-lg"
                 >
                   <span class="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-surface-container-lowest block">
                     <img src={view.image} alt="" loading="lazy" decoding="async" class="w-full h-full object-cover" />
@@ -183,7 +183,7 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
         }
       </div>
 
-      <div class="lg:col-span-5 flex flex-col gap-space-lg">
+      <div class="lg:col-span-5 flex flex-col gap-4 md:gap-space-lg">
         <div class="flex flex-col gap-space-xs">
           <div class="flex items-center justify-between gap-space-sm flex-wrap">
             <div class="flex items-center flex-wrap gap-space-xs">
@@ -238,7 +238,7 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
           <p class="font-body-sm text-body-sm text-on-surface-variant">{description}</p>
         </div>
 
-        <div class="p-space-lg rounded-xl bg-surface-container-low flex flex-col gap-space-md shadow-xl">
+        <div class="p-4 md:p-space-lg rounded-xl bg-surface-container-low flex flex-col gap-space-md shadow-xl">
           <div class="flex items-baseline justify-between gap-space-sm flex-wrap">
             <div class="flex items-baseline gap-2">
               <span class="font-headline-lg text-[44px] leading-none font-bold text-on-surface">${model.price}</span>
@@ -252,13 +252,13 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
                 href={model.buyUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="w-full flex items-center justify-center gap-space-sm px-space-lg py-space-md rounded-full bg-gradient-to-r from-primary-container via-primary to-tertiary-container text-on-surface font-headline-sm text-headline-sm uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.5)] hover:shadow-[0_0_32px_rgba(255,87,34,0.6)] transition-all active:scale-[0.98] group/buy"
+                class="w-full flex items-center justify-center gap-space-sm px-space-lg py-space-md rounded-full bg-gradient-to-r from-primary-container via-primary to-tertiary-container text-on-surface font-headline-sm text-base md:text-headline-sm uppercase tracking-wider shadow-[0_0_24px_-4px_rgba(160,120,255,0.5)] hover:shadow-[0_0_32px_rgba(255,87,34,0.6)] transition-all active:scale-[0.98] group/buy"
               >
                 <span>{buyLabel}</span>
                 <span class="material-symbols-outlined text-[20px] transition-transform group-hover/buy:translate-x-1 group-hover/buy:-translate-y-1">open_in_new</span>
               </a>
             ) : (
-              <span class="w-full flex items-center justify-center px-space-lg py-space-md rounded-full bg-surface-container-high text-outline font-headline-sm text-headline-sm uppercase tracking-wider cursor-not-allowed">{buyLabel}</span>
+              <span class="w-full flex items-center justify-center px-space-lg py-space-md rounded-full bg-surface-container-high text-outline font-headline-sm text-base md:text-headline-sm uppercase tracking-wider cursor-not-allowed">{buyLabel}</span>
             )
           }
           <div class="flex items-start gap-2 text-on-surface-variant font-tech-data-sm text-[11px] leading-relaxed">
@@ -302,15 +302,15 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
   </section>
 
   <!-- 3. ОПИСАНИЕ И ХАРАКТЕРИСТИКИ -->
-  <section class="w-full bg-surface-container-lowest py-space-2xl">
-    <div class={`${sectionClass} grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start`}>
-      <div class="lg:col-span-7 flex flex-col gap-space-lg">
+  <section class="w-full bg-surface-container-lowest py-6 md:py-space-2xl">
+    <div class={`${sectionClass} grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-gutter-desktop items-start`}>
+      <div class="lg:col-span-7 flex flex-col gap-4 md:gap-space-lg">
         <div class="flex items-center gap-space-xs">
           <span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
           <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">{d.dossierKicker}</span>
         </div>
-        <h2 class="font-headline-md text-headline-md uppercase text-on-surface tracking-tight">{detail ? pick(detail.brief.heading, lang) : title}</h2>
-        <div class="flex flex-col gap-space-md text-on-surface-variant font-body-md text-body-md">
+        <h2 class="font-headline-md text-lg md:text-headline-md uppercase text-on-surface tracking-tight">{detail ? pick(detail.brief.heading, lang) : title}</h2>
+        <div class="flex flex-col gap-space-md text-on-surface-variant font-body-md text-[13px] leading-5 md:text-body-md">
           {detail ? detail.brief.paragraphs.map((p) => <p>{pick(p, lang)}</p>) : <p>{description}</p>}
         </div>
         {
@@ -336,8 +336,8 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
         </div>
       </div>
 
-      <div class="lg:col-span-5 flex flex-col gap-space-md">
-        <div class="p-space-lg rounded-2xl bg-surface-container flex flex-col gap-space-md shadow-2xl">
+      <div class="lg:col-span-5 flex flex-col gap-3 md:gap-space-md">
+        <div class="p-4 md:p-space-lg rounded-2xl bg-surface-container flex flex-col gap-space-md shadow-2xl">
           <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-secondary-fixed text-[20px]">terminal</span>
@@ -372,24 +372,24 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
   </section>
 
   <!-- 4. ПОДПИСКА -->
-  <section class={`${sectionClass} py-space-xl`}>
+  <section class={`${sectionClass} py-4 md:py-space-xl`}>
     <SubscribeBlock lang={lang} variant="item" />
   </section>
 
   <!-- 5. ПОХОЖИЕ МОДЕЛИ -->
-  <section class="w-full bg-surface-container-lowest py-space-xl">
-    <div class={`${sectionClass} flex flex-col gap-space-lg`}>
+  <section class="w-full bg-surface-container-lowest py-4 md:py-space-xl">
+    <div class={`${sectionClass} flex flex-col gap-4 md:gap-space-lg`}>
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
         <div class="flex items-center gap-space-xs">
           <span class="w-2.5 h-2.5 rounded-full bg-secondary-container"></span>
-          <h2 class="font-headline-md text-headline-md uppercase text-on-surface tracking-tight">{d.similar}</h2>
+          <h2 class="font-headline-md text-lg md:text-headline-md uppercase text-on-surface tracking-tight">{d.similar}</h2>
         </div>
         <a href={path(lang, 'marketplace')} class="font-tech-data-sm text-tech-data-sm text-primary hover:underline uppercase flex items-center gap-1">
           <span>{d.viewAllBefore} {marketModels.length} {d.viewAllAfter}</span>
           <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
         </a>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter-desktop">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 md:gap-gutter-desktop">
         {
           similar.map((item) => (
             <article class="rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col overflow-hidden group shadow-lg">

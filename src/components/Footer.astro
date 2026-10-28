@@ -22,12 +22,12 @@ const socials = [
   { icon: 'forum', label: dict.discord, href: SITE.discord },
   { icon: 'share', label: dict.twitter, href: SITE.twitter },
 ];
-const linkClass = 'font-tech-data-sm text-tech-data-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5';
+const linkClass = 'font-tech-data-sm text-tech-data-sm text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-2 py-1 lg:py-0';
 ---
 
-<footer class="w-full bg-surface-container-lowest py-space-2xl relative">
-  <div class="max-w-[1440px] mx-auto px-margin md:px-margin-desktop">
-    <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-space-lg mb-space-xl">
+<footer class="w-full bg-surface-container-lowest pt-8 pb-10 lg:py-space-2xl relative border-t border-surface-container-highest/60 lg:border-0">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-margin-desktop">
+    <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-6 lg:gap-space-lg mb-6 lg:mb-space-xl">
       <div class="md:col-span-4 lg:col-span-4 flex flex-col gap-space-sm">
         <div class="flex items-center gap-space-xs">
           <span class="font-headline-sm text-headline-sm text-on-surface tracking-tight uppercase">{name}</span>
@@ -40,7 +40,7 @@ const linkClass = 'font-tech-data-sm text-tech-data-sm text-on-surface-variant h
         </div>
       </div>
 
-      <div class="lg:col-span-3 flex flex-col gap-space-xs">
+      <div class="lg:col-span-3 flex flex-col gap-1.5 lg:gap-space-xs max-lg:border-t max-lg:border-surface-container-highest/50 max-lg:pt-3">
         <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-space-xs">{dict.platforms}</span>
         {
           platforms.map((p) => (
@@ -52,7 +52,7 @@ const linkClass = 'font-tech-data-sm text-tech-data-sm text-on-surface-variant h
         }
       </div>
 
-      <div class="lg:col-span-3 flex flex-col gap-space-xs">
+      <div class="lg:col-span-3 flex flex-col gap-1.5 lg:gap-space-xs max-lg:border-t max-lg:border-surface-container-highest/50 max-lg:pt-3">
         <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-space-xs">{dict.social}</span>
         {
           socials.map((s) => (
@@ -64,7 +64,7 @@ const linkClass = 'font-tech-data-sm text-tech-data-sm text-on-surface-variant h
         }
       </div>
 
-      <div class="lg:col-span-2 flex flex-col gap-space-xs">
+      <div class="lg:col-span-2 flex flex-col gap-1.5 lg:gap-space-xs max-lg:border-t max-lg:border-surface-container-highest/50 max-lg:pt-3">
         <span class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-space-xs">{dict.inquiries}</span>
         <div class="p-space-sm bg-surface-container rounded-lg">
           <span class="font-label-caps text-label-caps text-outline block mb-1 uppercase">{dict.comms}</span>
@@ -73,7 +73,7 @@ const linkClass = 'font-tech-data-sm text-tech-data-sm text-on-surface-variant h
       </div>
     </div>
 
-    <div class="pt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md bg-surface-container-low px-space-md py-space-sm rounded-lg shadow-inner">
+    <div class="pt-4 lg:pt-space-lg max-lg:border-t max-lg:border-surface-container-highest/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-space-md lg:bg-surface-container-low lg:px-space-md lg:py-space-sm rounded-lg lg:shadow-inner">
       <span class="font-tech-data-sm text-tech-data-sm text-outline">© {new Date().getFullYear()} {name.toUpperCase()}. {dict.rights}</span>
       <div class="flex items-center gap-space-md">
         <a class="font-tech-data-sm text-tech-data-sm text-on-surface-variant hover:text-on-surface transition-colors uppercase" href={path(lang, 'privacy')}>{dict.privacy}</a>

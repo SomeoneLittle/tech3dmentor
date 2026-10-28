@@ -20,13 +20,13 @@ const tiers: PolyTier[] = ['low', 'mid', 'high'];
 const countBy = (category: MarketCategory) => marketModels.filter((m) => m.category === category).length;
 const sortOptions = Object.entries(d.sort) as [string, string][];
 const PAGE_SIZE = 12;
-const sectionClass = 'w-full max-w-[1440px] mx-auto px-margin md:px-margin-desktop';
+const sectionClass = 'w-full max-w-[1440px] mx-auto px-4 md:px-margin-desktop';
 const labelClass = 'font-label-caps text-label-caps text-outline uppercase tracking-wider';
 const optionClass = 'flex items-center gap-2 p-2 rounded bg-surface-container-low hover:bg-surface-container-high cursor-pointer font-tech-data-sm text-tech-data-sm text-on-surface';
 ---
 
 <BaseLayout lang={lang} page="marketplace" title={`${dict.nav.marketplace} — ${dict.site.name}`} description={d.sub} image={marketModels[0].image}>
-  <div class={`${sectionClass} py-space-xl flex flex-col gap-space-xl relative`}>
+  <div class={`${sectionClass} py-4 md:py-space-xl flex flex-col gap-5 md:gap-space-xl relative`}>
     <!-- 1. ХЛЕБНЫЕ КРОШКИ -->
     <Breadcrumbs items={[{ label: dict.common.home, href: path(lang) }, { label: d.archive }, { label: dict.nav.marketplace }]}>
       <div class="flex flex-wrap items-center gap-space-sm">
@@ -42,27 +42,27 @@ const optionClass = 'flex items-center gap-2 p-2 rounded bg-surface-container-lo
     </Breadcrumbs>
 
     <!-- 2. ЗАГОЛОВОК -->
-    <header class="flex flex-col gap-space-xs">
+    <header class="flex flex-col gap-2 md:gap-space-xs">
       <div class="flex flex-wrap items-center gap-3">
         <span class="font-tech-data-sm text-tech-data-sm text-secondary-container uppercase tracking-widest px-2 py-0.5 rounded bg-surface-container-high">CAD_REPO // V4.18</span>
-        <span class="font-tech-data-sm text-tech-data-sm text-outline">FPS: 60.0 • ACEScg ACTIVE</span>
+        <span class="font-tech-data-sm text-tech-data-sm text-outline hidden sm:inline">FPS: 60.0 • ACEScg ACTIVE</span>
       </div>
       <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg tracking-tight uppercase text-on-surface">
         {d.titleBefore}<span class="bg-gradient-to-r from-primary-container via-primary to-tertiary-container bg-clip-text text-transparent">{d.titleAccent}</span>
       </h1>
-      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">{d.sub}</p>
+      <p class="font-body-lg text-sm md:text-body-lg text-on-surface-variant max-w-3xl">{d.sub}</p>
     </header>
 
     <!-- 3. ПЛАШКА: ПОКА ПРОДАЖИ НА 3DCULT -->
-    <section class="relative overflow-hidden rounded-xl bg-surface-container p-space-md sm:p-space-lg shadow-xl">
-      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-space-lg relative z-10">
-        <div class="flex items-start gap-space-md max-w-2xl">
+    <section class="relative overflow-hidden rounded-xl bg-surface-container p-3 sm:p-space-lg shadow-xl">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 md:gap-space-lg relative z-10">
+        <div class="flex items-start gap-space-sm md:gap-space-md max-w-2xl">
           <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 shadow-inner">
             <span class="material-symbols-outlined text-secondary-container text-2xl animate-pulse">sync_saved_locally</span>
           </div>
           <div class="flex flex-col gap-1">
             <span class="font-tech-data-sm text-tech-data-sm text-secondary-container font-bold uppercase tracking-wider">{d.notice.tag}</span>
-            <p class="font-body-md text-body-md text-on-surface">
+            <p class="font-body-md text-[13px] leading-5 md:text-body-md text-on-surface">
               {d.notice.before} <a href={SITE.cults} target="_blank" rel="noopener noreferrer" class="text-primary font-medium hover:underline">{d.notice.store}</a>{d.notice.after}
             </p>
           </div>
@@ -86,7 +86,7 @@ const optionClass = 'flex items-center gap-2 p-2 rounded bg-surface-container-lo
     </section>
 
     <!-- 4. ПАНЕЛЬ: ПОИСК, СЧЁТЧИК, СОРТИРОВКА -->
-    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-space-md bg-surface-container-low p-space-sm rounded-xl shadow-md">
+    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 md:gap-space-md bg-surface-container-low p-2.5 md:p-space-sm rounded-xl shadow-md">
       <label class="flex items-center gap-2 bg-surface-container-lowest px-space-md py-2 rounded-lg flex-1 md:max-w-md shadow-inner">
         <span class="material-symbols-outlined text-outline text-lg">search</span>
         <input id="market-search" type="search" placeholder={d.search} aria-label={d.search} class="bg-transparent text-on-surface placeholder:text-outline font-tech-data-sm text-tech-data-sm w-full focus:outline-none" />
@@ -98,11 +98,15 @@ const optionClass = 'flex items-center gap-2 p-2 rounded bg-surface-container-lo
           {d.showingBefore} <strong id="market-shown" class="text-on-surface">{Math.min(PAGE_SIZE, marketModels.length)}</strong> {d.showingMid} <span id="market-total">{marketModels.length}</span> {d.showingAfter}
         </span>
       </div>
-      <div class="flex items-center justify-between md:justify-end gap-space-sm shrink-0">
-        <label class="flex items-center gap-2 bg-surface-container-lowest px-3 py-1.5 rounded-lg shadow-inner">
-          <span class="material-symbols-outlined text-outline text-base">swap_vert</span>
+      <div class="flex flex-wrap items-center justify-between md:justify-end gap-2 md:gap-space-sm md:shrink-0">
+        <button id="filters-open" type="button" class="lg:hidden h-9 px-3 rounded-lg bg-surface-container-high text-on-surface flex items-center gap-1.5 font-tech-data-sm text-tech-data-sm uppercase tracking-wider font-semibold active:scale-95">
+          <span class="material-symbols-outlined text-[16px] text-secondary-container">tune</span>
+          <span>{f.title}</span>
+        </button>
+        <label class="flex items-center gap-2 bg-surface-container-lowest px-2.5 md:px-3 py-1.5 rounded-lg shadow-inner min-w-0">
+          <span class="hidden sm:inline material-symbols-outlined text-outline text-base">swap_vert</span>
           <span class="font-tech-data-sm text-tech-data-sm text-outline uppercase hidden sm:inline">{d.sortLabel}</span>
-          <select id="market-sort" class="bg-transparent font-tech-data-sm text-tech-data-sm text-on-surface focus:outline-none cursor-pointer">
+          <select id="market-sort" class="min-w-0 max-w-[110px] sm:max-w-none bg-transparent font-tech-data-sm text-tech-data-sm text-on-surface focus:outline-none cursor-pointer">
             {sortOptions.map(([value, label]) => <option class="bg-surface-container-high" value={value}>{label}</option>)}
           </select>
         </label>
@@ -118,15 +122,24 @@ const optionClass = 'flex items-center gap-2 p-2 rounded bg-surface-container-lo
     </div>
 
     <!-- 5. ФИЛЬТРЫ + КАТАЛОГ -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
-      <aside id="market-filters" class="lg:col-span-3 lg:sticky lg:top-24">
-        <div class="bg-surface-container rounded-xl p-space-md flex flex-col gap-space-md shadow-lg">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-gutter-desktop items-start">
+      <div id="filters-backdrop" class="hidden lg:hidden fixed inset-0 z-[65] bg-black/70 backdrop-blur-sm"></div>
+      <aside
+        id="market-filters"
+        class="lg:col-span-3 lg:sticky lg:top-24 max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:z-[70] max-lg:max-h-[85vh] max-lg:overflow-y-auto max-lg:rounded-t-2xl max-lg:translate-y-full max-lg:invisible max-lg:transition-transform max-lg:duration-300 max-lg:data-[open=true]:translate-y-0 max-lg:data-[open=true]:visible"
+      >
+        <div class="bg-surface-container rounded-xl max-lg:rounded-b-none p-space-md flex flex-col gap-space-md shadow-lg">
           <div class="flex items-center justify-between pb-space-xs">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-primary text-base">tune</span>
-              <span class="font-tech-data-lg text-tech-data-lg uppercase font-bold text-on-surface">{f.title}</span>
+              <span class="font-tech-data-lg text-xs md:text-tech-data-lg uppercase font-bold text-on-surface">{f.title}</span>
             </div>
-            <button id="filters-reset" type="button" class="font-tech-data-sm text-tech-data-sm text-secondary-container hover:underline uppercase transition-all">{f.reset}</button>
+            <div class="flex items-center gap-3">
+              <button id="filters-reset" type="button" class="font-tech-data-sm text-tech-data-sm text-secondary-container hover:underline uppercase transition-all">{f.reset}</button>
+              <button id="filters-close" type="button" aria-label={f.title} class="lg:hidden w-9 h-9 -mr-2 flex items-center justify-center rounded-full text-on-surface active:bg-surface-container-high">
+                <span class="material-symbols-outlined text-[22px]">close</span>
+              </button>
+            </div>
           </div>
 
           <fieldset class="flex flex-col gap-2 pt-2">
@@ -220,15 +233,15 @@ const optionClass = 'flex items-center gap-2 p-2 rounded bg-surface-container-lo
         </div>
       </aside>
 
-      <section class="lg:col-span-9 flex flex-col gap-space-lg">
+      <section class="lg:col-span-9 flex flex-col gap-4 md:gap-space-lg">
         <div
           id="market-grid"
           data-view="grid"
-          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-space-md data-[view=list]:!grid-cols-1"
+          class="grid grid-cols-2 xl:grid-cols-3 gap-2.5 md:gap-space-md data-[view=list]:!grid-cols-1"
         >
           {marketModels.map((model, i) => <MarketCard model={model} lang={lang} index={i} />)}
         </div>
-        <p id="market-empty" class="hidden py-space-2xl text-center font-tech-data-sm text-tech-data-sm text-outline">{d.empty}</p>
+        <p id="market-empty" class="hidden py-6 md:py-space-2xl text-center font-tech-data-sm text-tech-data-sm text-outline">{d.empty}</p>
 
         <!-- ПАГИНАЦИЯ -->
         <nav id="market-pager" aria-label="Pagination" class="flex flex-col sm:flex-row items-center justify-between gap-space-md bg-surface-container-low px-space-md py-space-sm rounded-xl shadow-md">
@@ -246,6 +259,19 @@ const optionClass = 'flex items-center gap-2 p-2 rounded bg-surface-container-lo
     <SubscribeBlock lang={lang} variant="page" />
   </div>
 </BaseLayout>
+
+<script>
+  const sheet = document.getElementById('market-filters');
+  const backdrop = document.getElementById('filters-backdrop');
+  const setSheet = (open: boolean) => {
+    sheet?.setAttribute('data-open', String(open));
+    backdrop?.classList.toggle('hidden', !open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+  document.getElementById('filters-open')?.addEventListener('click', () => setSheet(true));
+  document.getElementById('filters-close')?.addEventListener('click', () => setSheet(false));
+  backdrop?.addEventListener('click', () => setSheet(false));
+</script>
 
 <script>
   const PAGE = 12;

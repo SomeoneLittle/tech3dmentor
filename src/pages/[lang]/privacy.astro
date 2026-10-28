@@ -12,11 +12,11 @@ const dict = t(lang);
 const p = tp(lang);
 
 const domain = new URL(SITE.url).host;
-const card = 'p-space-lg bg-surface-container-low rounded-xl flex flex-col gap-space-md scroll-mt-28';
+const card = 'p-4 md:p-space-lg bg-surface-container-low rounded-xl flex flex-col gap-space-md scroll-mt-28';
 const code = 'flex items-center gap-space-xs font-tech-data-sm text-tech-data-sm';
 const badge = 'font-label-caps text-label-caps px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant uppercase';
-const h2 = 'font-headline-sm text-headline-sm text-on-surface uppercase';
-const lead = 'font-body-md text-body-md text-on-surface-variant leading-relaxed';
+const h2 = 'font-headline-sm text-base md:text-headline-sm text-on-surface uppercase';
+const lead = 'font-body-md text-[13px] leading-5 md:text-body-md text-on-surface-variant leading-relaxed';
 
 const tocIcons = ['domain', 'sensors', 'balance', 'shield_person', 'hub', 'cookie', 'security', 'gavel', 'alternate_email'];
 const s2Colors = ['text-primary', 'text-tertiary', 'text-primary', 'text-on-surface'];
@@ -42,7 +42,7 @@ const mail = (subject: string) => `mailto:${SITE.email}?subject=${encodeURICompo
   <div class="flex flex-col w-full">
     <!-- Telemetry ribbon -->
     <div class="w-full bg-surface-container-lowest/80 backdrop-blur-md">
-      <div class="max-w-[1440px] mx-auto px-margin md:px-margin-desktop py-space-sm flex flex-wrap items-center justify-between gap-space-sm">
+      <div class="max-w-[1440px] mx-auto px-4 md:px-margin-desktop py-space-sm flex flex-wrap items-center justify-between gap-space-sm">
         <div class="flex items-center gap-space-xs font-tech-data-sm text-tech-data-sm text-outline">
           <a class="text-on-surface-variant hover:text-primary transition-colors uppercase" href={path(lang)}>{p.crumbs.home}</a>
           <span class="text-outline-variant font-bold">/</span>
@@ -63,10 +63,10 @@ const mail = (subject: string) => `mailto:${SITE.email}?subject=${encodeURICompo
     </div>
 
     <!-- Hero -->
-    <section class="relative w-full bg-surface-dim overflow-hidden py-space-2xl">
+    <section class="relative w-full bg-surface-dim overflow-hidden py-6 md:py-space-2xl">
       <div class="absolute -top-32 left-1/4 w-[600px] h-[350px] bg-primary-container/10 rounded-full blur-[140px] pointer-events-none"></div>
       <div class="absolute top-10 right-10 w-[450px] h-[300px] bg-tertiary-container/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div class="relative max-w-[1440px] mx-auto px-margin md:px-margin-desktop">
+      <div class="relative max-w-[1440px] mx-auto px-4 md:px-margin-desktop">
         <div class="flex flex-col gap-space-md max-w-4xl">
           <div class="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full bg-surface-container font-tech-data-sm text-tech-data-sm text-on-surface-variant">
             <span class="material-symbols-outlined text-[15px] text-tertiary">lock</span>
@@ -76,7 +76,7 @@ const mail = (subject: string) => `mailto:${SITE.email}?subject=${encodeURICompo
             {p.hero.titleBefore}
             <span class="bg-gradient-to-r from-primary to-tertiary text-transparent bg-clip-text">{p.hero.titleAccent}</span>
           </h1>
-          <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          <p class="font-body-lg text-sm md:text-body-lg text-on-surface-variant leading-relaxed">
             {p.hero.introBefore}{
               p.hero.terms.map((term, i) => (
                 <>
@@ -101,9 +101,9 @@ const mail = (subject: string) => `mailto:${SITE.email}?subject=${encodeURICompo
     </section>
 
     <!-- TOC + policy body -->
-    <section class="w-full bg-background py-space-2xl">
-      <div class="max-w-[1440px] mx-auto px-margin md:px-margin-desktop">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
+    <section class="w-full bg-background py-6 md:py-space-2xl">
+      <div class="max-w-[1440px] mx-auto px-4 md:px-margin-desktop">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-gutter-desktop items-start">
           <aside class="lg:col-span-4 lg:sticky lg:top-24 self-start flex flex-col gap-space-md">
             <div class="bg-surface-container-low rounded-xl p-space-md shadow-md">
               <div class="flex items-center justify-between pb-space-sm">
@@ -152,7 +152,7 @@ const mail = (subject: string) => `mailto:${SITE.email}?subject=${encodeURICompo
             </div>
           </aside>
 
-          <div class="lg:col-span-8 flex flex-col gap-space-xl">
+          <div class="lg:col-span-8 flex flex-col gap-5 md:gap-space-xl">
             <!-- 01 -->
             <article class={card} id="sec-01">
               <div class="flex flex-wrap items-center justify-between gap-space-sm">
@@ -256,7 +256,7 @@ const mail = (subject: string) => `mailto:${SITE.email}?subject=${encodeURICompo
                 <div class="flex items-start gap-space-sm">
                   <span class="material-symbols-outlined text-secondary-fixed-dim text-[24px] mt-0.5">verified</span>
                   <div>
-                    <h3 class="font-headline-sm text-tech-data-lg text-on-surface uppercase">{p.s4.headTitle}</h3>
+                    <h3 class="font-headline-sm text-xs md:text-tech-data-lg text-on-surface uppercase">{p.s4.headTitle}</h3>
                     <p class={`${lead} mt-1`} set:html={p.s4.head} />
                   </div>
                 </div>
@@ -340,7 +340,7 @@ const mail = (subject: string) => `mailto:${SITE.email}?subject=${encodeURICompo
                     <span class="material-symbols-outlined text-[28px]">lock</span>
                   </div>
                   <div>
-                    <span class="font-headline-sm text-tech-data-lg text-on-surface block">{p.s7.cardTitle}</span>
+                    <span class="font-headline-sm text-xs md:text-tech-data-lg text-on-surface block">{p.s7.cardTitle}</span>
                     <span class="font-body-sm text-body-sm text-on-surface-variant">{p.s7.cardText}</span>
                   </div>
                 </div>
@@ -385,13 +385,13 @@ const mail = (subject: string) => `mailto:${SITE.email}?subject=${encodeURICompo
               </div>
               <h2 class={h2}>09. {p.s9.title}</h2>
               <p class={lead} set:html={p.s9.text} />
-              <div class="p-space-lg bg-gradient-to-br from-surface-container via-surface-container to-surface-variant rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md shadow-lg">
+              <div class="p-4 md:p-space-lg bg-gradient-to-br from-surface-container via-surface-container to-surface-variant rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-md shadow-lg">
                 <div class="flex flex-col gap-1 min-w-0">
                   <span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">{p.s9.label}</span>
-                  <span class="font-headline-sm text-headline-sm text-on-surface break-all">{SITE.email}</span>
+                  <span class="font-headline-sm text-base md:text-headline-sm text-on-surface break-all">{SITE.email}</span>
                 </div>
                 <a
-                  class="px-space-lg py-3 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-tech-data-lg text-tech-data-lg uppercase tracking-wider shadow-lg hover:shadow-[0_0_24px_rgba(160,120,255,0.5)] transition-all flex items-center gap-2 shrink-0"
+                  class="px-space-lg py-3 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-tech-data-lg text-xs md:text-tech-data-lg uppercase tracking-wider shadow-lg hover:shadow-[0_0_24px_rgba(160,120,255,0.5)] transition-all flex items-center gap-2 shrink-0"
                   href={mail(p.s9.subject)}
                 >
                   <span>{p.s9.button}</span>
