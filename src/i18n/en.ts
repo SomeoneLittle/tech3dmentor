@@ -17,6 +17,13 @@ export const en = {
     apply: 'Apply for Mentoring',
     work: 'See My Work',
     slotsValue: '4 / 6 Remaining',
+    slotsLeft: '{left} / {total} Remaining',
+    status: {
+      open: '[LIVE MENTORSHIP • ENROLLMENT OPEN]',
+      closing_soon: '[LIVE MENTORSHIP • CLOSING SOON]',
+      waitlist: '[LIVE MENTORSHIP • WAITLIST]',
+      closed: '[LIVE MENTORSHIP • ENROLLMENT CLOSED]',
+    },
   },
   process: {
     kicker: '// PIPELINE METHODOLOGY',
