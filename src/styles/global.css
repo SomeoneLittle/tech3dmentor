@@ -28,6 +28,24 @@
   }
 }
 
+/* Всё, что двигается, масштабируется или вращается при наведении/нажатии, получает слой заранее:
+   иначе браузер создаёт его посреди анимации, текст «едет по дуге» и мылится.
+   Ловит по именам Tailwind-классов, поэтому работает и на новых элементах. Картинки исключены: у них нет текста. */
+:where(
+    [class*='hover:-translate'],
+    [class*='hover:translate'],
+    [class*='hover:scale'],
+    [class*='hover:rotate'],
+    [class*='active:scale'],
+    [class*='active:translate'],
+    [class*='group-hover:scale'],
+    [class*='group-hover:translate'],
+    [class*='group-hover:rotate'],
+    [class*='group-hover/buy:translate']
+  ):not(img, video) {
+  will-change: transform;
+}
+
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
