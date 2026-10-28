@@ -2,7 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import SubscribeBlock from '../../../components/SubscribeBlock.astro';
-import { locales, pick, t, tk, path, type Lang } from '../../../i18n';
+import { locales, pick, t, tk, path, type Lang, type Localized } from '../../../i18n';
 import { marketModels, type MarketModel } from '../../../data/marketplace';
 
 export function getStaticPaths() {
@@ -27,9 +27,17 @@ const similar = [
   ...marketModels.filter((m) => m !== model && m.category !== model.category),
 ].slice(0, 4);
 
-const views =
-  detail?.views ??
-  [model.image, ...(model.gallery ?? [])].map((image, i) => ({ image, label: i === 0 ? '[3D VIEW]' : `[VIEW_0${i + 1}]`, sub: '', alt: model.title }));
+// Порядок кадров: видео-превью (если есть), обложка и картинки по порядку из студии, 3D Sketchfab (если есть)
+type View = { image: string; label: string; sub: string; alt: Localized; kind: 'image' | 'video' | '3d' };
+const views: View[] = detail
+  ? detail.views.map((v) => ({ ...v, kind: 'image' as const }))
+  : [
+      ...(model.video ? [{ image: model.image, label: '[VIDEO]', sub: '', alt: model.title, kind: 'video' as const }] : []),
+      ...[model.image, ...(model.gallery ?? [])].map((image, i) => ({ image, label: i === 0 ? '[3D VIEW]' : `[VIEW_0${i + 1}]`, sub: '', alt: model.title, kind: 'image' as const })),
+      ...(model.sketchfab ? [{ image: model.image, label: '[3D]', sub: '', alt: model.title, kind: '3d' as const }] : []),
+    ];
+const firstImage = views.find((v) => v.kind === 'image') ?? views[0];
+const startKind = views[0].kind;
 const priceLabel = model.price > 0 ? `$${model.price}` : '—';
 const titleParts = detail?.accent && title.includes(detail.accent) ? title.split(detail.accent) : null;
 const shadingModes = [
@@ -132,12 +140,14 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
             }
             <img
               id="main-viewport-img"
-              src={views[0].image}
-              alt={pick(views[0].alt, lang)}
+              src={firstImage.image}
+              alt={pick(firstImage.alt, lang)}
               fetchpriority="high"
               decoding="async"
-              class="w-full h-full object-cover transition-[transform,filter] duration-700 ease-out group-hover:scale-105"
+              class:list={['w-full h-full object-cover transition-[transform,filter] duration-700 ease-out group-hover:scale-105', startKind !== 'image' && 'hidden']}
             />
+            {model.video && <video id="main-viewport-video" src={model.video} poster={model.image} autoplay muted loop playsinline class:list={['absolute inset-0 w-full h-full object-cover', startKind !== 'video' && 'hidden']} />}
+            {model.sketchfab && <iframe id="main-viewport-3d" title={title} data-src={model.sketchfab} allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen class:list={['absolute inset-0 w-full h-full border-0', startKind !== '3d' && 'hidden']} />}
             <div class="absolute bottom-16 left-1/2 -translate-x-1/2 z-10 pointer-events-none hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-md shadow-xl text-on-surface-variant font-tech-data-sm text-tech-data-sm whitespace-nowrap">
               <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
               <span>{d.hint}</span>
@@ -166,6 +176,7 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
                 <button
                   type="button"
                   data-view={i}
+                  data-kind={view.kind}
                   data-src={view.image}
                   data-alt={pick(view.alt, lang)}
                   aria-pressed={i === 0 ? 'true' : 'false'}
@@ -173,9 +184,9 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
                 >
                   <span class="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-surface-container-lowest block">
                     <img src={view.image} alt="" loading="lazy" decoding="async" class="w-full h-full object-cover" />
-                    {i === 0 && (
+                    {(i === 0 || view.kind !== 'image') && (
                       <span class="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-on-surface text-[20px] drop-shadow">360</span>
+                        <span class="material-symbols-outlined text-on-surface text-[20px] drop-shadow">{view.kind === 'video' ? 'play_circle' : '360'}</span>
                       </span>
                     )}
                   </span>
@@ -440,23 +451,42 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
   const filters: Record<string, string> = { pbr: 'none', clay: 'grayscale(100%) contrast(1.1) brightness(0.9)', wire: 'invert(0.9) hue-rotate(180deg) contrast(1.4)' };
   const modeFrame: Record<string, number> = { pbr: 0, clay: 1, wire: 2 };
 
+  const video = document.getElementById('main-viewport-video') as HTMLVideoElement | null;
+  const frame3d = document.getElementById('main-viewport-3d') as HTMLIFrameElement | null;
+  const modeBar = document.getElementById('shading-modes');
+  const imageThumbs = thumbs.filter((t) => (t.dataset.kind ?? 'image') === 'image');
+
+  // Один кадр на экране: картинка, видео-превью или 3D Sketchfab (iframe грузится только при первом открытии)
   const showFrame = (i: number) => {
     const thumb = thumbs[i];
     if (!main || !thumb) return;
-    main.src = thumb.dataset.src ?? main.src;
-    main.alt = thumb.dataset.alt ?? '';
+    const kind = thumb.dataset.kind ?? 'image';
+    main.classList.toggle('hidden', kind !== 'image');
+    video?.classList.toggle('hidden', kind !== 'video');
+    frame3d?.classList.toggle('hidden', kind !== '3d');
+    modeBar?.classList.toggle('hidden', kind === '3d');
+    if (kind === 'video') video?.play().catch(() => {});
+    else video?.pause();
+    if (kind === '3d' && frame3d && !frame3d.src) frame3d.src = frame3d.dataset.src ?? '';
+    if (kind === 'image') {
+      main.src = thumb.dataset.src ?? main.src;
+      main.alt = thumb.dataset.alt ?? '';
+    }
     thumbs.forEach((t, n) => t.setAttribute('aria-pressed', String(n === i)));
   };
   const setMode = (mode: string) => {
     modes.forEach((m) => m.setAttribute('aria-pressed', String(m.dataset.shading === mode)));
     if (!main) return;
-    if (thumbs.length > modeFrame[mode]) {
-      showFrame(modeFrame[mode]);
+    const frame = imageThumbs[modeFrame[mode]];
+    if (frame) {
+      showFrame(thumbs.indexOf(frame));
       main.style.filter = '';
     } else {
+      main.classList.remove('hidden');
       main.style.filter = filters[mode];
     }
   };
+  if (frame3d && !frame3d.classList.contains('hidden')) frame3d.src = frame3d.dataset.src ?? '';
   modes.forEach((btn) => btn.addEventListener('click', () => setMode(btn.dataset.shading ?? 'pbr')));
   thumbs.forEach((btn) =>
     btn.addEventListener('click', () => {

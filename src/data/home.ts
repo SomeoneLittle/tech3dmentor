@@ -1,6 +1,7 @@
 // Временные данные главной из макета. Форма совпадает с будущими записями Sanity (поля по языкам); потом заменить запросом.
 import type { Localized } from '../i18n';
 import { mockImages as img } from './mockImages';
+import { SITE } from '../config';
 
 const L = (ru: string, ua: string, en: string): Localized => ({ ru, ua, en });
 
@@ -28,6 +29,8 @@ export interface Model {
   buyUrl: string;
   /** Цена из Sanity; у заглушек не задана */
   price?: number;
+  /** Видео-превью из Sanity */
+  video?: string;
 }
 
 export interface Article {
@@ -145,7 +148,7 @@ export const models: Model[] = [
       'Квад-топологія, UV-розгортка та набір PBR-текстур 4K.',
       'Quad-topology UV mapped with 4K PBR texture set.',
     ),
-    buyUrl: 'https://3dcults.com',
+    buyUrl: SITE.cults,
   },
   {
     slug: 'golem-sculpt-base',
@@ -158,7 +161,7 @@ export const models: Model[] = [
       'Кілька рівнів SubD для швидкого концепту.',
       'Multi-resolution SubD levels included for fast concepting.',
     ),
-    buyUrl: 'https://3dcults.com',
+    buyUrl: SITE.cults,
   },
   {
     slug: 'sci-fi-weapon-kit-vol1',
@@ -171,7 +174,7 @@ export const models: Model[] = [
       'Змінні рейки та оптимізовані ігрові LOD.',
       'Interchangeable rail attachments and optimized game lods.',
     ),
-    buyUrl: 'https://3dcults.com',
+    buyUrl: SITE.cults,
   },
   {
     slug: 'human-anatomy-study',
@@ -184,7 +187,7 @@ export const models: Model[] = [
       'Анатомічна точність перевірена, підходить як референс для художників із персонажів.',
       'Medical accuracy reviewed for character artist reference.',
     ),
-    buyUrl: 'https://3dcults.com',
+    buyUrl: SITE.cults,
   },
 ];
 

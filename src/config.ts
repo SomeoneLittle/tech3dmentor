@@ -2,8 +2,8 @@
 export const SITE = {
   url: 'https://tech3dmentor.littlesomeonenotanyone.workers.dev', // TODO: реальный домен
   email: 'hello@example.com', // TODO: реальная почта
-  artstation: '#',
-  cults: 'https://3dcults.com',
+  artstation: 'https://tonirabaron.artstation.com',
+  cults: 'https://cults3d.com/en/users/Toni_Rabaron_STL/3d-models',
   gumroad: '#',
   instagram: '#',
   youtube: '#',

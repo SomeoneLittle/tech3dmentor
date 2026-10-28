@@ -15,6 +15,8 @@ interface RawModel {
   polycount?: number;
   specs?: { label?: SanityLocalized; value?: SanityLocalized }[];
   badge?: SanityLocalized;
+  video?: string;
+  sketchfabUrl?: string;
   price?: number;
   buyUrl?: string;
   status?: 'available' | 'soon' | 'hidden';
@@ -40,6 +42,12 @@ const categoryAliases: Record<string, MarketCategory> = {
   resources: 'resources',
   prints: 'prints',
   '3d prints': 'prints',
+};
+
+/** Ссылка на страницу модели Sketchfab → адрес для iframe (id — 32 символа в конце адреса) */
+const sketchfabEmbed = (url?: string): string | undefined => {
+  const id = url?.match(/[0-9a-f]{32}/i)?.[0];
+  return id ? `https://sketchfab.com/models/${id}/embed?ui_theme=dark&dnt=1` : undefined;
 };
 
 const toMarketModel = (raw: RawModel): MarketModel => {
@@ -73,6 +81,8 @@ const toMarketModel = (raw: RawModel): MarketModel => {
     status: raw.status === 'soon' ? 'soon' : 'active',
     buyUrl: raw.buyUrl ?? '',
     specs: (raw.specs ?? []).map((s) => ({ label: toLocalized(s.label), value: toLocalized(s.value) })),
+    video: raw.video || undefined,
+    sketchfab: sketchfabEmbed(raw.sketchfabUrl),
     fromSanity: true,
   };
 };
@@ -80,7 +90,8 @@ const toMarketModel = (raw: RawModel): MarketModel => {
 /** Опубликованные модели, не скрытые; новые сверху */
 export async function fetchSanityModels(): Promise<MarketModel[]> {
   const raw = await sanity.fetch<RawModel[]>(`*[_type == "model" && status != "hidden" && defined(slug.current)] | order(_createdAt desc) {
-    slug, title, description, image, gallery, category, tags, formats, polycount, specs, badge, price, buyUrl, status
+    slug, title, description, image, gallery, category, tags, formats, polycount, specs, badge, price, buyUrl, status,
+    "video": previewVideo.asset->url, sketchfabUrl
   }`);
   return raw.map(toMarketModel);
 }

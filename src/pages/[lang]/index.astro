@@ -40,6 +40,7 @@ const sanityHomeModels: Model[] = marketModels
     desc: m.desc,
     buyUrl: m.buyUrl,
     price: m.price,
+    video: m.video,
   }));
 const homeModels = [...sanityHomeModels, ...models.filter((m) => !sanityHomeModels.some((s) => s.slug === m.slug))].slice(0, 4);
 

@@ -21,6 +21,7 @@ const dict = t(lang);
         decoding="async"
         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
       />
+      {model.video && <video data-lazy-video data-src={model.video} poster={model.image} muted loop playsinline preload="none" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover pointer-events-none" />}
       <div class="absolute bottom-1.5 left-1.5 md:bottom-2 md:left-2 px-1.5 md:px-2 py-0.5 rounded bg-surface-container-lowest/85 font-tech-data-sm text-[8px] md:text-tech-data-sm text-secondary-container font-semibold">
         {pick(model.badge, lang)}
       </div>
@@ -48,3 +49,7 @@ const dict = t(lang);
     <span class="material-symbols-outlined text-[14px] md:text-[18px]">favorite</span>
   </button>
 </div>
+
+<script>
+  import '../scripts/lazyVideo';
+</script>

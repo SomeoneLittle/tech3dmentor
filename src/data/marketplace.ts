@@ -4,6 +4,7 @@
 import type { Localized } from '../i18n';
 import { marketImages as img } from './mockMarketplaceImages';
 import { fetchSanityModels } from '../lib/sanity-models';
+import { SITE } from '../config';
 
 const L = (ru: string, ua: string, en: string): Localized => ({ ru, ua, en });
 const same = (v: string): Localized => ({ ru: v, ua: v, en: v });
@@ -73,12 +74,16 @@ export interface MarketModel {
   detail?: ModelDetail;
   /** Дополнительные кадры (из Sanity) */
   gallery?: string[];
+  /** Видео-превью mp4: показывается первым, если задано */
+  video?: string;
+  /** Адрес iframe Sketchfab: модель можно покрутить */
+  sketchfab?: string;
   /** Свои пункты блока характеристик (из Sanity): название + значение */
   specs?: { label: Localized; value: Localized }[];
   fromSanity?: boolean;
 }
 
-const buy = 'https://3dcults.com';
+const buy = SITE.cults; // у моделей-заглушек нет своих страниц покупки: ведём в магазин
 
 export const polyTier = (polys: number): PolyTier => (polys < 15000 ? 'low' : polys <= 60000 ? 'mid' : 'high');
 

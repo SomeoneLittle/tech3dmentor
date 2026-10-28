@@ -42,6 +42,7 @@ const priceLabel = model.price > 0 ? `$${model.price}` : '—';
         decoding="async"
         class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500"
       />
+      {model.video && <video data-lazy-video data-src={model.video} poster={model.image} muted loop playsinline preload="none" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover pointer-events-none" />}
     </a>
     {
       model.isNew ? (
@@ -113,3 +114,7 @@ const priceLabel = model.price > 0 ? `$${model.price}` : '—';
     </div>
   </div>
 </article>
+
+<script>
+  import '../scripts/lazyVideo';
+</script>

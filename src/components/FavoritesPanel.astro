@@ -35,7 +35,7 @@ const heart =
   <div
     role="dialog"
     aria-label={f.title}
-    class="fav-box absolute top-[84px] right-3 w-[calc(100vw-1.5rem)] sm:w-[380px] max-h-[calc(100vh-100px)] h-[560px] bg-surface rounded-2xl border border-outline-variant/40 shadow-2xl shadow-black/80 flex flex-col overflow-hidden"
+    class="fav-box absolute top-[64px] lg:top-[84px] left-3 right-3 sm:left-auto w-auto sm:w-[380px] max-h-[calc(100dvh-76px)] lg:max-h-[calc(100vh-100px)] h-[560px] bg-surface rounded-2xl border border-outline-variant/40 shadow-2xl shadow-black/80 flex flex-col overflow-hidden"
   >
     <div class="h-[2px] w-full bg-gradient-to-r from-primary-container via-pink-500 to-amber-500 shrink-0"></div>
 
@@ -159,7 +159,7 @@ const heart =
   #favorites-panel .fav-box {
     opacity: 0;
     transform: translateY(-8px) scale(0.98);
-    transform-origin: top right;
+    transform-origin: top center;
     transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
   #favorites-panel.fav-open .fav-box {
@@ -264,6 +264,11 @@ const heart =
 
   // Правый край панели — по правому краю иконки ♡ (на узком экране панель шире иконки, но не выходит за экран)
   function place(trigger?: Element | null) {
+    // На телефоне панель растянута от левого до правого края экрана
+    if (window.innerWidth < 640) {
+      box.style.right = '';
+      return;
+    }
     const icon = trigger ?? document.querySelector('[data-open-favorites]');
     if (!icon) return;
     const right = document.documentElement.clientWidth - icon.getBoundingClientRect().right;
