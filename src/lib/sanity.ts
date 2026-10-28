@@ -45,7 +45,7 @@ export interface Intake {
 /** Опубликованные «Главная → Первый экран» и «Набор на менторство» (null, если ещё не заполнены). */
 export async function fetchHomeHero(): Promise<{ hero: HomeHero | null; intake: Intake | null }> {
   return sanity.fetch(`{
-    "hero": *[_id == "home"][0].hero,
+    "hero": *[_id == "homeHero"][0],
     "intake": *[_id == "intake"][0]{ status, slotsTotal, slotsTaken }
   }`);
 }
