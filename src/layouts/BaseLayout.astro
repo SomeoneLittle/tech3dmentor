@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import AuthModal from '../components/AuthModal.astro';
+import ApplyModal from '../components/ApplyModal.astro';
 import FavoritesPanel from '../components/FavoritesPanel.astro';
 import { htmlLang, locales, type Lang } from '../i18n';
 import { SITE } from '../config';
@@ -55,6 +56,11 @@ const urlFor = (code: string) => new URL(`/${code}/${page}`, SITE.url).href;
     </main>
     <Footer lang={lang} />
     <AuthModal lang={lang} />
+    <ApplyModal lang={lang} />
     <FavoritesPanel lang={lang} />
+    <script>
+      import '../scripts/accordion';
+      import '../scripts/selects';
+    </script>
   </body>
 </html>

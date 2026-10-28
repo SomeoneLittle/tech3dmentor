@@ -75,6 +75,7 @@ const bookHref = `${path(lang, 'mentoring')}#apply`;
       </button>
       <a
         href={bookHref}
+        data-open-apply
         class="hidden xl:inline-flex items-center justify-center px-space-md py-2 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-[0_0_20px_-4px_rgba(160,120,255,0.45)] hover:shadow-[0_0_28px_rgba(255,87,34,0.55)] transition-all active:scale-95"
       >
         {dict.header.book}
@@ -122,6 +123,7 @@ const bookHref = `${path(lang, 'mentoring')}#apply`;
       <div class="flex justify-center"><LangSwitcher lang={lang} page={page} /></div>
       <a
         href={bookHref}
+        data-open-apply
         class="drawer-link min-h-[46px] w-full py-3 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-xs font-bold uppercase tracking-wider shadow-lg flex items-center justify-center gap-2"
       >
         <span>{dict.header.book}</span>

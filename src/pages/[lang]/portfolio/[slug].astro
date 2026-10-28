@@ -442,6 +442,7 @@ const description = pick(work.desc, lang);
           <a href={path(lang, 'contacts')} class="px-space-lg py-3 rounded-full bg-surface-container-highest hover:bg-surface-variant text-on-surface font-tech-data-lg text-tech-data-lg uppercase tracking-wide text-center transition-all shadow-sm">{d.cta.contact}</a>
           <a
             href={`${path(lang, 'mentoring')}#apply`}
+            data-open-apply
             class="px-space-xl py-3 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-tech-data-lg uppercase tracking-wider shadow-lg hover:shadow-2xl transition-all transform active:scale-95 flex items-center justify-center gap-2"
           >
             <span>{d.cta.apply}</span>

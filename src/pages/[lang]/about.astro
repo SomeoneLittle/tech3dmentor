@@ -349,7 +349,8 @@ const workVisuals = [
                 </ul>
               </div>
               <a
-                href={href}
+                href={primary ? `${href}#apply` : href}
+                data-open-apply={primary ? '' : undefined}
                 class:list={[
                   'w-full py-space-sm text-center flex items-center justify-center gap-2',
                   primary

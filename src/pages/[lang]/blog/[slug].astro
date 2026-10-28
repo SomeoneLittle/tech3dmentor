@@ -240,7 +240,7 @@ const initials = 'T3';
           </div>
           <h2 class="font-headline-sm text-xs md:text-tech-data-lg text-on-surface font-bold uppercase mb-space-xs">{d.mentorMini.title}</h2>
           <p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">{d.mentorMini.text}</p>
-          <a href={`${path(lang, 'mentoring')}#apply`} class="text-primary hover:text-tertiary font-tech-data-sm text-tech-data-sm flex items-center gap-1.5 transition-colors font-semibold uppercase">
+          <a href={`${path(lang, 'mentoring')}#apply`} data-open-apply class="text-primary hover:text-tertiary font-tech-data-sm text-tech-data-sm flex items-center gap-1.5 transition-colors font-semibold uppercase">
             <span>{d.mentorMini.link}</span>
             <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
           </a>
@@ -468,6 +468,7 @@ const initials = 'T3';
           <div class="flex flex-wrap items-center gap-space-md pt-space-xs">
             <a
               href={`${path(lang, 'mentoring')}#apply`}
+              data-open-apply
               class="inline-flex items-center justify-center px-space-xl py-3.5 rounded-full bg-gradient-to-r from-primary-container to-tertiary-container text-on-surface font-headline-sm text-xs md:text-tech-data-lg uppercase tracking-wider shadow-[0_0_24px_rgba(160,120,255,0.4)] hover:shadow-[0_0_32px_rgba(255,87,34,0.55)] transition-all transform active:scale-95 font-bold"
             >
               {d.cta.apply}

@@ -60,6 +60,12 @@ const favDictionaries: Record<Lang, FavDict> = { ru: favRu, ua: favUa, en: favEn
 /** Тексты панели избранного */
 export const tf = (lang: Lang): FavDict => favDictionaries[lang];
 
+import { applyEn, applyRu, applyUa, type ApplyDict } from './apply';
+
+const applyDictionaries: Record<Lang, ApplyDict> = { ru: applyRu, ua: applyUa, en: applyEn };
+/** Тексты окна заявки на менторство */
+export const tz = (lang: Lang): ApplyDict => applyDictionaries[lang];
+
 const mentoringDictionaries: Record<Lang, MentoringDict> = { ru: mentoringRu, ua: mentoringUa, en: mentoringEn };
 
 export const t = (lang: Lang): Dict => dictionaries[lang];

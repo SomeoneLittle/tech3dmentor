@@ -1,0 +1,359 @@
+---
+import { tz, path, type Lang } from '../i18n';
+import { SITE } from '../config';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const a = tz(lang);
+
+const labelCls = 'block font-label-caps text-[10px] sm:text-[11px] uppercase tracking-wider text-on-surface-variant';
+const input =
+  'apply-input w-full bg-surface-container-low border border-outline-variant/40 text-on-surface placeholder:text-outline text-xs sm:text-sm rounded-lg px-3.5 transition-all font-body-md';
+const errCls = 'apply-error hidden items-center gap-1.5 pt-0.5 font-label-caps text-[11px] text-error normal-case tracking-normal';
+const alertIcon = 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+---
+
+<div
+  id="apply-modal"
+  class="hidden fixed inset-0 z-[60] items-start sm:items-center justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-3 sm:p-4"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="apply-title"
+  data-email={SITE.email}
+  data-subject={a.mailSubject}
+  data-labels={JSON.stringify(a.mailLabels)}
+  data-mentoring-url={path(lang, 'mentoring')}
+>
+  <div class="w-full max-w-[760px] my-auto bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-2xl relative overflow-hidden">
+    <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary-container/60 to-transparent"></div>
+    <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <button type="button" data-apply-close aria-label={a.close} class="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 w-10 h-10 flex items-center justify-center text-outline hover:text-on-surface rounded-full hover:bg-white/5 transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+    </button>
+
+    <!-- ФОРМА -->
+    <div id="apply-view-form" class="relative p-5 pt-6 sm:p-8 md:p-10">
+      <div class="flex justify-center mb-3 sm:mb-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container/10 border border-primary-container/25 text-primary font-label-caps text-[10px] sm:text-[11px] tracking-wider font-semibold">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
+          <span>{a.badge}</span>
+        </div>
+      </div>
+      <h2 id="apply-title" class="font-headline-md text-xl sm:text-2xl md:text-3xl font-bold text-center tracking-tight text-white mb-2 uppercase">{a.title}</h2>
+      <p class="font-body-md text-on-surface-variant text-center text-[13px] sm:text-sm md:text-base max-w-lg mx-auto mb-6 sm:mb-8">{a.sub}</p>
+
+      <form id="apply-form" class="space-y-5 sm:space-y-6" novalidate>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+          <div class="space-y-1.5" data-field>
+            <label class={labelCls} for="apply-name">{a.name} <span class="text-error">*</span></label>
+            <input id="apply-name" name="name" type="text" required autocomplete="name" placeholder={a.namePlaceholder} class={`${input} h-11`} />
+            <p class={errCls} data-error="required" role="alert"><svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d={alertIcon} /></svg><span>{a.errRequired}</span></p>
+          </div>
+
+          <div class="space-y-1.5" data-field>
+            <label class={labelCls} for="apply-email">{a.email} <span class="text-error">*</span></label>
+            <input id="apply-email" name="email" type="email" required autocomplete="email" placeholder={a.emailPlaceholder} class={`${input} h-11`} />
+            <p class={errCls} data-error="required" role="alert"><svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d={alertIcon} /></svg><span>{a.errRequired}</span></p>
+            <p class={errCls} data-error="email" role="alert"><svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d={alertIcon} /></svg><span>{a.errEmail}</span></p>
+          </div>
+
+          <div class="space-y-1.5" data-field>
+            <label class={labelCls} for="apply-link">{a.link} <span class="text-error">*</span></label>
+            <input id="apply-link" name="link" type="text" inputmode="url" required autocomplete="url" placeholder={a.linkPlaceholder} class={`${input} h-11 font-label-caps text-xs`} />
+            <p class={errCls} data-error="required" role="alert"><svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d={alertIcon} /></svg><span>{a.errRequired}</span></p>
+            <p class={errCls} data-error="link" role="alert"><svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d={alertIcon} /></svg><span>{a.errLink}</span></p>
+          </div>
+
+          <div class="space-y-1.5" data-field>
+            <label class={labelCls} for="apply-format">{a.format} <span class="text-error">*</span></label>
+            <select id="apply-format" name="format" required class={`${input} h-11 cursor-pointer`}>
+              <option value="" disabled selected>{a.formatPlaceholder}</option>
+              {a.formats.map((f) => <option value={f}>{f}</option>)}
+            </select>
+            <p class={errCls} data-error="required" role="alert"><svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d={alertIcon} /></svg><span>{a.errRequired}</span></p>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+            <span class={labelCls}>{a.software}</span>
+            <span class="font-label-caps text-[10px] sm:text-[11px] text-outline"><span>{a.softwareHint}</span> (<span id="apply-count">0</span> {a.selected})</span>
+          </div>
+          <div class="flex flex-wrap gap-2 sm:gap-2.5 pt-1" id="apply-tools">
+            {
+              a.tools.map((tool) => (
+                <button type="button" data-tool={tool} aria-pressed="false" class="apply-chip px-3 sm:px-3.5 py-2 sm:py-1.5 min-h-[40px] sm:min-h-0 rounded-lg font-label-caps text-xs inline-flex items-center gap-1.5 transition-all active:scale-95">
+                  <svg class="apply-chip-check w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+                  <span>{tool}</span>
+                </button>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="space-y-1.5" data-field>
+          <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+            <label class={labelCls} for="apply-goals">{a.goals} <span class="text-error">*</span></label>
+            <span class="font-label-caps text-[10px] sm:text-[11px] text-outline"><span id="apply-goals-count">0</span> / 1000 · {a.goalsHint}</span>
+          </div>
+          <textarea id="apply-goals" name="goals" rows="4" maxlength="1000" required placeholder={a.goalsPlaceholder} class={`${input} py-3 resize-none`}></textarea>
+          <p class={errCls} data-error="required" role="alert"><svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d={alertIcon} /></svg><span>{a.errRequired}</span></p>
+        </div>
+
+        <div class="pt-1 flex flex-col items-center">
+          <button type="submit" class="w-full sm:w-auto sm:min-w-[240px] min-h-[48px] px-9 rounded-lg bg-gradient-to-br from-primary-container via-pink-500 to-tertiary-container text-white font-headline-sm text-xs sm:text-sm font-semibold uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-lg shadow-primary-container/25 hover:shadow-[0_8px_28px_-4px_rgba(160,120,255,0.5)] hover:-translate-y-px active:scale-[0.98] transition-all">
+            <span>{a.submit}</span>
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+          </button>
+          <p class="mt-4 text-center text-[11px] sm:text-xs text-on-surface-variant leading-relaxed">
+            {a.note}
+            <span class="mx-1 text-outline-variant">•</span>
+            <a href={path(lang, 'privacy')} class="text-primary hover:text-primary-fixed underline underline-offset-2 transition-colors whitespace-nowrap">{a.privacy}</a>
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <!-- УСПЕХ -->
+    <div id="apply-view-done" class="hidden relative p-6 py-10 sm:p-12 md:p-16 flex-col items-center text-center">
+      <div class="relative mb-6">
+        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary-container via-pink-500 to-tertiary-container p-[2px] shadow-[0_0_30px_-5px_rgba(160,120,255,0.4)]">
+          <div class="w-full h-full rounded-full bg-surface-container-lowest flex items-center justify-center">
+            <svg class="w-10 h-10 text-secondary-container" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+          </div>
+        </div>
+      </div>
+      <h2 class="font-headline-md text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white mb-3 uppercase">{a.successTitle}</h2>
+      <p class="font-body-md text-on-surface-variant text-sm sm:text-base md:text-lg max-w-md mx-auto mb-7">{a.successText}</p>
+
+      <div class="w-full max-w-md bg-surface-container-low border border-outline-variant/40 rounded-xl p-4 mb-7 text-left font-label-caps text-xs text-on-surface-variant space-y-2">
+        <div class="flex items-center justify-between gap-3 pb-2 border-b border-outline-variant/30">
+          <span class="text-outline shrink-0">{a.replyTo}</span>
+          <span id="apply-done-email" class="text-primary font-semibold truncate min-w-0"></span>
+        </div>
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-outline shrink-0">{a.eta}</span>
+          <span class="text-on-surface">{a.etaValue}</span>
+        </div>
+      </div>
+
+      <a
+        href={path(lang, 'mentoring')}
+        data-apply-back
+        class="w-full sm:w-auto sm:min-w-[220px] min-h-[48px] px-8 rounded-lg bg-gradient-to-br from-primary-container via-pink-500 to-tertiary-container text-white font-headline-sm text-xs sm:text-sm font-semibold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-primary-container/25 hover:-translate-y-px active:scale-[0.98] transition-all"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+        <span>{a.back}</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  #apply-modal {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  #apply-modal > div {
+    transform: translateY(16px) scale(0.97);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #apply-modal.apply-open {
+    opacity: 1;
+  }
+  #apply-modal.apply-open > div {
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #apply-modal,
+    #apply-modal > div {
+      transition: none;
+    }
+  }
+  .apply-input:focus,
+  .apply-input.t3d-select-trigger:focus-visible {
+    outline: none;
+    border-color: #a078ff;
+    box-shadow: 0 0 0 1px #a078ff, 0 0 16px -2px rgba(160, 120, 255, 0.25);
+  }
+  .apply-input[aria-invalid='true'],
+  .apply-input[aria-invalid='true']:focus {
+    border-color: #ffb4ab;
+    box-shadow: 0 0 0 1px rgba(255, 180, 171, 0.6);
+  }
+  .apply-error[data-show] {
+    display: flex;
+  }
+  .apply-chip {
+    background: #1b1b1f;
+    border: 1px solid rgba(73, 68, 84, 0.6);
+    color: #958ea0;
+  }
+  .apply-chip:hover {
+    color: #e4e1e7;
+    border-color: #958ea0;
+  }
+  .apply-chip .apply-chip-check {
+    display: none;
+  }
+  .apply-chip[aria-pressed='true'] {
+    background: linear-gradient(135deg, #a078ff 0%, #ec4899 50%, #ff5722 100%);
+    border-color: transparent;
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 4px 12px -2px rgba(160, 120, 255, 0.35);
+  }
+  .apply-chip[aria-pressed='true'] .apply-chip-check {
+    display: block;
+  }
+</style>
+
+<script>
+  const modal = document.getElementById('apply-modal') as HTMLElement;
+  const form = document.getElementById('apply-form') as HTMLFormElement;
+  const viewForm = document.getElementById('apply-view-form') as HTMLElement;
+  const viewDone = document.getElementById('apply-view-done') as HTMLElement;
+  const doneEmail = document.getElementById('apply-done-email') as HTMLElement;
+  const count = document.getElementById('apply-count') as HTMLElement;
+  const goals = document.getElementById('apply-goals') as HTMLTextAreaElement;
+  const goalsCount = document.getElementById('apply-goals-count') as HTMLElement;
+  const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('#apply-tools [data-tool]'));
+  const labels = JSON.parse(modal.dataset.labels ?? '{}') as Record<string, string>;
+  let lastFocus: HTMLElement | null = null;
+
+  const fieldOf = (el: Element) => el.closest<HTMLElement>('[data-field]')!;
+
+  function showError(el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement, kind: string | null) {
+    const field = fieldOf(el);
+    field.querySelectorAll<HTMLElement>('[data-error]').forEach((p) => p.toggleAttribute('data-show', p.dataset.error === kind));
+    const trigger = field.querySelector<HTMLElement>('.t3d-select-trigger');
+    (trigger ?? el).setAttribute('aria-invalid', String(kind !== null));
+  }
+
+  function check(el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement): boolean {
+    const value = el.value.trim();
+    let kind: string | null = null;
+    if (!value) kind = 'required';
+    else if (el.name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)) kind = 'email';
+    else if (el.name === 'link' && !/^(https?:\/\/)?[^\s/.]+\.[^\s]{2,}$/i.test(value)) kind = 'link';
+    showError(el, kind);
+    return kind === null;
+  }
+
+  const requiredFields = () => Array.from(form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[required]'));
+
+  function reset() {
+    form.reset();
+    chips.forEach((c) => c.setAttribute('aria-pressed', 'false'));
+    count.textContent = '0';
+    goalsCount.textContent = '0';
+    requiredFields().forEach((el) => showError(el, null));
+    form.querySelector('select')?.dispatchEvent(new Event('select:sync'));
+    viewDone.classList.add('hidden');
+    viewDone.classList.remove('flex');
+    viewForm.classList.remove('hidden');
+  }
+
+  function open() {
+    if (!modal.classList.contains('hidden')) return;
+    lastFocus = document.activeElement as HTMLElement | null;
+    reset();
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    modal.getBoundingClientRect(); // фиксируем начальное состояние, чтобы анимация сработала
+    modal.classList.add('apply-open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => (document.getElementById('apply-name') as HTMLElement).focus({ preventScroll: true }), 120);
+  }
+
+  function close() {
+    if (modal.classList.contains('hidden')) return;
+    modal.classList.remove('apply-open');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      if (modal.classList.contains('apply-open')) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }, 300);
+    lastFocus?.focus?.({ preventScroll: true });
+  }
+
+  modal.querySelectorAll('[data-apply-close]').forEach((btn) => btn.addEventListener('click', close));
+  modal.addEventListener('mousedown', (e) => e.target === modal && close());
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || modal.classList.contains('hidden')) return;
+    if (document.querySelector('.t3d-select-panel[data-open]')) return; // Esc закрывает сначала выпадающий список
+    close();
+  });
+
+  // «Назад к менторству»: если уже на этой странице — просто закрываем окно
+  modal.querySelector('[data-apply-back]')!.addEventListener('click', (e) => {
+    const url = modal.dataset.mentoringUrl!;
+    if (location.pathname.replace(/\/$/, '') === url) {
+      e.preventDefault();
+      close();
+    }
+  });
+
+  chips.forEach((chip) =>
+    chip.addEventListener('click', () => {
+      chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+      count.textContent = String(chips.filter((c) => c.getAttribute('aria-pressed') === 'true').length);
+    })
+  );
+
+  goals.addEventListener('input', () => (goalsCount.textContent = String(goals.value.length)));
+
+  requiredFields().forEach((el) => {
+    el.addEventListener('blur', () => el.value.trim() && check(el));
+    el.addEventListener('input', () => el.getAttribute('aria-invalid') === 'true' && check(el));
+    el.addEventListener('change', () => el.tagName === 'SELECT' && check(el));
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const results = requiredFields().map((el) => [el, check(el)] as const);
+    const firstBad = results.find(([, ok]) => !ok)?.[0];
+    if (firstBad) {
+      const target = fieldOf(firstBad).querySelector<HTMLElement>('.t3d-select-trigger') ?? firstBad;
+      target.focus();
+      return;
+    }
+
+    // Бэкенда пока нет: заявка уходит письмом на почту из config.ts (как форма на странице менторства).
+    const data = new FormData(form);
+    const tools = chips.filter((c) => c.getAttribute('aria-pressed') === 'true').map((c) => c.dataset.tool);
+    const lines = [
+      `${labels.name}: ${data.get('name')}`,
+      `${labels.email}: ${data.get('email')}`,
+      `${labels.link}: ${data.get('link')}`,
+      `${labels.format}: ${data.get('format')}`,
+      `${labels.software}: ${tools.join(', ') || '—'}`,
+      `${labels.goals}: ${data.get('goals')}`,
+    ];
+    doneEmail.textContent = String(data.get('email'));
+    viewForm.classList.add('hidden');
+    viewDone.classList.remove('hidden');
+    viewDone.classList.add('flex');
+    modal.scrollTo({ top: 0 });
+    window.location.href = `mailto:${modal.dataset.email}?subject=${encodeURIComponent(modal.dataset.subject ?? '')}&body=${encodeURIComponent(lines.join('\n'))}`;
+  });
+
+  // Кнопки с data-open-apply открывают окно; без скрипта работает обычная ссылка на форму внизу менторства.
+  document.addEventListener('click', (e) => {
+    const trigger = (e.target as HTMLElement).closest('[data-open-apply]');
+    if (!trigger) return;
+    e.preventDefault();
+    open();
+  });
+  document.addEventListener('apply:open', open);
+</script>
