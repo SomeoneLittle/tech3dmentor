@@ -1,6 +1,6 @@
 ---
 import { pick, tk, t, path, type Lang } from '../i18n';
-import { polyTier, type MarketModel } from '../data/marketplace';
+import { categoryName, polyTier, type MarketModel } from '../data/marketplace';
 
 interface Props {
   model: MarketModel;
@@ -14,7 +14,7 @@ const d = tk(lang).list;
 const dict = t(lang);
 const href = path(lang, `marketplace/${model.slug}`);
 const title = pick(model.title, lang);
-const category = d.filters.category[model.category];
+const category = categoryName(model.category, lang);
 const featureTone = { green: 'text-secondary-container', primary: 'text-primary' };
 const feature = typeof model.feature === 'string' ? model.feature : pick(model.feature, lang);
 const priceLabel = model.price > 0 ? `$${model.price}` : '—';

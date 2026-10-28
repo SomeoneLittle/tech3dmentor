@@ -1,7 +1,7 @@
 // Модели маркетплейса из Sanity в форме MarketModel (так их понимают карточки и страницы сайта).
 import { sanity, imageUrl, type SanityLocalized } from './sanity';
-import { tk, type Lang, type Localized } from '../i18n';
-import type { MarketCategory, MarketModel } from '../data/marketplace';
+import type { Lang, Localized } from '../i18n';
+import type { MarketModel } from '../data/marketplace';
 
 interface RawModel {
   slug: { current: string };
@@ -9,7 +9,7 @@ interface RawModel {
   description?: SanityLocalized;
   image?: unknown;
   gallery?: unknown[];
-  category?: string;
+  category?: { key?: string; title?: SanityLocalized } | null;
   tags?: string[];
   formats?: string[];
   polycount?: number;
@@ -31,18 +31,18 @@ const toLocalized = (value?: SanityLocalized): Localized => ({
   en: value?.en || value?.ru || '',
 });
 
-// Ключи из списка в студии; русские/английские подписи на случай старых записей
-const categoryAliases: Record<string, MarketCategory> = {
-  characters: 'characters',
-  hardsurface: 'hardSurface',
-  anatomy: 'anatomy',
-  creatures: 'creatures',
-  props: 'props',
-  brushes: 'brushes',
-  resources: 'resources',
-  prints: 'prints',
-  '3d prints': 'prints',
-};
+export interface ModelCategory {
+  key: string;
+  title: Localized;
+}
+
+/** Категории из студии («Категории моделей») по порядку */
+export async function fetchModelCategories(): Promise<ModelCategory[]> {
+  const raw = await sanity.fetch<{ key?: string; title?: SanityLocalized }[]>(
+    `*[_type == "modelCategory" && defined(key.current)] | order(order asc, title.en asc) { "key": key.current, title }`,
+  );
+  return raw.filter((c) => c.key).map((c) => ({ key: c.key as string, title: toLocalized(c.title) }));
+}
 
 /** Ссылка на страницу модели Sketchfab → адрес для iframe (id — 32 символа в конце адреса) */
 const sketchfabEmbed = (url?: string): string | undefined => {
@@ -51,14 +51,12 @@ const sketchfabEmbed = (url?: string): string | undefined => {
 };
 
 const toMarketModel = (raw: RawModel): MarketModel => {
-  const category = categoryAliases[(raw.category ?? '').toLowerCase()] ?? 'props';
+  const category = raw.category?.key ?? 'other';
   const polys = raw.polycount ?? 0;
   const firstTag = raw.tags?.[0];
+  const categoryTitle = toLocalized(raw.category?.title);
   const sub = Object.fromEntries(
-    langs.map((lang) => {
-      const label = tk(lang).list.filters.category[category];
-      return [lang, firstTag ? `${label} // ${firstTag}` : label];
-    }),
+    langs.map((lang) => [lang, firstTag ? `${categoryTitle[lang]} // ${firstTag}` : categoryTitle[lang]]),
   ) as Localized;
 
   return {
@@ -90,7 +88,7 @@ const toMarketModel = (raw: RawModel): MarketModel => {
 /** Опубликованные модели, не скрытые; новые сверху */
 export async function fetchSanityModels(): Promise<MarketModel[]> {
   const raw = await sanity.fetch<RawModel[]>(`*[_type == "model" && status != "hidden" && defined(slug.current)] | order(_createdAt desc) {
-    slug, title, description, image, gallery, category, tags, formats, polycount, specs, badge, price, buyUrl, status,
+    slug, title, description, image, gallery, "category": category->{ "key": key.current, title }, tags, formats, polycount, specs, badge, price, buyUrl, status,
     "video": previewVideo.asset->url, sketchfabUrl
   }`);
   return raw.map(toMarketModel);

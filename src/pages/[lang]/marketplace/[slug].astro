@@ -3,7 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import SubscribeBlock from '../../../components/SubscribeBlock.astro';
 import { locales, pick, t, tk, path, type Lang, type Localized } from '../../../i18n';
-import { marketModels, type MarketModel } from '../../../data/marketplace';
+import { categoryName, marketModels, type MarketModel } from '../../../data/marketplace';
 
 export function getStaticPaths() {
   return locales.flatMap((lang) => marketModels.map((model) => ({ params: { lang, slug: model.slug } })));
@@ -19,7 +19,7 @@ const model = marketModels.find((m) => m.slug === slug) as MarketModel;
 const detail = model.detail;
 const title = pick(model.title, lang);
 const description = pick(model.desc, lang);
-const categoryLabel = list.filters.category[model.category];
+const categoryLabel = categoryName(model.category, lang);
 const subLabel = pick(model.sub, lang).split(' // ')[1] ?? '';
 const kindLabel = `${categoryLabel}${subLabel ? ` // ${subLabel}` : ''}`;
 const similar = [
@@ -421,7 +421,7 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
               </a>
               <div class="p-space-md flex flex-col gap-space-xs flex-1 justify-between">
                 <div>
-                  <span class="font-label-caps text-label-caps text-outline uppercase">{list.filters.category[item.category]} // {pick(item.sub, lang).split(' // ')[1]}</span>
+                  <span class="font-label-caps text-label-caps text-outline uppercase">{categoryName(item.category, lang)} // {pick(item.sub, lang).split(' // ')[1]}</span>
                   <h3 class="font-headline-sm text-[18px] text-on-surface uppercase font-bold mt-0.5">
                     <a href={path(lang, `marketplace/${item.slug}`)} class="hover:text-primary transition-colors">{pick(item.title, lang)}</a>
                   </h3>

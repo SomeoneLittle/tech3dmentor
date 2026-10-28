@@ -5,7 +5,7 @@ import MarketCard from '../../../components/MarketCard.astro';
 import SubscribeBlock from '../../../components/SubscribeBlock.astro';
 import { locales, t, tk, path, type Lang } from '../../../i18n';
 import { SITE } from '../../../config';
-import { marketModels, marketTags, marketFormats, priceBounds, type MarketCategory, type PolyTier } from '../../../data/marketplace';
+import { categoryName, marketCategories, marketModels, marketTags, marketFormats, priceBounds, type MarketCategory, type PolyTier } from '../../../data/marketplace';
 
 export function getStaticPaths() {
   return locales.map((lang) => ({ params: { lang } }));
@@ -15,7 +15,7 @@ const lang = Astro.params.lang as Lang;
 const dict = t(lang);
 const d = tk(lang).list;
 const f = d.filters;
-const categories = Object.keys(f.category) as MarketCategory[];
+const categories = marketCategories;
 const tiers: PolyTier[] = ['low', 'mid', 'high'];
 const countBy = (category: MarketCategory) => marketModels.filter((m) => m.category === category).length;
 const sortOptions = Object.entries(d.sort) as [string, string][];
@@ -150,7 +150,7 @@ const optionClass = 'flex items-center gap-2 p-2 rounded bg-surface-container-lo
                   <label class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low hover:bg-surface-container-high cursor-pointer transition-colors group">
                     <span class="flex items-center gap-2">
                       <input type="checkbox" data-filter-category value={key} class="rounded accent-primary-container w-4 h-4" />
-                      <span class="font-tech-data-sm text-tech-data-sm text-on-surface group-hover:text-primary transition-colors">{f.category[key]}</span>
+                      <span class="font-tech-data-sm text-tech-data-sm text-on-surface group-hover:text-primary transition-colors">{categoryName(key, lang)}</span>
                     </span>
                     <span class="font-tech-data-sm text-tech-data-sm text-outline">{String(countBy(key)).padStart(2, '0')}</span>
                   </label>

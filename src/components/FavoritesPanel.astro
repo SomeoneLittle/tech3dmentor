@@ -83,7 +83,7 @@ const heart =
             <article class="p-2.5 rounded-xl bg-[#16161c] border border-white/5 hover:border-primary-container/30 transition-all group flex items-center gap-3">
               <a href={path(lang, `marketplace/${model.slug}`)} class="w-14 h-14 rounded-lg bg-surface-container-lowest border border-white/10 shrink-0 relative overflow-hidden block" aria-label={title}>
                 <img src={model.image} alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                <span class="absolute bottom-1 right-1 text-[8px] font-label-caps text-gray-300 bg-black/70 px-1 rounded">{model.formats[0].replace('.', '')}</span>
+                {model.formats[0] && <span class="absolute bottom-1 right-1 text-[8px] font-label-caps text-gray-300 bg-black/70 px-1 rounded">{model.formats[0].replace('.', '')}</span>}
               </a>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between gap-1">

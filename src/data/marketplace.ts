@@ -1,15 +1,16 @@
 // Временные данные маркетплейса из макета. Форма совпадает с будущими записями Sanity (модель: название, описание, категория, теги,
 // формат файлов, полигонаж, превью, цена, ссылка на покупку, статус). Цены, лайки и счётчики — плейсхолдеры из макета.
 // Порядок в массиве = порядок «Новые». Блок `detail` необязателен: без него карточка модели покажет упрощённый вид.
-import type { Localized } from '../i18n';
+import { tk, type Lang, type Localized } from '../i18n';
 import { marketImages as img } from './mockMarketplaceImages';
-import { fetchSanityModels } from '../lib/sanity-models';
+import { fetchModelCategories, fetchSanityModels } from '../lib/sanity-models';
 import { SITE } from '../config';
 
 const L = (ru: string, ua: string, en: string): Localized => ({ ru, ua, en });
 const same = (v: string): Localized => ({ ru: v, ua: v, en: v });
 
-export type MarketCategory = 'characters' | 'hardSurface' | 'anatomy' | 'creatures' | 'props' | 'brushes' | 'resources' | 'prints';
+/** Ключ категории: список ведётся в Sanity («Категории моделей»); у заглушек это characters, hardSurface и т.д. */
+export type MarketCategory = string;
 export type PolyTier = 'low' | 'mid' | 'high';
 export type ModelStatus = 'active' | 'soon' | 'sold';
 
@@ -447,6 +448,15 @@ const placeholderModels: MarketModel[] = [
 const sanityModels = await fetchSanityModels();
 const sanitySlugs = new Set(sanityModels.map((m) => m.slug));
 export const marketModels: MarketModel[] = [...sanityModels, ...placeholderModels.filter((m) => !sanitySlugs.has(m.slug))];
+
+// Категории: порядок и названия из Sanity; для заглушек запасные подписи из словаря. В фильтре только те, где есть модели.
+const sanityCategories = await fetchModelCategories();
+const categoryTitles = new Map(sanityCategories.map((c) => [c.key, c.title]));
+const noCategory: Localized = { ru: 'Без категории', ua: 'Без категорії', en: 'Uncategorized' };
+export const categoryName = (key: string, lang: Lang): string =>
+  categoryTitles.get(key)?.[lang] || (tk(lang).list.filters.category as Record<string, string>)[key] || (key === 'other' ? noCategory[lang] : key);
+const usedCategories = new Set(marketModels.map((m) => m.category));
+export const marketCategories: string[] = [...new Set([...sanityCategories.map((c) => c.key), ...usedCategories])].filter((key) => usedCategories.has(key));
 
 // Фильтры по тегам и форматам: список заглушек + то, что встречается в Sanity
 const unique = (list: string[]) => [...new Set(list)];
