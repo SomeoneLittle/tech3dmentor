@@ -7,10 +7,11 @@ import ArticleCard from '../../components/ArticleCard.astro';
 import MentoringCTA from '../../components/MentoringCTA.astro';
 import { locales, t, path, type Lang } from '../../i18n';
 import { SITE } from '../../config';
-import { works, models, articles, toolkit } from '../../data/home';
+import { works, models, articles, toolkit, type Model } from '../../data/home';
 import { mockImages } from '../../data/mockImages';
 import Hero from '../../components/Hero.astro';
 import { fetchHomeHero, imageUrl, loc } from '../../lib/sanity';
+import { marketModels } from '../../data/marketplace';
 
 export function getStaticPaths() {
   return locales.map((lang) => ({ params: { lang } }));
@@ -26,6 +27,21 @@ const stepStyles = [
   { icon: 'draw', glow: 'bg-tertiary-container', iconBg: 'from-tertiary-container to-on-tertiary', iconColor: 'text-on-surface', value: 'text-tertiary' },
 ];
 const description = dict.hero.sub;
+
+// Модели из Sanity идут первыми, потом заглушки главной; всего 4 карточки
+const sanityHomeModels: Model[] = marketModels
+  .filter((m) => m.fromSanity)
+  .map((m) => ({
+    slug: m.slug,
+    image: m.image,
+    badge: typeof m.feature === 'string' ? { ru: m.feature, ua: m.feature, en: m.feature } : m.feature,
+    formats: m.formats,
+    title: m.title,
+    desc: m.desc,
+    buyUrl: m.buyUrl,
+    price: m.price,
+  }));
+const homeModels = [...sanityHomeModels, ...models.filter((m) => !sanityHomeModels.some((s) => s.slug === m.slug))].slice(0, 4);
 
 // Hero из Sanity: показывается только если «Главная → Первый экран» заполнена и опубликована
 const { hero, intake } = await fetchHomeHero();
@@ -149,7 +165,7 @@ const sanityHero = headline
       <SectionTitle kicker={dict.marketplace.kicker} title={dict.marketplace.title} sub={dict.marketplace.sub} />
     </div>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 md:gap-gutter-desktop mb-3.5 md:mb-space-xl">
-      {models.map((model) => <ModelCard model={model} lang={lang} />)}
+      {homeModels.map((model) => <ModelCard model={model} lang={lang} />)}
     </div>
     <div class="flex justify-center">
       <a

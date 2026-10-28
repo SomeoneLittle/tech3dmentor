@@ -34,7 +34,7 @@ const dict = t(lang);
         <p class="hidden md:block font-body-sm text-body-sm text-on-surface-variant mt-1">{pick(model.desc, lang)}</p>
       </div>
       <div class="pt-1 md:pt-space-sm max-md:border-t max-md:border-surface-container-highest/60 flex items-center justify-between font-tech-data-sm text-tech-data-sm">
-        <span class="text-on-surface font-bold text-[10px] md:text-tech-data-lg">$--</span>
+        <span class="text-on-surface font-bold text-[10px] md:text-tech-data-lg">{model.price ? `$${model.price}` : '$--'}</span>
         <span class="text-outline uppercase text-[9px] md:text-[11px]">{dict.marketplace.on}</span>
       </div>
     </div>

@@ -26,6 +26,8 @@ export interface Model {
   title: Localized;
   desc: Localized;
   buyUrl: string;
+  /** Цена из Sanity; у заглушек не задана */
+  price?: number;
 }
 
 export interface Article {

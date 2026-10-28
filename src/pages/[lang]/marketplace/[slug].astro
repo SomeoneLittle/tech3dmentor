@@ -27,7 +27,10 @@ const similar = [
   ...marketModels.filter((m) => m !== model && m.category !== model.category),
 ].slice(0, 4);
 
-const views = detail?.views ?? [{ image: model.image, label: '[3D VIEW]', sub: '', alt: model.title }];
+const views =
+  detail?.views ??
+  [model.image, ...(model.gallery ?? [])].map((image, i) => ({ image, label: i === 0 ? '[3D VIEW]' : `[VIEW_0${i + 1}]`, sub: '', alt: model.title }));
+const priceLabel = model.price > 0 ? `$${model.price}` : '—';
 const titleParts = detail?.accent && title.includes(detail.accent) ? title.split(detail.accent) : null;
 const shadingModes = [
   { key: 'pbr', label: d.shading.pbr },
@@ -52,8 +55,9 @@ const specRows: { label: string; value: string; tone?: string; stacked?: boolean
   : [
       { label: d.specs.category, value: kindLabel },
       { label: d.specs.formats, value: model.formats.join(' • '), stacked: true },
-      { label: d.specs.polycount, value: model.polyLabel, tone: 'text-secondary-fixed' },
-      { label: d.specs.price, value: `$${model.price}` },
+      ...(model.polyLabel ? [{ label: d.specs.polycount, value: model.polyLabel, tone: 'text-secondary-fixed' }] : []),
+      { label: d.specs.price, value: priceLabel },
+      ...(model.specs ?? []).map((s) => ({ label: pick(s.label, lang), value: pick(s.value, lang) })),
     ];
 const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
 ---
@@ -241,7 +245,7 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
         <div class="p-4 md:p-space-lg rounded-xl bg-surface-container-low flex flex-col gap-space-md shadow-xl">
           <div class="flex items-baseline justify-between gap-space-sm flex-wrap">
             <div class="flex items-baseline gap-2">
-              <span class="font-headline-lg text-[44px] leading-none font-bold text-on-surface">${model.price}</span>
+              <span class="font-headline-lg text-[44px] leading-none font-bold text-on-surface">{priceLabel}</span>
               <span class="font-tech-data-sm text-tech-data-sm text-outline uppercase">USD</span>
             </div>
             <span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface font-label-caps text-label-caps uppercase tracking-wider">{d.license}</span>
@@ -395,9 +399,11 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
             <article class="rounded-xl bg-surface-container-low hover:bg-surface-container transition-all flex flex-col overflow-hidden group shadow-lg">
               <a href={path(lang, `marketplace/${item.slug}`)} class="relative block w-full aspect-[4/3] bg-surface-container-lowest overflow-hidden" aria-label={pick(item.title, lang)}>
                 <img src={item.image} alt={pick(item.title, lang)} loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-surface-container-low/90 backdrop-blur-md text-on-surface font-tech-data-sm text-[10px]">
-                  {list.poly} {item.polyLabel}
-                </span>
+                {item.polyLabel && (
+                  <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-surface-container-low/90 backdrop-blur-md text-on-surface font-tech-data-sm text-[10px]">
+                    {list.poly} {item.polyLabel}
+                  </span>
+                )}
                 <span class="absolute bottom-2 right-2 p-1 rounded-full bg-surface-container-lowest/80 text-on-surface flex">
                   <span class="material-symbols-outlined text-[16px]">360</span>
                 </span>
@@ -411,7 +417,7 @@ const moduleTone = { primary: 'text-primary', peach: 'text-tertiary' };
                   <span class="font-tech-data-sm text-[11px] text-on-surface-variant block mt-1">{item.formats.join(', ')}</span>
                 </div>
                 <div class="flex items-center justify-between mt-space-xs bg-surface-container-lowest/50 p-2 rounded-lg">
-                  <span class="font-headline-sm text-[20px] font-bold text-on-surface">${item.price}</span>
+                  <span class="font-headline-sm text-[20px] font-bold text-on-surface">{item.price > 0 ? `$${item.price}` : '—'}</span>
                   <a href={item.buyUrl} target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-full bg-surface-container-high hover:bg-primary-container text-on-surface hover:text-on-primary font-tech-data-sm text-tech-data-sm uppercase transition-colors flex items-center gap-1">
                     <span>{list.store}</span>
                     <span class="material-symbols-outlined text-[12px]">open_in_new</span>

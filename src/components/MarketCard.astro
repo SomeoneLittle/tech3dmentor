@@ -16,6 +16,8 @@ const href = path(lang, `marketplace/${model.slug}`);
 const title = pick(model.title, lang);
 const category = d.filters.category[model.category];
 const featureTone = { green: 'text-secondary-container', primary: 'text-primary' };
+const feature = typeof model.feature === 'string' ? model.feature : pick(model.feature, lang);
+const priceLabel = model.price > 0 ? `$${model.price}` : '—';
 ---
 
 <article
@@ -68,23 +70,27 @@ const featureTone = { green: 'text-secondary-container', primary: 'text-primary'
         <span class="material-symbols-outlined text-[16px]">favorite</span>
       </button>
     </div>
-    <div class:list={['hidden sm:block absolute bottom-2 left-2 bg-surface/85 backdrop-blur px-2 py-0.5 rounded font-label-caps text-label-caps pointer-events-none', featureTone[model.featureTone]]}>
-      {model.feature}
-    </div>
+    {
+      feature && (
+        <div class:list={['hidden sm:block absolute bottom-2 left-2 bg-surface/85 backdrop-blur px-2 py-0.5 rounded font-label-caps text-label-caps pointer-events-none', featureTone[model.featureTone]]}>
+          {feature}
+        </div>
+      )
+    }
   </div>
 
   <div class="p-2 sm:p-space-md flex flex-col flex-1 justify-between gap-1.5 sm:gap-space-sm min-w-0">
     <div class="flex flex-col gap-1">
       <div class="hidden sm:flex items-center justify-between gap-2 font-tech-data-sm text-tech-data-sm text-outline uppercase">
         <span class="truncate">{category} // {pick(model.sub, lang).split(' // ')[1] ?? pick(model.sub, lang)}</span>
-        <span class:list={['shrink-0', model.polyHeavy ? 'text-tertiary-container' : 'text-secondary-container']}>{d.poly} {model.polyLabel}</span>
+        {model.polyLabel && <span class:list={['shrink-0', model.polyHeavy ? 'text-tertiary-container' : 'text-secondary-container']}>{d.poly} {model.polyLabel}</span>}
       </div>
       <h3 class="font-headline-sm text-[13px] leading-tight sm:text-base text-on-surface font-bold group-hover/card:text-primary transition-colors truncate sm:whitespace-normal">
         <a href={href}>{title}</a>
       </h3>
       <div class="sm:hidden flex items-center gap-1 text-[10px] text-outline font-tech-data-sm truncate">
-        <span>{model.polyLabel}</span>
-        <span>•</span>
+        {model.polyLabel && <span>{model.polyLabel}</span>}
+        {model.polyLabel && <span>•</span>}
         <span class="text-secondary-container truncate">{model.formats.join('/')}</span>
       </div>
       <p class="hidden [[data-view=list]_&]:block font-body-sm text-body-sm text-on-surface-variant">{pick(model.desc, lang)}</p>
@@ -93,7 +99,7 @@ const featureTone = { green: 'text-secondary-container', primary: 'text-primary'
       </div>
     </div>
     <div class="pt-space-xs flex items-center justify-between">
-      <span class="font-tech-data-lg text-base sm:text-lg text-on-surface font-bold">${model.price}</span>
+      <span class="font-tech-data-lg text-base sm:text-lg text-on-surface font-bold">{priceLabel}</span>
       <a
         href={model.buyUrl}
         target="_blank"

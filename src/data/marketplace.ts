@@ -3,16 +3,17 @@
 // Порядок в массиве = порядок «Новые». Блок `detail` необязателен: без него карточка модели покажет упрощённый вид.
 import type { Localized } from '../i18n';
 import { marketImages as img } from './mockMarketplaceImages';
+import { fetchSanityModels } from '../lib/sanity-models';
 
 const L = (ru: string, ua: string, en: string): Localized => ({ ru, ua, en });
 const same = (v: string): Localized => ({ ru: v, ua: v, en: v });
 
-export type MarketCategory = 'characters' | 'hardSurface' | 'anatomy' | 'creatures' | 'props';
+export type MarketCategory = 'characters' | 'hardSurface' | 'anatomy' | 'creatures' | 'props' | 'brushes' | 'resources' | 'prints';
 export type PolyTier = 'low' | 'mid' | 'high';
 export type ModelStatus = 'active' | 'soon' | 'sold';
 
-export const marketTags = ['QuadsOnly', 'RigReady', 'UDIM', 'SubD', 'PBR_Textures', 'GameReady'] as const;
-export const marketFormats = ['.FBX', '.BLEND', '.ZTL', '.OBJ', '.GLB'] as const;
+const staticTags = ['QuadsOnly', 'RigReady', 'UDIM', 'SubD', 'PBR_Textures', 'GameReady'];
+const staticFormats = ['.FBX', '.BLEND', '.ZTL', '.OBJ', '.GLB'];
 
 export interface ModelDetail {
   accent: string;
@@ -59,8 +60,8 @@ export interface MarketModel {
   polyLabel: string;
   /** Подсвечивать полигонаж оранжевым (тяжёлые SubD-модели) */
   polyHeavy?: boolean;
-  /** Плашка внизу превью */
-  feature: string;
+  /** Плашка внизу превью (из Sanity приходит на трёх языках) */
+  feature: string | Localized;
   featureTone: 'green' | 'primary';
   /** Плашка слева сверху: TURNTABLE READY и т.п. (если не новинка) */
   badge?: string;
@@ -70,13 +71,18 @@ export interface MarketModel {
   status: ModelStatus;
   buyUrl: string;
   detail?: ModelDetail;
+  /** Дополнительные кадры (из Sanity) */
+  gallery?: string[];
+  /** Свои пункты блока характеристик (из Sanity): название + значение */
+  specs?: { label: Localized; value: Localized }[];
+  fromSanity?: boolean;
 }
 
 const buy = 'https://3dcults.com';
 
 export const polyTier = (polys: number): PolyTier => (polys < 15000 ? 'low' : polys <= 60000 ? 'mid' : 'high');
 
-export const marketModels: MarketModel[] = [
+const placeholderModels: MarketModel[] = [
   {
     slug: 'modular-drone-rig-v4',
     image: img.drone,
@@ -431,6 +437,16 @@ export const marketModels: MarketModel[] = [
     buyUrl: buy,
   },
 ];
+
+// Модели из Sanity идут первыми, затем заглушки из макета (если slug не совпал)
+const sanityModels = await fetchSanityModels();
+const sanitySlugs = new Set(sanityModels.map((m) => m.slug));
+export const marketModels: MarketModel[] = [...sanityModels, ...placeholderModels.filter((m) => !sanitySlugs.has(m.slug))];
+
+// Фильтры по тегам и форматам: список заглушек + то, что встречается в Sanity
+const unique = (list: string[]) => [...new Set(list)];
+export const marketTags: string[] = unique([...staticTags, ...sanityModels.flatMap((m) => m.tags)]);
+export const marketFormats: string[] = unique([...staticFormats, ...sanityModels.flatMap((m) => m.formats)]);
 
 export const priceBounds = {
   min: Math.min(...marketModels.map((m) => m.price)),
